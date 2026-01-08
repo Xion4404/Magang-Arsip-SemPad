@@ -39,4 +39,16 @@ Route::get('/peminjaman/{id}/edit', [PeminjamanController::class, 'edit']);
 Route::put('/peminjaman/{id}', [PeminjamanController::class, 'update']);
 
 // Proses Hapus Data (DELETE)
+// Proses Hapus Data (DELETE)
 Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy']);
+
+
+// ==========================================
+// 3. FITUR MONITORING KARYAWAN
+// ==========================================
+
+use App\Http\Controllers\MonitoringKaryawanController;
+
+Route::get('/monitoring', [MonitoringKaryawanController::class, 'index'])->name('monitoring.index');
+Route::get('/monitoring/create', [MonitoringKaryawanController::class, 'create'])->name('monitoring.create');
+Route::post('/monitoring', [MonitoringKaryawanController::class, 'store'])->name('monitoring.store');
