@@ -21,12 +21,12 @@
             </div>
 
             <div class="bg-white rounded-lg p-4 border border-red-200 shadow-sm hover:shadow-md transition flex flex-col justify-center items-center group">
-                <h3 class="text-gray-500 font-bold text-xs uppercase tracking-widest mb-1">Masih Dipinjam</h3>
+                <h3 class="text-gray-500 font-bold text-xs uppercase tracking-widest mb-1">Sedang Dipinjam</h3>
                 <p class="text-3xl font-bold text-red-900 group-hover:scale-110 transition-transform">{{ $masihDipinjam }}</p>
             </div>
 
             <div class="bg-white rounded-lg p-4 border border-red-200 shadow-sm hover:shadow-md transition flex flex-col justify-center items-center group">
-                <h3 class="text-gray-500 font-bold text-xs uppercase tracking-widest mb-1">Sudah Kembali</h3>
+                <h3 class="text-gray-500 font-bold text-xs uppercase tracking-widest mb-1">Telah Dikembalikan</h3>
                 <p class="text-3xl font-bold text-red-900 group-hover:scale-110 transition-transform">{{ $sudahDikembalikan }}</p>
             </div>
 
@@ -96,12 +96,12 @@
                             @if($item->status == 'Sedang Dipinjam')
                                 <span class="inline-flex items-center gap-1 bg-red-50 text-red-700 px-2.5 py-0.5 rounded-full text-xs font-bold border border-red-100">
                                     <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                                    Dipinjam
+                                    Sedang Dipinjam
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-bold border border-green-100">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                    Kembali
+                                    Telah Dikembalikan
                                 </span>
                             @endif
                         </td>
@@ -161,13 +161,15 @@
                                 <input type="radio" name="status" value="All" {{ request('status') == 'All' || !request('status') ? 'checked' : '' }} class="w-4 h-4 text-red-600 focus:ring-red-500">
                                 <span class="text-sm text-gray-700">All</span>
                             </label>
+                            
                             <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition">
                                 <input type="radio" name="status" value="Sedang Dipinjam" {{ request('status') == 'Sedang Dipinjam' ? 'checked' : '' }} class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                <span class="text-sm text-gray-700">Dipinjam</span>
+                                <span class="text-sm text-gray-700">Sedang Dipinjam</span>
                             </label>
+                            
                             <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition">
                                 <input type="radio" name="status" value="Sudah Dikembalikan" {{ request('status') == 'Sudah Dikembalikan' ? 'checked' : '' }} class="w-4 h-4 text-red-600 focus:ring-red-500">
-                                <span class="text-sm text-gray-700">Kembali</span>
+                                <span class="text-sm text-gray-700">Telah Dikembalikan</span>
                             </label>
                         </div>
                     </div>
