@@ -50,15 +50,54 @@
                             </div>
 
                             <template x-for="(input, index) in inputs" :key="index">
-                                <div class="flex gap-2">
-                                    <select name="arsip[]" required class="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-bold text-gray-700 bg-white shadow-sm">
-                                        <option value="" disabled selected>-- Pilih Arsip --</option>
-                                        @foreach($daftarArsip as $arsip)
-                                            <option value="{{ $arsip }}">{{ $arsip }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="flex gap-2 items-start relative z-10" :style="'z-index: ' + (50 - index)">
                                     
-                                    <button type="button" x-show="inputs.length > 1" @click="inputs.splice(index, 1)" class="text-red-500 hover:text-red-700 p-2">
+                                    <div 
+                                        x-data="searchableSelect()" 
+                                        class="relative w-full"
+                                    >
+                                        <input type="hidden" name="arsip_id[]" :value="selectedId" required>
+
+                                        <div class="relative">
+                                            <input 
+                                                type="text" 
+                                                x-model="search"
+                                                @click="open = true"
+                                                @click.outside="open = false"
+                                                placeholder="Ketik untuk mencari arsip..."
+                                                class="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-bold text-gray-700 bg-white shadow-sm"
+                                                autocomplete="off"
+                                            >
+                                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                            </div>
+                                        </div>
+
+                                        <div 
+                                            x-show="open" 
+                                            class="absolute z-50 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+                                            style="display: none;"
+                                        >
+                                            <template x-if="filteredOptions.length > 0">
+                                                <ul>
+                                                    <template x-for="option in filteredOptions" :key="option.id">
+                                                        <li 
+                                                            @click="selectOption(option)"
+                                                            class="px-4 py-2 hover:bg-red-50 cursor-pointer text-sm text-gray-700 border-b border-gray-100 last:border-0"
+                                                        >
+                                                            <span class="font-bold block" x-text="option.nama_berkas"></span>
+                                                            <span class="text-xs text-gray-500" x-text="'No: ' + option.no_berkas"></span>
+                                                        </li>
+                                                    </template>
+                                                </ul>
+                                            </template>
+                                            <div x-show="filteredOptions.length === 0" class="p-3 text-sm text-gray-500 text-center">
+                                                Tidak ada arsip ditemukan.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="button" x-show="inputs.length > 1" @click="inputs.splice(index, 1)" class="text-red-500 hover:text-red-700 p-3 bg-red-50 rounded-lg hover:bg-red-100 transition">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </div>
@@ -77,4 +116,46 @@
 
         </div>
     </div>
+
+    <script>
+        window.arsipOptions = @json($daftarArsip);
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('searchableSelect', (initialId = null) => ({
+                open: false,
+                search: '',
+                selectedId: initialId || '',
+                options: window.arsipOptions,
+                
+                init() {
+                    if (this.selectedId) {
+                        const found = this.options.find(o => o.id == this.selectedId);
+                        if (found) {
+                            this.search = found.nama_berkas;
+                        }
+                    }
+                },
+
+                get filteredOptions() {
+                    // Kalau search kosong, tampilkan semua
+                    if (this.search === '') return this.options;
+
+                    // Filter aman (Cek dulu apakah properti ada isinya sebelum di-lowercase)
+                    return this.options.filter(option => {
+                        const nama = option.nama_berkas ? option.nama_berkas.toLowerCase() : '';
+                        const no = option.no_berkas ? option.no_berkas.toLowerCase() : '';
+                        const keyword = this.search.toLowerCase();
+
+                        return nama.includes(keyword) || no.includes(keyword);
+                    });
+                },
+
+                selectOption(option) {
+                    this.selectedId = option.id;
+                    this.search = option.nama_berkas;
+                    this.open = false;
+                }
+            }))
+        })
+    </script>
 </x-layout>
