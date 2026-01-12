@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\DashboardController;
 
 // ==========================================
 // 1. HALAMAN UTAMA & LOGIN
@@ -40,3 +41,11 @@ Route::put('/peminjaman/{id}', [PeminjamanController::class, 'update']);
 
 // Proses Hapus Data (DELETE)
 Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy']);
+
+// Route untuk Halaman Beranda
+Route::get('/beranda', [DashboardController::class, 'index']);
+
+Route::get('/peminjaman/export', [PeminjamanController::class, 'export']); 
+
+// Baru route resource di bawahnya
+Route::resource('peminjaman', PeminjamanController::class);

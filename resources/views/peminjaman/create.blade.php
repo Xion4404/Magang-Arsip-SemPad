@@ -6,7 +6,7 @@
     <div class="flex justify-center items-start min-h-[80vh]">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-4xl border border-gray-100 relative">
             
-            <form action="/peminjaman" method="POST">
+            <form action="/peminjaman" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="space-y-6">
 
@@ -25,14 +25,52 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+    <label class="font-medium text-gray-700 text-lg">NIP :</label>
+    <div class="md:col-span-2">
+        <input 
+            type="text" 
+            name="nip" 
+            placeholder="Masukkan Nomor Induk Pegawai..." 
+            required 
+            inputmode="numeric" 
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            class="w-full border-2 border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-semibold text-gray-700"
+        >
+    </div>
+</div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                         <label class="font-medium text-gray-700 text-lg">Unit Peminjam :</label>
                         <div class="md:col-span-2">
-                            <select name="unit" required class="w-full border-2 border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-bold text-gray-700 bg-white">
-                                <option value="" disabled selected>-- Pilih Unit --</option>
-                                @foreach($units as $unit)
-                                    <option value="{{ $unit }}">{{ $unit }}</option>
-                                @endforeach
+                            <input type="text" name="unit" placeholder="Contoh: Unit SDM & Umum..." required class="w-full border-2 border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-semibold text-gray-700">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label class="font-medium text-gray-700 text-lg">Jenis Dokumen :</label>
+                        <div class="md:col-span-2">
+                            <select name="jenis_dokumen" required class="w-full border-2 border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-bold text-gray-700 bg-white">
+                                <option value="" disabled selected>-- Pilih Jenis Dokumen --</option>
+                                <option value="Berkas Digital">Berkas Digital</option>
+                                <option value="Berkas Fisik">Berkas Fisik</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                        <label class="font-medium text-gray-700 text-lg pt-2">Bukti Bon Peminjaman :</label>
+                        <div class="md:col-span-2">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition relative cursor-pointer group">
+                                <input type="file" name="bukti_pinjam" accept=".png, .jpg, .jpeg" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(event)">
+                                
+                                <div id="upload-placeholder" class="text-center">
+                                    <svg class="w-10 h-10 text-gray-400 mx-auto mb-2 group-hover:text-red-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    <p class="text-sm text-gray-500 font-semibold">Klik untuk upload bukti (PNG/JPG)</p>
+                                    <p class="text-xs text-gray-400 mt-1">Maksimal 2MB</p>
+                                </div>
+
+                                <img id="image-preview" src="#" alt="Preview" class="hidden max-h-48 rounded-lg shadow-md mt-2 z-20 relative pointer-events-none">
+                            </div>
                         </div>
                     </div>
 
@@ -52,48 +90,24 @@
                             <template x-for="(input, index) in inputs" :key="index">
                                 <div class="flex gap-2 items-start relative z-10" :style="'z-index: ' + (50 - index)">
                                     
-                                    <div 
-                                        x-data="searchableSelect()" 
-                                        class="relative w-full"
-                                    >
+                                    <div x-data="searchableSelect()" class="relative w-full">
                                         <input type="hidden" name="arsip_id[]" :value="selectedId" required>
-
                                         <div class="relative">
-                                            <input 
-                                                type="text" 
-                                                x-model="search"
-                                                @click="open = true"
-                                                @click.outside="open = false"
-                                                placeholder="Ketik untuk mencari arsip..."
-                                                class="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-bold text-gray-700 bg-white shadow-sm"
-                                                autocomplete="off"
-                                            >
-                                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                            </div>
+                                            <input type="text" x-model="search" @click="open = true" @click.outside="open = false" placeholder="Ketik untuk mencari arsip..." class="w-full border-2 border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none font-bold text-gray-700 bg-white shadow-sm" autocomplete="off">
+                                            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"><svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
                                         </div>
-
-                                        <div 
-                                            x-show="open" 
-                                            class="absolute z-50 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto"
-                                            style="display: none;"
-                                        >
+                                        <div x-show="open" class="absolute z-50 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto" style="display: none;">
                                             <template x-if="filteredOptions.length > 0">
                                                 <ul>
                                                     <template x-for="option in filteredOptions" :key="option.id">
-                                                        <li 
-                                                            @click="selectOption(option)"
-                                                            class="px-4 py-2 hover:bg-red-50 cursor-pointer text-sm text-gray-700 border-b border-gray-100 last:border-0"
-                                                        >
+                                                        <li @click="selectOption(option)" class="px-4 py-2 hover:bg-red-50 cursor-pointer text-sm text-gray-700 border-b border-gray-100 last:border-0">
                                                             <span class="font-bold block" x-text="option.nama_berkas"></span>
                                                             <span class="text-xs text-gray-500" x-text="'No: ' + option.no_berkas"></span>
                                                         </li>
                                                     </template>
                                                 </ul>
                                             </template>
-                                            <div x-show="filteredOptions.length === 0" class="p-3 text-sm text-gray-500 text-center">
-                                                Tidak ada arsip ditemukan.
-                                            </div>
+                                            <div x-show="filteredOptions.length === 0" class="p-3 text-sm text-gray-500 text-center">Tidak ada arsip ditemukan.</div>
                                         </div>
                                     </div>
                                     
@@ -113,11 +127,28 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 
     <script>
+        // Preview Image Script
+        function previewImage(event) {
+            const input = event.target;
+            const placeholder = document.getElementById('upload-placeholder');
+            const preview = document.getElementById('image-preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Data Arsip dari Backend
         window.arsipOptions = @json($daftarArsip);
 
         document.addEventListener('alpine:init', () => {
@@ -137,15 +168,11 @@
                 },
 
                 get filteredOptions() {
-                    // Kalau search kosong, tampilkan semua
                     if (this.search === '') return this.options;
-
-                    // Filter aman (Cek dulu apakah properti ada isinya sebelum di-lowercase)
                     return this.options.filter(option => {
                         const nama = option.nama_berkas ? option.nama_berkas.toLowerCase() : '';
                         const no = option.no_berkas ? option.no_berkas.toLowerCase() : '';
                         const keyword = this.search.toLowerCase();
-
                         return nama.includes(keyword) || no.includes(keyword);
                     });
                 },

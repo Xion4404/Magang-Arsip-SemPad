@@ -17,11 +17,14 @@ class Peminjaman extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'arsip_id',
-        'nama_peminjam',
-        'unit_peminjam',
-        'tanggal_pinjam',
-        'status',
+    'tanggal_pinjam',
+    'nama_peminjam',
+    'nip',              // Baru
+    'unit_peminjam',
+    'arsip_id',
+    'jenis_dokumen',    // Baru
+    'bukti_peminjaman', // Baru
+    'status'
     ];
 
     public function arsip()
