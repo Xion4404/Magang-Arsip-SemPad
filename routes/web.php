@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PengunjungController;
 
 // ==========================================
 // 1. HALAMAN UTAMA & LOGIN
@@ -49,3 +50,5 @@ Route::get('/peminjaman/export', [PeminjamanController::class, 'export']);
 
 // Baru route resource di bawahnya
 Route::resource('peminjaman', PeminjamanController::class);
+
+Route::resource('pengunjung', PengunjungController::class);
