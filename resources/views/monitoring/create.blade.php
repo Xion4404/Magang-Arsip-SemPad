@@ -6,7 +6,7 @@
                  <svg class="w-24 h-24 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
             <div class="p-8 relative z-10">
-                <h2 class="text-3xl font-bold text-white">Formulir Monitoring Kerja Karyawan</h2>
+                <h2 class="text-3xl font-bold text-white">Formulir Monitoring Kinerja Karyawan</h2>
                 <p class="text-red-100 mt-2">Silakan lengkapi data monitoring di bawah ini</p>
             </div>
         </div>
@@ -20,94 +20,103 @@
                          <label class="block text-gray-800 font-bold mb-2 text-sm">PIC</label>
                          <select name="user_id" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
                              @foreach($users as $user)
-                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                 <option value="{{ $user->id }}">{{ $user->nama }}</option>
                              @endforeach
                          </select>
                      </div>
-                     
-                     <!-- Nomor Berita Acara -->
+
+                     <!-- Tanggal Kerja -->
                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Berita Acara</label>
-                         <input type="text" name="nba" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="Contoh: PB-001">
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Tanggal Kerja</label>
+                         <input type="date" name="tanggal_kerja" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
                      </div>
-                     
-                     <!-- Tahapan Pengarsipan -->
+
+                     <!-- Nomor Box (Filter) -->
                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Tahapan Pengarsipan</label>
-                         <select name="tahapan" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
-                            <option value="" disabled selected>Pilih Tahapan</option>
-                            <option value="Waiting List Pengarsipan">Waiting List Pengarsipan</option>
-                            <option value="Pemilahan Arsip">Pemilahan Arsip</option>
-                            <option value="Alih Media">Alih Media</option>
-                            <option value="Input E-Arsip">Input E-Arsip</option>
-                            <option value="Pemusnahan Arsip">Pemusnahan Arsip</option>
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Box</label>
+                         <select id="box_filter" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                             <option value="" disabled selected>Pilih Nomor Box</option>
+                             @php
+                                 $uniqueBoxes = $allBerkas->unique('no_box')->sortBy('no_box');
+                             @endphp
+                             @foreach($uniqueBoxes as $box)
+                                 <option value="{{ $box->no_box }}">Box {{ $box->no_box }}</option>
+                             @endforeach
                          </select>
                      </div>
-    
-                     <!-- Jumlah Box -->
-                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Jumlah Box</label>
-                         <input type="number" name="jumlah_box" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="1">
-                     </div>
-    
-                     <!-- Tanggal Berkas Masuk -->
+
+                     <!-- Nama Berkas -->
                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Tanggal Berkas Masuk</label>
-                         <input type="date" name="tanggal_berkas_masuk" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nama Berkas</label>
+                         <select name="berkas_id" id="berkas_select" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                             <option value="" disabled selected>Pilih Nomor Box Terlebih Dahulu</option>
+                             <!-- Options populated by JS -->
+                         </select>
                      </div>
-    
+
+                     <!-- Jumlah Box Selesai -->
+                     <div>
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Jumlah Box Selesai</label>
+                         <input type="number" name="jumlah_box_selesai" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="0">
+                     </div>
+
                      <!-- Keterangan -->
                      <div class="md:row-span-2">
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Keterangan</label>
                          <textarea name="keterangan" rows="5" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="Opsional"></textarea>
                      </div>
-    
-                      <!-- Unit Kerja -->
+
+                     <!-- Tahapan Pengarsipan -->
                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Unit Kerja</label>
-                         <select name="unit_kerja" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
-                            <option value="" disabled selected>Pilih Unit Kerja</option>
-                            <option value="Sistem Manajemen">Sistem Manajemen</option>
-                            <option value="Internal Audit">Internal Audit</option>
-                            <option value="Komunikasi & Kesekretariatan">Komunikasi & Kesekretariatan</option>
-                            <option value="CSR">CSR</option>
-                            <option value="Hukum">Hukum</option>
-                            <option value="Keamanan">Keamanan</option>
-                            <option value="Staf Dept. Komunikasi & Hukum Perusahaan">Staf Dept. Komunikasi & Hukum Perusahaan</option>
-                            <option value="Bisnis Inkubasi Non Semen">Bisnis Inkubasi Non Semen</option>
-                            <option value="Quality Assurance">Quality Assurance</option>
-                            <option value="SHE">SHE</option>
-                            <option value="Perencanaan & Evaluasi Produksi">Perencanaan & Evaluasi Produksi</option>
-                            <option value="Penunjang Produksi">Penunjang Produksi</option>
-                            <option value="Quality Control">Quality Control</option>
-                            <option value="Staf AFR">Staf AFR</option>
-                            <option value="Operasi Tambang">Operasi Tambang</option>
-                            <option value="Produksi Bahan Baku">Produksi Bahan Baku</option>
-                            <option value="Perencanaan & Pengawasan Tambang">Perencanaan & Pengawasan Tambang</option>
-                            <option value="WHRPG & Utilitas">WHRPG & Utilitas</option>
-                            <option value="Produksi Terak">Produksi Terak</option>
-                            <option value="Produksi Semen">Produksi Semen</option>
-                            <option value="Pabrik Kantong">Pabrik Kantong</option>
-                            <option value="Pabrik Dumai">Pabrik Dumai</option>
-                            <option value="Pemeliharaan Mesin">Pemeliharaan Mesin</option>
-                            <option value="Pemeliharaan Listrik & Instrumen">Pemeliharaan Listrik & Instrumen</option>
-                            <option value="Maintenance Reliability">Maintenance Reliability</option>
-                            <option value="Capex">Capex</option>
-                            <option value="Site Engineering">Site Engineering</option>
-                            <option value="Project Management">Project Management</option>
-                            <option value="Perencanaan Suku Cadang">Perencanaan Suku Cadang</option>
-                            <option value="TPM Officer">TPM Officer</option>
-                            <option value="Produksi Mesin & Teknikal Support">Produksi Mesin & Teknikal Support</option>
-                            <option value="Produksi BIP & Aplikasi">Produksi BIP & Aplikasi</option>
-                            <option value="Operasional SDM">Operasional SDM</option>
-                            <option value="Sarana Umum">Sarana Umum</option>
-                            <option value="GRC & Internal Control">GRC & Internal Control</option>
-                            <option value="Kinerja & Anggaran">Kinerja & Anggaran</option>
-                            <option value="Keuangan">Keuangan</option>
-                            <option value="Akuntansi">Akuntansi</option>
-                            <option value="Lainnya">Lainnya</option>
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Tahapan Pengarsipan</label>
+                         <select name="tahapan" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                            <option value="" disabled selected>Pilih Tahapan</option>
+                            <option value="Pemilahan">Pemilahan</option>
+                            <option value="Pendataan">Pendataan</option>
+                            <option value="Pelabelan">Pelabelan</option>
                          </select>
                      </div>
+                     
+                     <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const boxFilter = document.getElementById('box_filter');
+                            const berkasSelect = document.getElementById('berkas_select');
+                            
+                            // Pass data from Blade to JS
+                            const allBerkas = @json($allBerkas);
+
+                            function filterBerkas() {
+                                const selectedBox = boxFilter.value;
+                                
+                                // Reset Berkas Dropdown
+                                berkasSelect.innerHTML = '<option value="" disabled selected>Pilih Nama Berkas</option>';
+                                
+                                if (!selectedBox) return;
+
+                                // Filter berkas based on selected box
+                                const filtered = allBerkas.filter(item => item.no_box == selectedBox);
+                                
+                                if (filtered.length === 0) {
+                                    berkasSelect.innerHTML = '<option value="" disabled>Tidak ada berkas di box ini</option>';
+                                    return;
+                                }
+
+                                filtered.forEach(item => {
+                                    const option = document.createElement('option');
+                                    option.value = item.id;
+                                    // Display format: Nama Berkas (Unit Asal)
+                                    // We need safety check for nested relation
+                                    const unitAsal = item.arsip_masuk ? item.arsip_masuk.unit_asal : '-';
+                                    option.textContent = `${item.nama_berkas} (${unitAsal})`;
+                                    berkasSelect.appendChild(option);
+                                });
+                            }
+
+                            if(boxFilter) {
+                                boxFilter.addEventListener('change', filterBerkas);
+                            }
+                        });
+                     </script>
     
                  </div>
     
