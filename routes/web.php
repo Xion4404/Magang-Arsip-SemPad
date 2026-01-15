@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PengunjungController;
 use App\Http\Controllers\MonitoringKaryawanController;
 use App\Http\Controllers\ArsipMasukController;
+use App\Http\Controllers\ArsipController;
 
 // ==========================================
 // 1. HALAMAN UTAMA & LOGIN
@@ -18,9 +19,6 @@ Route::get('/', [PeminjamanController::class, 'index']);
 Route::get('/login', function () {
     return view('login');
 })->name('login');
-
-
-
 
 // ==========================================
 // 2. FITUR PEMINJAMAN (CRUD)
@@ -82,3 +80,24 @@ Route::delete('/arsip-masuk/{id}/berkas/{berkasId}', [ArsipMasukController::clas
 Route::get('/arsip-masuk/get-klasifikasi-options', [ArsipMasukController::class, 'getKlasifikasiOptions'])->name('arsip-masuk.get-klasifikasi-options');
 Route::get('/arsip-masuk/{id}/berkas/{berkasId}/edit', [ArsipMasukController::class, 'editBerkas'])->name('arsip-masuk.berkas.edit');
 Route::put('/arsip-masuk/{id}/berkas/{berkasId}', [ArsipMasukController::class, 'updateBerkas'])->name('arsip-masuk.berkas.update');
+
+// ==========================================
+// 5. FITUR ARSIP
+// ==========================================
+Route::get('/arsip', [ArsipController::class, 'index']);
+Route::post('/arsip/export', [ArsipController::class, 'export']); // Handle Export
+Route::get('/input-arsip', [ArsipController::class, 'create']);
+Route::post('/input-arsip', [ArsipController::class, 'store']);
+Route::get('/debug-php', function () {
+    echo "PHP Binary: " . PHP_BINARY . "<br>";
+    echo "SAPI Name: " . php_sapi_name() . "<br>";
+    echo "Loaded INI: " . php_ini_loaded_file() . "<br>";
+    echo "GD Loaded: " . (extension_loaded('gd') ? 'YES' : 'NO') . "<br>";
+    if (extension_loaded('gd')) {
+        print_r(gd_info());
+    } else {
+        echo "GD extension is NOT loaded.<br>";
+        echo "Extension Dir: " . ini_get('extension_dir') . "<br>";
+    }
+    return;
+});
