@@ -13,7 +13,7 @@ use App\Http\Controllers\ArsipController;
 // ==========================================
 
 // Halaman utama langsung buka daftar peminjaman
-Route::get('/', [PeminjamanController::class, 'index']);
+Route::get('/', [DashboardController::class, 'index']);
 
 // Halaman Login (Cadangan)
 Route::get('/login', function () {
