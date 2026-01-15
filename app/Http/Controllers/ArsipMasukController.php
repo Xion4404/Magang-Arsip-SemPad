@@ -2,138 +2,115 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Arsip;
-use App\Models\MasterKlasifikasi;
+use App\Models\ArsipMasuk;
+use App\Models\BerkasArsipMasuk;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class ArsipController extends Controller
+class ArsipMasukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Arsip::with('klasifikasi');
+        $query = ArsipMasuk::orderBy('id', 'asc');
 
-        // Search logic
-        if ($request->has('search') && $request->search) {
+        // Filter by Search (General)
+        if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('nama_berkas', 'like', "%{$search}%")
-                  ->orWhere('no_berkas', 'like', "%{$search}%")
-                  ->orWhere('isi_berkas', 'like', "%{$search}%")
-                  ->orWhereHas('klasifikasi', function($q2) use ($search) {
-                      $q2->where('kode_klasifikasi', 'like', "%{$search}%");
+                $q->where('unit_asal', 'like', "%{$search}%")
+                  ->orWhere('nomor_berita_acara', 'like', "%{$search}%")
+                  ->orWhereHas('penerima', function($userQuery) use ($search) {
+                      $userQuery->where('nama', 'like', "%{$search}%");
                   });
             });
         }
 
-        // Sorting logic
-        switch ($request->input('sort')) {
-            case 'oldest':
-                $query->orderBy('id', 'asc');
-                break;
-            case 'year_desc':
-                $query->orderBy('tahun', 'desc');
-                break;
-            case 'year_asc':
-                $query->orderBy('tahun', 'asc');
-                break;
-            case 'newest':
-            default:
-                $query->orderBy('id', 'desc');
-                break;
+        // Filter by Unit Asal
+        if ($request->has('unit_asal') && $request->unit_asal != '') {
+            $query->where('unit_asal', $request->unit_asal);
         }
 
-        $arsips = $query->paginate(10); // Use paginate instead of take(10) for better lists
+        // Filter by Penerima
+        if ($request->has('penerima') && $request->penerima != '') {
+            $query->where('user_penerima', $request->penerima);
+        }
+
+        $arsipMasuk = $query->get();
         
-        if ($request->ajax()) {
-            return view('arsip.partials.table', compact('arsips'));
-        }
+        // Get Options for Filters
+        $unitAsalOptions = ArsipMasuk::select('unit_asal')->distinct()->pluck('unit_asal');
+        $users = User::all();
 
-        return view('arsip.arsip', compact('arsips'));
+        return view('arsip-masuk.index', compact('arsipMasuk', 'unitAsalOptions', 'users'));
+    }
+
+    public function show($id)
+    {
+        $arsipMasuk = ArsipMasuk::with(['berkas.klasifikasi', 'penerima'])->findOrFail($id);
+        return view('arsip-masuk.show', compact('arsipMasuk'));
     }
 
     public function create()
     {
-        $klasifikasis = MasterKlasifikasi::all();
-        return view('arsip.input-arsip', compact('klasifikasis'));
+        $users = User::all();
+        return view('arsip-masuk.create', compact('users'));
     }
 
     public function store(Request $request)
     {
-        // Validasi sederhana, sesuaikan dengan kebutuhan
-        $validated = $request->validate([
-            'no_berkas' => 'required|string',
-            'klasifikasi_id' => 'required|exists:master_klasifikasi,id',
-            'nama_berkas' => 'required|string',
-            'isi_berkas' => 'nullable|string',
-            'tahun' => 'required|integer',
-            'tanggal' => 'required|date',
-            'jumlah' => 'required|integer|min:0',
-            'no_box' => 'required|string',
-            'jenis_media' => 'required|string|in:Kertas,Foto,Kartografi',
+        $request->validate([
+            'unit_asal' => 'required|string|max:255',
+            'nomor_berita_acara' => 'required|string|max:100',
+            'tanggal_terima' => 'required|date',
+            'jumlah_box_masuk' => 'required|integer',
+            'user_penerima' => 'required|exists:users,id',
         ]);
 
-        // Mapping input 'tanggal' ke 'tanggal_masuk' sesuai DB
-        $data = [
-            'no_berkas' => $validated['no_berkas'],
-            'klasifikasi_id' => $validated['klasifikasi_id'],
-            'nama_berkas' => $validated['nama_berkas'],
-            'isi_berkas' => $validated['isi_berkas'],
-            'jenis_media' => $validated['jenis_media'],
-            'tahun' => $validated['tahun'],
-            'tanggal_masuk' => $validated['tanggal'],
-            'jumlah' => $validated['jumlah'],
-            'no_box' => $validated['no_box'],
-        ];
+        $arsipMasuk = ArsipMasuk::create($request->all());
 
-        // Ensure user exists
-        $user = \App\Models\User::first();
-        if (!$user) {
-            $user = \App\Models\User::create([
-                'nama' => 'Admin',
-                'email' => 'admin@admin.com',
-                'password' => bcrypt('password'),
-            ]);
-        }
-        $data['user_id'] = $user->id;
-
-        Arsip::create($data);
-
-        return redirect('/arsip')->with('success', 'Data arsip berhasil ditambahkan!');
+        return redirect()->route('arsip-masuk.berkas.create', $arsipMasuk->id)
+            ->with('success', 'Data Arsip Masuk berhasil disimpan. Silakan input berkas per box.');
     }
 
-    public function export(Request $request) 
+    public function createBerkas($id)
     {
-        $type = $request->input('type');
-        $ids = json_decode($request->input('ids'), true);
-        $search = $request->input('search');
-        $sort = $request->input('sort');
-
-        // Prepare query for PDF (Excel uses Export class)
-        // Ideally, we reuse logic. Let's extract query logic or use the Export class query.
-        $export = new \App\Exports\ArsipExport($ids, $search, $sort);
-        $filename = 'arsip-all-' . date('Y-m-d') . ($type === 'pdf' ? '.pdf' : '.xlsx');
-
-        if ($type === 'excel') {
-            return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
-        }
-
-        if ($type === 'pdf') {
-            // Fetch data manually for the view
-            $query = $export->query(); 
-            $arsips = $query->get();
-            
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('arsip.pdf', compact('arsips'));
-            $pdf->setPaper('a4', 'landscape');
-            return $pdf->download($filename);
-        }
-
-        return redirect()->back();
+        $arsipMasuk = ArsipMasuk::with('berkas.klasifikasi')->findOrFail($id);
+        $klasifikasi = \App\Models\MasterKlasifikasi::all();
+        return view('arsip-masuk.add-berkas', compact('arsipMasuk', 'klasifikasi'));
     }
+
+    public function storeBerkas(Request $request, $id)
+    {
+        $request->validate([
+            'no_box' => 'required|string|max:50',
+            'klasifikasi_id' => 'required|exists:master_klasifikasi,id',
+            'nama_berkas' => 'required|string|max:255',
+            'isi_berkas' => 'nullable|string',
+            'tanggal_berkas' => 'nullable|date',
+            'jumlah' => 'nullable|integer',
+        ]);
+
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+
+        $arsipMasuk->berkas()->create([
+            'no_box' => $request->no_box,
+            'klasifikasi_id' => $request->klasifikasi_id,
+            'nama_berkas' => $request->nama_berkas,
+            'isi_berkas' => $request->isi_berkas,
+            'tanggal_berkas' => $request->tanggal_berkas,
+            'jumlah' => $request->jumlah,
+        ]);
+
+        return redirect()->back()->with('success', 'Berkas berhasil ditambahkan!');
+    }
+
+
+
     public function getKlasifikasiOptions(Request $request)
     {
-        $level = $request->input('level', 0); // Default to 0 now
+        $level = $request->input('level', 0);
         $parent = $request->input('parent');
-        $jraType = $request->input('jra_type'); // New input
+        $jraType = $request->input('jra_type');
 
         // Level 0: Choose JRA Type
         if ($level == 0) {
@@ -145,9 +122,11 @@ class ArsipController extends Controller
 
         // Level 1: Pokok Masalah (filtered by JRA Type)
         if ($level == 1) {
-            $query = MasterKlasifikasi::select('kode_klasifikasi');
+            $query = \App\Models\MasterKlasifikasi::select('kode_klasifikasi');
             
             if ($jraType) {
+                // Assuming 'jenis_jra' column exists. If not, logic might utilize prefix or join. 
+                // Using user provided logic:
                 $query->where('jenis_jra', $jraType);
             }
 
@@ -157,9 +136,7 @@ class ArsipController extends Controller
                 return isset($parts[0]) ? $parts[0] : null;
             })->unique()->filter()->values();
             
-            $formatted = $unique->map(function($code) use ($jraType) {
-                // If Substantif, we might need a dynamic label generator if the hardcoded list doesn't cover it
-                // attempting to use existing map first
+            $formatted = $unique->map(function($code) {
                 return [
                     'code' => $code,
                     'label' => $this->getKategoriLabel($code)
@@ -169,8 +146,9 @@ class ArsipController extends Controller
             return response()->json($formatted);
         }
 
+        // Level 2: Sub Masalah (filtered by Parent Pokok Masalah)
         if ($level == 2 && $parent) {
-            $codes = MasterKlasifikasi::where('kode_klasifikasi', 'like', $parent . '.%')->get();
+            $codes = \App\Models\MasterKlasifikasi::where('kode_klasifikasi', 'like', $parent . '.%')->get();
             $unique = $codes->map(function($item) {
                 $parts = explode('.', $item->kode_klasifikasi);
                 return isset($parts[0], $parts[1]) ? $parts[0] . '.' . $parts[1] : null;
@@ -186,8 +164,9 @@ class ArsipController extends Controller
             return response()->json($formatted);
         }
 
+        // Level 3: Specific Classification (filtered by Parent Sub Masalah)
         if ($level == 3 && $parent) {
-            $items = MasterKlasifikasi::where('kode_klasifikasi', 'like', $parent . '.%')
+            $items = \App\Models\MasterKlasifikasi::where('kode_klasifikasi', 'like', $parent . '.%')
                         ->select('id', 'kode_klasifikasi', 'jenis_arsip', 'masa_simpan', 'tindakan_akhir')
                         ->get();
             
@@ -205,6 +184,60 @@ class ArsipController extends Controller
         }
 
         return response()->json([]);
+    }
+
+    public function editBerkas($id, $berkasId)
+    {
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        $berkas = \App\Models\BerkasArsipMasuk::findOrFail($berkasId);
+        
+        // Ensure the berkas belongs to the arsipMasuk
+        if($berkas->arsip_masuk_id != $id) {
+            abort(404);
+        }
+
+        return view('arsip-masuk.add-berkas', compact('arsipMasuk', 'berkas'));
+    }
+
+    public function updateBerkas(Request $request, $id, $berkasId)
+    {
+        $berkas = \App\Models\BerkasArsipMasuk::findOrFail($berkasId);
+        
+        if($berkas->arsip_masuk_id != $id) {
+            abort(404);
+        }
+
+        $request->validate([
+            'no_box' => 'required',
+            'klasifikasi_id' => 'required|exists:master_klasifikasi,id',
+            'nama_berkas' => 'required',
+            'tanggal_berkas' => 'required|date',
+            'jumlah' => 'required|integer|min:1',
+        ]);
+
+        $berkas->update([
+            'no_box' => $request->no_box,
+            'klasifikasi_id' => $request->klasifikasi_id,
+            'nama_berkas' => $request->nama_berkas,
+            'isi_berkas' => $request->isi_berkas,
+            'tanggal_berkas' => $request->tanggal_berkas,
+            'jumlah' => $request->jumlah
+        ]);
+
+        return redirect()->route('arsip-masuk.berkas.create', $id)->with('success', 'Berkas berhasil diperbarui!');
+    }
+
+    public function destroyBerkas($id, $berkasId)
+    {
+        $berkas = \App\Models\BerkasArsipMasuk::findOrFail($berkasId);
+        
+        if($berkas->arsip_masuk_id != $id) {
+            abort(404);
+        }
+
+        $berkas->delete();
+
+        return redirect()->route('arsip-masuk.berkas.create', $id)->with('success', 'Berkas berhasil dihapus!');
     }
 
     private function getKategoriLabel($code)
@@ -297,9 +330,8 @@ class ArsipController extends Controller
             'SM.08' => 'SM.08 - Evaluasi Organisasi',
             'SM.09' => 'SM.09 - Komitmen / Kesepakatan',
             'SM.10' => 'SM.10 - Personal File',
-            'SM.10' => 'SM.10 - Personal File',
             
-            // Substantif placeholders (to be expanded fully if needed, but for now fallback logic is fine or basic ones)
+            // Substantif placeholders 
             'BJ.00' => 'BJ.00 - Penetapan Kebijakan',
             'DT.00' => 'DT.00 - Transportir',
             'DT.01' => 'DT.01 - Distribusi & Transportasi Laut',
@@ -334,7 +366,6 @@ class ArsipController extends Controller
             'PM.03' => 'PM.03 - Peralatan Uji Mutu',
             'PM.04' => 'PM.04 - Energi Listrik',
             'PM.05' => 'PM.05 - Sistem Informasi',
-
         ];
         return $labels[$code] ?? $code;
     }
