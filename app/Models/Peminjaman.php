@@ -9,22 +9,24 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
-    // --- BAGIAN INI SANGAT PENTING ---
-    // Kita kasih tahu Laravel nama tabel aslinya 'peminjaman', bukan 'peminjamen'
+    // --- PENGATURAN TABEL (DIPERTAHANKAN) ---
     protected $table = 'peminjaman'; 
-    // ----------------------------------
-
     public $timestamps = false;
+    // ----------------------------------------
 
     protected $fillable = [
-    'tanggal_pinjam',
-    'nama_peminjam',
-    'nip',              // Baru
-    'unit_peminjam',
-    'arsip_id',
-    'jenis_dokumen',    // Baru
-    'bukti_peminjaman', // Baru
-    'status'
+        'tanggal_pinjam',
+        'nama_peminjam',
+        'nip',
+        'unit_peminjam',
+        'arsip_id',
+        'jenis_dokumen',
+        'bukti_peminjaman',
+        'status',
+        
+        // --- TAMBAHAN BARU (FITUR KEAMANAN) ---
+        'jabatan_peminjam',   // Menyimpan data: Direksi, Band I, Pelaksana, dll
+        'is_approved_khusus'  // Menyimpan status: Apakah pakai surat kuasa? (0/1)
     ];
 
     public function arsip()
