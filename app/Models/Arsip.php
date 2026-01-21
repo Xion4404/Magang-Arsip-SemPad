@@ -17,4 +17,9 @@ class Arsip extends Model
     {
         return $this->belongsTo(MasterKlasifikasi::class, 'klasifikasi_id');
     }
+
+    public function isiArsip()
+    {
+        return $this->hasMany(IsiArsip::class);
+    }
 }

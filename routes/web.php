@@ -7,6 +7,8 @@ use App\Http\Controllers\PengunjungController;
 use App\Http\Controllers\MonitoringKaryawanController;
 use App\Http\Controllers\ArsipMasukController;
 use App\Http\Controllers\ArsipController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 // ==========================================
 // 1. HALAMAN UTAMA & LOGIN
@@ -88,16 +90,4 @@ Route::get('/arsip', [ArsipController::class, 'index']);
 Route::post('/arsip/export', [ArsipController::class, 'export']); // Handle Export
 Route::get('/input-arsip', [ArsipController::class, 'create']);
 Route::post('/input-arsip', [ArsipController::class, 'store']);
-Route::get('/debug-php', function () {
-    echo "PHP Binary: " . PHP_BINARY . "<br>";
-    echo "SAPI Name: " . php_sapi_name() . "<br>";
-    echo "Loaded INI: " . php_ini_loaded_file() . "<br>";
-    echo "GD Loaded: " . (extension_loaded('gd') ? 'YES' : 'NO') . "<br>";
-    if (extension_loaded('gd')) {
-        print_r(gd_info());
-    } else {
-        echo "GD extension is NOT loaded.<br>";
-        echo "Extension Dir: " . ini_get('extension_dir') . "<br>";
-    }
-    return;
-});
+Route::get('/api/klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);
