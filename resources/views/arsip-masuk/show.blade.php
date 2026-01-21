@@ -22,75 +22,43 @@
             </div>
         </div>
 
-        <!-- Info Grid -->
-        <div class="bg-white p-6 rounded-2xl shadow-lg border border-red-100 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="p-4 bg-red-50 rounded-xl">
-                    <span class="text-xs font-bold text-red-800 uppercase tracking-wide block mb-1">Tanggal Terima</span>
-                    <span class="text-lg text-gray-800 font-medium">{{ \Carbon\Carbon::parse($arsipMasuk->tanggal_terima)->format('d F Y') }}</span>
+        <!-- Info Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Tanggal Terima -->
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-red-50 hover:shadow-lg transition duration-300 flex items-center gap-5 group">
+                <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition duration-300 shadow-sm">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </div>
-                <div class="p-4 bg-red-50 rounded-xl">
-                    <span class="text-xs font-bold text-red-800 uppercase tracking-wide block mb-1">Jumlah Box Masuk</span>
-                    <span class="text-lg text-gray-800 font-medium">{{ $arsipMasuk->jumlah_box_masuk }} Box</span>
+                <div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Tanggal Terima</span>
+                    <span class="text-xl font-bold text-gray-900">{{ \Carbon\Carbon::parse($arsipMasuk->tanggal_terima)->format('d F Y') }}</span>
                 </div>
-                <div class="p-4 bg-red-50 rounded-xl">
-                    <span class="text-xs font-bold text-red-800 uppercase tracking-wide block mb-1">Total Berkas Terdata</span>
-                    <span class="text-lg text-gray-800 font-medium">{{ $arsipMasuk->berkas->count() }} Berkas</span>
+            </div>
+
+            <!-- Jumlah Box -->
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-red-50 hover:shadow-lg transition duration-300 flex items-center gap-5 group">
+                <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition duration-300 shadow-sm">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                 </div>
-                <div class="p-4 bg-red-50 rounded-xl">
-                    <span class="text-xs font-bold text-red-800 uppercase tracking-wide block mb-1">Penerima</span>
-                    <span class="text-lg text-gray-800 font-medium">{{ $arsipMasuk->penerima->nama ?? '-' }}</span>
+                <div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Jumlah Box Masuk</span>
+                    <span class="text-xl font-bold text-gray-900">{{ $arsipMasuk->jumlah_box_masuk }} Box</span>
+                </div>
+            </div>
+
+            <!-- Penerima -->
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-red-50 hover:shadow-lg transition duration-300 flex items-center gap-5 group">
+                <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition duration-300 shadow-sm">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Penerima</span>
+                    <span class="text-xl font-bold text-gray-900">{{ $arsipMasuk->penerima->nama ?? '-' }}</span>
                 </div>
             </div>
         </div>
 
-        <!-- Daftar Berkas Table -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-red-100">
-            <div class="p-6 bg-white border-b border-red-100 flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800">Daftar Berkas</h3>
-                <a href="{{ route('arsip-masuk.berkas.create', $arsipMasuk->id) }}" class="text-sm text-red-600 hover:text-red-800 font-semibold flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    Kelola Berkas
-                </a>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-red-50 text-red-900 border-b border-red-100">
-                        <tr>
-                            <th class="py-4 px-6 font-semibold">No</th>
-                            <th class="py-4 px-6 font-semibold">No Box</th>
-                            <th class="py-4 px-6 font-semibold">Kode Klasifikasi</th>
-                            <th class="py-4 px-6 font-semibold">Uraian / Nama Berkas</th>
-                            <th class="py-4 px-6 font-semibold">Tahun</th>
-                            <th class="py-4 px-6 font-semibold text-center">Jumlah</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-red-50">
-                        @forelse($arsipMasuk->berkas as $index => $berkas)
-                        <tr class="hover:bg-red-50 transition">
-                            <td class="py-4 px-6 text-gray-700">{{ $loop->iteration }}</td>
-                            <td class="py-4 px-6 text-gray-700 font-medium">Box {{ $berkas->no_box }}</td>
-                            <td class="py-4 px-6 text-gray-700">
-                                <span class="bg-white border border-red-200 px-2 py-1 rounded text-xs font-mono text-red-700">
-                                    {{ $berkas->klasifikasi->kode_klasifikasi ?? '-' }}
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-gray-700">{{ $berkas->nama_berkas }}</td>
-                            <td class="py-4 px-6 text-gray-700">
-                                {{ $berkas->tanggal_berkas ? \Carbon\Carbon::parse($berkas->tanggal_berkas)->format('Y') : '-' }}
-                            </td>
-                            <td class="py-4 px-6 text-gray-700 text-center">{{ $berkas->jumlah }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="py-10 text-center text-gray-500 italic">Belum ada berkas yang diinput untuk arsip ini.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
 
         <div class="mt-8">
             <a href="{{ route('arsip-masuk.index') }}" class="inline-flex items-center text-gray-600 hover:text-red-800 font-medium transition">

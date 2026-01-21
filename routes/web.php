@@ -46,7 +46,7 @@ Route::put('/peminjaman/{id}', [PeminjamanController::class, 'update']);
 Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy']);
 
 // Route untuk Halaman Beranda
-Route::get('/beranda', [DashboardController::class, 'index']);
+Route::get('/beranda', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::get('/peminjaman/export', [PeminjamanController::class, 'export']); 
 

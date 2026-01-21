@@ -9,7 +9,7 @@
     <!-- Stats -->
     <!-- Stats -->
     <!-- Stats -->
-    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
         <!-- Card 1: Total -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center justify-center h-32 hover:shadow-md transition">
             <h3 class="text-[#8B1A1A] font-bold text-sm mb-1 uppercase tracking-wider">Total</h3>
@@ -34,6 +34,11 @@
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center justify-center h-32 hover:shadow-md transition">
             <h3 class="text-[#8B1A1A] font-bold text-sm mb-1 uppercase tracking-wider">Pelabelan</h3>
             <p class="text-3xl font-extrabold text-gray-800">{{ $pelabelan }}</p>
+        </div>
+        <!-- Card 6: Input E-Arsip -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center justify-center h-32 hover:shadow-md transition">
+            <h3 class="text-[#8B1A1A] font-bold text-sm mb-1 uppercase tracking-wider">Input E-Arsip</h3>
+            <p class="text-3xl font-extrabold text-gray-800">{{ $inputEArsip }}</p>
         </div>
     </div>
 
@@ -64,7 +69,7 @@
                      <option value="Pemilahan" {{ request('tahapan') == 'Pemilahan' ? 'selected' : '' }} class="bg-white text-gray-800">Pemilahan</option>
                      <option value="Pendataan" {{ request('tahapan') == 'Pendataan' ? 'selected' : '' }} class="bg-white text-gray-800">Pendataan</option>
                      <option value="Pelabelan" {{ request('tahapan') == 'Pelabelan' ? 'selected' : '' }} class="bg-white text-gray-800">Pelabelan</option>
-                     <option value="Input E Arsip" {{ request('tahapan') == 'Input E Arsip' ? 'selected' : '' }} class="bg-white text-gray-800">Input E Arsip</option>
+                     <option value="Input E-Arsip" {{ request('tahapan') == 'Input E-Arsip' ? 'selected' : '' }} class="bg-white text-gray-800">Input E-Arsip</option>
                  </select>
              </div>
         </div>
@@ -88,9 +93,9 @@
                             <span class="block text-xs text-gray-400 font-normal mt-1">(Klik tombol untuk lanjut)</span>
                         </th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Tanggal Kerja</th>
+                        <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Nomor Berita Acara</th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Unit Kerja</th>
-                        <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Nomor Box</th>
-                        <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Nama Berkas</th>
+
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Jumlah Box Selesai</th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Keterangan</th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Aksi</th>
@@ -99,25 +104,7 @@
                 <tbody id="monitoringTableBody" class="divide-y divide-red-50 bg-[#FFF5F5]">
                     @forelse($monitoring as $index => $item)
                     @php
-                        // Parse "Pengerjaan Box: X" and "Berkas: Y" from keterangan
-                        $keterangan = $item->keterangan;
-                        $noBox = '-';
-                        $namaBerkas = '-';
-                        
-                        // Parse Box
-                        if (preg_match('/Pengerjaan Box:\s*([^\s|]+)/', $keterangan, $matches)) {
-                            $noBox = $matches[1];
-                            $keterangan = str_replace($matches[0], '', $keterangan);
-                        }
-                        
-                        // Parse Berkas
-                        if (preg_match('/Berkas:\s*([^|]+)/', $keterangan, $matches)) {
-                            $namaBerkas = trim($matches[1]);
-                            $keterangan = str_replace($matches[0], '', $keterangan);
-                        }
-
-                        // Clean cleanup
-                        $keteranganDisplay = trim($keterangan, " |");
+                        $keteranganDisplay = $item->keterangan;
                     @endphp
                     <tr class="hover:bg-red-50 transition duration-150 ease-in-out">
                         <td class="py-4 px-4 text-[#8B1A1A] font-medium">{{ $loop->iteration }}</td>
@@ -131,19 +118,19 @@
                                     {{ $item->tahapan == 'Pemilahan' ? 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100' : '' }}
                                     {{ $item->tahapan == 'Pendataan' ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' : '' }}
                                     {{ $item->tahapan == 'Pelabelan' ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' : '' }}
-                                    {{ $item->tahapan == 'Input E Arsip' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default' : '' }}"
+                                    {{ $item->tahapan == 'Input E-Arsip' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default' : '' }}"
                                     title="Klik untuk lanjut ke tahapan berikutnya"
                                     data-current="{{ $item->tahapan }}"
-                                    {{ $item->tahapan == 'Input E Arsip' ? 'disabled' : '' }}
+                                    {{ $item->tahapan == 'Input E-Arsip' ? 'disabled' : '' }}
                                 >
                                     {{ $item->tahapan }}
                                 </button>
                             </form>
                         </td>
                         <td class="py-4 px-4 text-[#8B1A1A]">{{ \Carbon\Carbon::parse($item->tanggal_kerja)->format('d/m/Y') }}</td>
+                        <td class="py-4 px-4 text-[#8B1A1A]">{{ $item->nba }}</td>
                         <td class="py-4 px-4 text-[#8B1A1A]">{{ $item->unit_kerja }}</td>
-                        <td class="py-4 px-4 text-[#8B1A1A]">{{ $noBox }}</td>
-                        <td class="py-4 px-4 text-[#8B1A1A]">{{ $namaBerkas }}</td>
+
                         <td class="py-4 px-4 text-[#8B1A1A]">{{ $item->jumlah_box_selesai }}</td>
                         <td class="py-4 px-4 text-[#8B1A1A]">{{ $keteranganDisplay ?: '-' }}</td>
                         <td class="py-4 px-4 text-[#8B1A1A]">
@@ -163,7 +150,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="10" class="py-10 text-gray-500 italic">Belum ada data monitoring.</td>
+                        <td colspan="9" class="py-10 text-gray-500 italic">Belum ada data monitoring.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -287,7 +274,7 @@
                         let nextStage = '';
                         if(currentStage === 'Pemilahan') nextStage = 'Pendataan';
                         else if(currentStage === 'Pendataan') nextStage = 'Pelabelan';
-                        else if(currentStage === 'Pelabelan') nextStage = 'Input E Arsip';
+                        else if(currentStage === 'Pelabelan') nextStage = 'Input E-Arsip';
                         
                         if (!nextStage) return; 
 

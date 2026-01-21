@@ -38,9 +38,19 @@
                      @endforeach
                  </select>
              </div>
+             
+             <!-- Filter: Tahun -->
+             <div class="w-full md:w-32">
+                 <select id="yearFilter" class="w-full bg-[#5c1313] hover:bg-[#4a0f0f] text-white py-2 px-3 border-none rounded-lg focus:outline-none focus:ring-0 text-sm font-medium cursor-pointer filter-input">
+                     <option value="" class="bg-white text-gray-800">Semua Tahun</option>
+                     @foreach($yearOptions as $year)
+                         <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }} class="bg-white text-gray-800">{{ $year }}</option>
+                     @endforeach
+                 </select>
+             </div>
 
             <!-- Reset Button -->
-            @if(request('search') || request('unit_asal') || request('penerima'))
+            @if(request('search') || request('unit_asal') || request('penerima') || request('year'))
                 <a href="{{ route('arsip-masuk.index') }}" class="text-xs text-red-600 font-semibold hover:underline px-2">Reset</a>
             @endif
         </div>
@@ -62,7 +72,7 @@
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Unit Asal</th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Tanggal Terima</th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Jumlah Box</th>
-                        <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Total Berkas</th>
+
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Penerima</th>
                         <th class="py-5 px-4 font-bold text-gray-900 tracking-wide border-l border-red-50">Aksi</th>
                     </tr>
@@ -75,7 +85,7 @@
                         <td class="py-4 px-4 text-red-900">{{ $item->unit_asal }}</td>
                         <td class="py-4 px-4 text-red-900">{{ \Carbon\Carbon::parse($item->tanggal_terima)->format('d/m/Y') }}</td>
                         <td class="py-4 px-4 text-red-900">{{ $item->jumlah_box_masuk }} Box</td>
-                        <td class="py-4 px-4 text-red-900">{{ $item->berkas->count() }} Berkas</td>
+
                         <td class="py-4 px-4 text-red-900">{{ $item->penerima->nama ?? '-' }}</td>
                         <td class="py-4 px-4">
                             <a href="{{ route('arsip-masuk.show', $item->id) }}" class="inline-flex items-center justify-center bg-white border border-red-200 text-red-700 hover:bg-red-50 hover:text-red-900 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all duration-200 gap-1" title="Lihat Detail">
@@ -86,7 +96,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-10 text-gray-500 italic">Belum ada data arsip masuk.</td>
+                        <td colspan="6" class="py-10 text-gray-500 italic">Belum ada data arsip masuk.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -104,11 +114,13 @@
                 const search = document.getElementById('searchInput').value;
                 const unit = document.getElementById('unitAsalFilter').value;
                 const penerima = document.getElementById('penerimaFilter').value;
+                const year = document.getElementById('yearFilter').value;
 
                 const params = new URLSearchParams();
                 if(search) params.append('search', search);
                 if(unit) params.append('unit_asal', unit);
                 if(penerima) params.append('penerima', penerima);
+                if(year) params.append('year', year);
 
                 const url = `{{ route('arsip-masuk.index') }}?${params.toString()}`;
 

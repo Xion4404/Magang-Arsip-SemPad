@@ -35,13 +35,19 @@ class ArsipMasukController extends Controller
             $query->where('user_penerima', $request->penerima);
         }
 
+        // Filter by Year
+        if ($request->has('year') && $request->year != '') {
+            $query->whereYear('tanggal_terima', $request->year);
+        }
+
         $arsipMasuk = $query->get();
         
         // Get Options for Filters
         $unitAsalOptions = ArsipMasuk::select('unit_asal')->distinct()->pluck('unit_asal');
+        $yearOptions = ArsipMasuk::selectRaw('YEAR(tanggal_terima) as year')->distinct()->orderBy('year', 'desc')->pluck('year');
         $users = User::all();
 
-        return view('arsip-masuk.index', compact('arsipMasuk', 'unitAsalOptions', 'users'));
+        return view('arsip-masuk.index', compact('arsipMasuk', 'unitAsalOptions', 'yearOptions', 'users'));
     }
 
     public function show($id)
@@ -68,8 +74,8 @@ class ArsipMasukController extends Controller
 
         $arsipMasuk = ArsipMasuk::create($request->all());
 
-        return redirect()->route('arsip-masuk.berkas.create', $arsipMasuk->id)
-            ->with('success', 'Data Arsip Masuk berhasil disimpan. Silakan input berkas per box.');
+        return redirect()->route('arsip-masuk.index')
+            ->with('success', 'Data Arsip Masuk berhasil disimpan.');
     }
 
     public function createBerkas($id)
