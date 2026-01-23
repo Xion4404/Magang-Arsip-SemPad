@@ -4,261 +4,389 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Peminjaman;
+use App\Models\DetailPeminjaman;
 use App\Models\Arsip;
-use App\Exports\PeminjamanExport; 
+use App\Exports\PeminjamanExport;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\File; 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class PeminjamanController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Statistik
-        $totalPeminjaman = Peminjaman::count();
-        $masihDipinjam = Peminjaman::where('status', 'Sedang Dipinjam')->count();
-        $sudahDikembalikan = Peminjaman::whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan'])->count();
+        // 1. Statistik (Total Item Arsip)
+        $totalPeminjaman = DetailPeminjaman::count();
+        $masihDipinjam = DetailPeminjaman::whereHas('peminjaman', function ($q) {
+            $q->where('status', 'Sedang Dipinjam');
+        })->count();
 
-        // 2. Query Dasar
-        $query = Peminjaman::with('arsip');
+        $sudahDikembalikan = DetailPeminjaman::whereHas('peminjaman', function ($q) {
+            $q->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
+        })->count();
 
-        // --- FILTERING START ---
+        // 2. Query Utama (Detail Based)
+        $query = DetailPeminjaman::with(['peminjaman', 'arsip']);
 
-        // A. Filter Search (Nama, NIP, Unit, Nama Arsip)
-        if ($request->has('search') && $request->search != null) {
+        // 3. Filter Search
+        if ($request->filled('search')) {
             $keyword = $request->search;
-            $query->where(function($q) use ($keyword) {
-                $q->where('nama_peminjam', 'LIKE', "%$keyword%")
-                  ->orWhere('nip', 'LIKE', "%$keyword%")
-                  ->orWhere('unit_peminjam', 'LIKE', "%$keyword%")
-                  ->orWhereHas('arsip', function($qArsip) use ($keyword) {
-                      $qArsip->where('nama_berkas', 'LIKE', "%$keyword%")
-                             ->orWhere('no_berkas', 'LIKE', "%$keyword%");
-                  });
+            $query->where(function ($q) use ($keyword) {
+                // Cari di Parent
+                $q->whereHas('peminjaman', function ($qP) use ($keyword) {
+                    $qP->where('nama_peminjam', 'LIKE', "%$keyword%")
+                        ->orWhere('nip', 'LIKE', "%$keyword%")
+                        ->orWhere('unit_peminjam', 'LIKE', "%$keyword%");
+                })
+                    // Cari di Detail
+                    ->orWhere('nama_arsip', 'LIKE', "%$keyword%")
+                    ->orWhere('no_box', 'LIKE', "%$keyword%")
+                    // Cari di Relasi Arsip
+                    ->orWhereHas('arsip', function ($qArsip) use ($keyword) {
+                        $qArsip->where('nama_berkas', 'LIKE', "%$keyword%")
+                            ->orWhere('no_berkas', 'LIKE', "%$keyword%");
+                    });
             });
         }
 
-        // B. Filter Status (Radio Button)
+        // 4. Filter Lainnya
         if ($request->has('status') && $request->status != 'All') {
-            if ($request->status == 'Sudah Dikembalikan') {
-                $query->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
-            } else {
-                $query->where('status', $request->status);
-            }
-        }
-
-        // C. Filter Media (Softfile / Hardfile)
-        if ($request->has('media') && $request->media != 'All') {
-            // Menggunakan LIKE karena isi database bisa "Hardfile - Asli"
-            $query->where('jenis_dokumen', 'LIKE', '%' . $request->media . '%');
-        }
-
-        // D. Filter Keamanan (Rahasia / Terbatas / Biasa)
-        if ($request->has('keamanan') && $request->keamanan != 'All') {
-            $keamanan = $request->keamanan;
-            // Gunakan whereHas untuk cek ke tabel relasi 'arsip'
-            $query->whereHas('arsip', function($q) use ($keamanan) {
-                $q->where('klasifikasi_keamanan', $keamanan);
+            $status = $request->status;
+            $query->whereHas('peminjaman', function ($q) use ($status) {
+                if ($status == 'Sudah Dikembalikan') {
+                    $q->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
+                } else {
+                    $q->where('status', $status);
+                }
             });
         }
 
-        // E. Filter Tanggal
+        if ($request->has('media') && $request->media != 'All') {
+            $query->where('jenis_arsip', $request->media);
+        }
+
+        if ($request->has('keamanan') && $request->keamanan != 'All') {
+            $query->where('hak_akses', $request->keamanan);
+        }
+
         if ($request->start_date) {
-            $query->whereDate('tanggal_pinjam', '>=', $request->start_date);
+            $query->whereHas('peminjaman', function ($q) use ($request) {
+                $q->whereDate('tanggal_pinjam', '>=', $request->start_date);
+            });
         }
         if ($request->end_date) {
-            $query->whereDate('tanggal_pinjam', '<=', $request->end_date);
+            $query->whereHas('peminjaman', function ($q) use ($request) {
+                $q->whereDate('tanggal_pinjam', '<=', $request->end_date);
+            });
         }
 
-        // --- FILTERING END ---
+        // Urutkan berdasarkan tanggal pinjam parent terbaru
+        $query->select('detail_peminjaman.*')
+            ->join('peminjaman', 'detail_peminjaman.peminjaman_id', '=', 'peminjaman.id')
+            ->orderBy('peminjaman.tanggal_pinjam', 'desc');
 
-        $peminjaman = $query->orderBy('id', 'desc')->get();
+        // Pagination diperbesar jadi 25 agar semua data 22 baris muncul
+        $peminjaman = $query->paginate(25)->withQueryString();
 
         return view('peminjaman.index', compact('peminjaman', 'totalPeminjaman', 'masihDipinjam', 'sudahDikembalikan'));
     }
 
-    // --- FUNGSI LAINNYA TETAP SAMA (CREATE, STORE, EDIT, UPDATE, DLL) ---
-    // Pastikan fungsi create, store, edit, update, destroy, complete, export tetap ada di bawah ini.
-    // Copy fungsi-fungsi tersebut dari kode sebelumnya jika tertimpa.
-    
     public function create()
     {
-        $idSedangDipinjam = Peminjaman::where('status', 'Sedang Dipinjam')->pluck('arsip_id')->toArray();
-        $daftarArsip = Arsip::whereNotIn('id', $idSedangDipinjam)
-                            ->select('id', 'nama_berkas', 'no_berkas', 'klasifikasi_keamanan', 'unit_pengolah')
-                            ->get();
+        // 1. Cek Arsip yang Sedang Dipinjam
+        // Filter: whereNotNull agar data manual (NULL) tidak merusak query
+        $arsipDipinjam = DetailPeminjaman::whereHas('peminjaman', function ($q) {
+            $q->where('status', 'Sedang Dipinjam');
+        })->whereNotNull('arsip_id')->pluck('arsip_id');
+
+        // 2. Ambil Arsip Available
+        $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
+            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'klasifikasi_keamanan', 'unit_pengolah')
+            ->orderBy('nama_berkas', 'asc')
+            ->get();
+
         return view('peminjaman.create', compact('daftarArsip'));
     }
 
     public function store(Request $request)
     {
+        // 1. Validasi
         $request->validate([
             'tanggal' => 'required|date',
             'nama_peminjam' => 'required',
-            'nip' => 'required|numeric',
+            'nip' => 'required',
             'unit' => 'required',
             'jabatan_peminjam' => 'required',
-            'jenis_dokumen_utama' => 'required',
-            'bukti_pinjam' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'arsip_id' => 'required|array'
+            'keperluan' => 'required',
+            'items_source' => 'required|array|min:1',
+            'bukti_pinjam.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:10240'
         ]);
 
-        $jenisDokumenFinal = $request->jenis_dokumen_utama;
-        if ($request->jenis_dokumen_utama == 'Hardfile' && $request->has('detail_fisik')) {
-            $jenisDokumenFinal .= ' - ' . $request->detail_fisik; 
-        }
+        // 2. Validasi Ketersediaan (Double Check)
+        $sources = $request->items_source;
+        for ($i = 0; $i < count($sources); $i++) {
+            if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                $idArsip = $request->items_arsip_id[$i];
+                $sedangDipinjam = DetailPeminjaman::where('arsip_id', $idArsip)
+                    ->whereHas('peminjaman', function ($q) {
+                        $q->where('status', 'Sedang Dipinjam');
+                    })->exists();
 
-        $daftarArsipDipilih = Arsip::whereIn('id', $request->arsip_id)->get();
-
-        foreach ($daftarArsipDipilih as $arsip) {
-            $levelArsip = $arsip->klasifikasi_keamanan ?? 'Biasa/Terbuka';
-            $jabatan    = $request->jabatan_peminjam;
-            $unitUser   = $request->unit;
-            $unitArsip  = $arsip->unit_pengolah; 
-            
-            $isAllowed = false;
-            $pesanError = "";
-
-            if ($levelArsip == 'Biasa/Terbuka') {
-                $isAllowed = true;
-            } elseif ($levelArsip == 'Terbatas') {
-                if (in_array($jabatan, ['Direksi', 'Auditor', 'Legal'])) {
-                    $isAllowed = true; 
-                } elseif (in_array($jabatan, ['Band I', 'Band II', 'Band III'])) {
-                    if ($unitArsip && strcasecmp($unitUser, $unitArsip) == 0) {
-                        $isAllowed = true;
-                    } else {
-                        $pesanError = "Pimpinan ($jabatan) hanya boleh akses Arsip Terbatas milik unitnya sendiri.";
-                    }
-                } else {
-                    $pesanError = "Level Staf/Pelaksana tidak diizinkan meminjam Arsip TERBATAS.";
-                }
-            } elseif ($levelArsip == 'Rahasia') {
-                if (in_array($jabatan, ['Direksi', 'Auditor', 'Legal'])) {
-                    $isAllowed = true;
-                } else {
-                    $pesanError = "Arsip RAHASIA hanya boleh diakses oleh Direksi, Legal, atau Auditor.";
+                if ($sedangDipinjam) {
+                    return back()->withErrors(['msg' => 'Gagal! Salah satu arsip sedang dipinjam orang lain.'])->withInput();
                 }
             }
-
-            if (!$isAllowed) {
-                return back()->withErrors(['msg' => "AKSES DITOLAK! $pesanError"])->withInput();
-            }
         }
 
-        foreach ($request->arsip_id as $idArsip) {
-            $sedangDipinjam = Peminjaman::where('arsip_id', $idArsip)->where('status', 'Sedang Dipinjam')->exists();
-            if ($sedangDipinjam) {
-                return back()->withErrors(['msg' => 'Gagal! Salah satu arsip yang dipilih sedang dipinjam orang lain.']);
-            }
-        }
-
-        $pathBukti = null;
+        // 3. Upload File
+        $filePaths = [];
         if ($request->hasFile('bukti_pinjam')) {
-            $file = $request->file('bukti_pinjam');
-            $namaFile = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('bukti_pinjam'), $namaFile); 
-            $pathBukti = 'bukti_pinjam/' . $namaFile;
+            foreach ($request->file('bukti_pinjam') as $file) {
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('bukti_pinjam'), $filename);
+                $filePaths[] = 'bukti_pinjam/' . $filename;
+            }
         }
 
-        foreach ($request->arsip_id as $idArsip) {
-            Peminjaman::create([
-                'tanggal_pinjam' => $request->tanggal,
-                'nama_peminjam' => $request->nama_peminjam,
-                'nip' => $request->nip,
-                'unit_peminjam' => $request->unit,
-                'jenis_dokumen' => $jenisDokumenFinal,
-                'bukti_peminjaman' => $pathBukti,
-                'arsip_id' => $idArsip,
-                'status' => 'Sedang Dipinjam',
-                'jabatan_peminjam' => $request->jabatan_peminjam,
-                'is_approved_khusus' => false
+        // 4. Simpan Parent (Peminjaman)
+        $peminjaman = Peminjaman::create([
+            'tanggal_pinjam' => $request->tanggal,
+            'nama_peminjam' => $request->nama_peminjam,
+            'nip' => $request->nip,
+            'unit_peminjam' => $request->unit,
+            'jabatan_peminjam' => $request->jabatan_peminjam,
+            'keperluan' => $request->keperluan,
+            'bukti_peminjaman' => !empty($filePaths) ? json_encode($filePaths) : null,
+            'status' => 'Sedang Dipinjam',
+            'is_approved_khusus' => 0
+        ]);
+
+        // 5. Simpan Detail (DENGAN LOGIKA SNAPSHOT)
+        for ($i = 0; $i < count($sources); $i++) {
+
+            $arsipId = null;
+            $namaArsip = null;
+            $noBox = null;
+            $hakAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+
+            // LOGIKA UTAMA: Tentukan Nama & Box
+            if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                // Jika dari DB, kita CARI datanya dan SIMPAN TEKSNYA juga
+                $arsipMaster = Arsip::find($request->items_arsip_id[$i]);
+                if ($arsipMaster) {
+                    $arsipId = $arsipMaster->id;
+                    $namaArsip = $arsipMaster->nama_berkas; // COPY NAMA
+                    $noBox = $arsipMaster->no_box;          // COPY BOX
+                    $hakAkses = $arsipMaster->klasifikasi_keamanan; // COPY AKSES
+                }
+            } else {
+                // Jika Manual, ambil dari input
+                $arsipId = null;
+                $namaArsip = $request->items_nama_manual[$i];
+                $noBox = $request->items_box_manual[$i];
+            }
+
+            DetailPeminjaman::create([
+                'peminjaman_id' => $peminjaman->id,
+                'arsip_id' => $arsipId,
+                'nama_arsip' => $namaArsip, // Pasti terisi (Text)
+                'no_arsip' => null,         // Dikosongkan sesuai request
+                'no_box' => $noBox,         // Pasti terisi (Text)
+                'hak_akses' => $hakAkses,
+                'jenis_arsip' => $request->items_media[$i],
+                'detail_fisik' => $request->items_fisik[$i] ?? null,
             ]);
         }
 
         return redirect('/peminjaman')->with('success', 'Data peminjaman berhasil ditambahkan!');
     }
 
+    public function edit($id)
+    {
+        $editData = Peminjaman::with(['details.arsip'])->findOrFail($id);
+
+        $arsipDipinjam = DetailPeminjaman::whereHas('peminjaman', function ($q) use ($id) {
+            $q->where('status', 'Sedang Dipinjam')
+                ->where('id', '!=', $id);
+        })->whereNotNull('arsip_id')->pluck('arsip_id');
+
+        $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
+            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'klasifikasi_keamanan')
+            ->orderBy('nama_berkas', 'asc')
+            ->get();
+
+        $formattedItems = $editData->details->map(function ($detail) {
+            return [
+                'id' => $detail->arsip_id,
+                'source' => $detail->arsip_id ? 'db' : 'manual',
+                // Ambil dari detail->nama_arsip karena sekarang sudah pasti ada isinya (Snapshot)
+                'display_name' => $detail->nama_arsip ?? ($detail->arsip->nama_berkas ?? '-'),
+                'nama_manual' => $detail->nama_arsip,
+                'no_box' => $detail->no_box,
+                'akses' => $detail->hak_akses,
+                'media' => $detail->jenis_arsip,
+                'fisik' => $detail->detail_fisik
+            ];
+        });
+
+        return view('peminjaman.edit', compact('editData', 'id', 'daftarArsip', 'formattedItems'));
+    }
+
     public function update(Request $request, $id)
     {
-        $pinjam = Peminjaman::findOrFail($id);
+        $peminjaman = Peminjaman::findOrFail($id);
 
         $request->validate([
             'tanggal' => 'required|date',
             'nama_peminjam' => 'required',
-            'nip' => 'required|numeric',
-            'unit' => 'required',
-            'jenis_dokumen_utama' => 'required',
-            'bukti_pinjam' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+            'items_source' => 'required|array|min:1',
         ]);
 
-        $jenisDokumenFinal = $request->jenis_dokumen_utama;
-        if ($request->jenis_dokumen_utama == 'Hardfile' && $request->has('detail_fisik')) {
-            $jenisDokumenFinal .= ' - ' . $request->detail_fisik; 
+        // Handle File
+        $existingFiles = json_decode($peminjaman->bukti_peminjaman) ?? [];
+        if (!is_array($existingFiles) && $peminjaman->bukti_peminjaman)
+            $existingFiles = [$peminjaman->bukti_peminjaman];
+
+        if ($request->boolean('delete_existing_bukti')) {
+            foreach ($existingFiles as $file) {
+                if (File::exists(public_path($file)))
+                    File::delete(public_path($file));
+            }
+            $existingFiles = [];
         }
 
-        $dataUpdate = [
+        if ($request->hasFile('bukti_pinjam')) {
+            foreach ($request->file('bukti_pinjam') as $file) {
+                $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('bukti_pinjam'), $filename);
+                $existingFiles[] = 'bukti_pinjam/' . $filename;
+            }
+        }
+
+        $peminjaman->update([
             'tanggal_pinjam' => $request->tanggal,
             'nama_peminjam' => $request->nama_peminjam,
             'nip' => $request->nip,
             'unit_peminjam' => $request->unit,
-            'jenis_dokumen' => $jenisDokumenFinal,
             'jabatan_peminjam' => $request->jabatan_peminjam,
-        ];
+            'keperluan' => $request->keperluan,
+            'bukti_peminjaman' => count($existingFiles) > 0 ? json_encode($existingFiles) : null,
+        ]);
 
-        if ($request->hasFile('bukti_pinjam')) {
-            if ($pinjam->bukti_peminjaman && File::exists(public_path($pinjam->bukti_peminjaman))) {
-                File::delete(public_path($pinjam->bukti_peminjaman));
+        DetailPeminjaman::where('peminjaman_id', $id)->delete();
+
+        if ($request->has('items_source')) {
+            $sources = $request->items_source;
+            for ($i = 0; $i < count($sources); $i++) {
+
+                // Cek Validasi
+                if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                    $idArsip = $request->items_arsip_id[$i];
+                    $sedangDipinjam = DetailPeminjaman::where('arsip_id', $idArsip)
+                        ->where('peminjaman_id', '!=', $id)
+                        ->whereHas('peminjaman', function ($q) {
+                            $q->where('status', 'Sedang Dipinjam');
+                        })->exists();
+
+                    if ($sedangDipinjam)
+                        return back()->withErrors(['msg' => 'Gagal update! Arsip dipinjam orang lain.']);
+                }
+
+                // SIAPKAN DATA (SNAPSHOT LOGIC JUGA DITERAPKAN DISINI)
+                $arsipId = null;
+                $namaArsip = null;
+                $noBox = null;
+                $hakAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+
+                if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                    $arsipMaster = Arsip::find($request->items_arsip_id[$i]);
+                    if ($arsipMaster) {
+                        $arsipId = $arsipMaster->id;
+                        $namaArsip = $arsipMaster->nama_berkas; // Copy Name
+                        $noBox = $arsipMaster->no_box;          // Copy Box
+                        $hakAkses = $arsipMaster->klasifikasi_keamanan; // Copy Akses
+                    }
+                } else {
+                    $arsipId = null;
+                    $namaArsip = $request->items_nama_manual[$i];
+                    $noBox = $request->items_box_manual[$i];
+                }
+
+                DetailPeminjaman::create([
+                    'peminjaman_id' => $id,
+                    'arsip_id' => $arsipId,
+                    'nama_arsip' => $namaArsip, // Pasti terisi
+                    'no_arsip' => null,
+                    'no_box' => $noBox,         // Pasti terisi
+                    'hak_akses' => $hakAkses,
+                    'jenis_arsip' => $request->items_media[$i],
+                    'detail_fisik' => $request->items_fisik[$i] ?? null,
+                ]);
             }
-            $file = $request->file('bukti_pinjam');
-            $namaFile = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('bukti_pinjam'), $namaFile);
-            $dataUpdate['bukti_peminjaman'] = 'bukti_pinjam/' . $namaFile;
         }
 
-        if ($request->has('arsip_id') && !empty($request->arsip_id)) {
-            $newArsipId = is_array($request->arsip_id) ? $request->arsip_id[0] : $request->arsip_id;
-            $sedangDipinjam = Peminjaman::where('arsip_id', $newArsipId)
-                                        ->where('status', 'Sedang Dipinjam')
-                                        ->where('id', '!=', $id) 
-                                        ->exists();
-            if($sedangDipinjam) {
-                 return back()->withErrors(['msg' => 'Gagal update! Arsip pengganti sedang dipinjam orang lain.']);
-            }
-            $dataUpdate['arsip_id'] = $newArsipId;
-        }
-
-        $pinjam->update($dataUpdate);
         return redirect('/peminjaman')->with('success', 'Data peminjaman berhasil diperbarui!');
     }
 
     public function complete($id)
     {
-        $pinjam = Peminjaman::findOrFail($id);
-        $pinjam->update(['status' => 'Sudah Dikembalikan']);
-        return redirect('/peminjaman')->with('success', 'Arsip telah dikembalikan.');
-    }
-
-    public function edit($id)
-    {
-        $editData = Peminjaman::with('arsip')->findOrFail($id);
-        $idDipinjamOrangLain = Peminjaman::where('status', 'Sedang Dipinjam')
-                                         ->where('id', '!=', $id) 
-                                         ->pluck('arsip_id')->toArray();
-        $daftarArsip = Arsip::whereNotIn('id', $idDipinjamOrangLain)
-                            ->select('id', 'nama_berkas', 'no_berkas')
-                            ->get();
-        return view('peminjaman.edit', compact('editData', 'id', 'daftarArsip'));
+        $peminjaman = Peminjaman::findOrFail($id);
+        $peminjaman->update(['status' => 'Sudah Dikembalikan']);
+        return back()->with('success', 'Arsip telah dikembalikan.');
     }
 
     public function destroy($id)
     {
-        $pinjam = Peminjaman::findOrFail($id);
-        if ($pinjam->bukti_peminjaman && File::exists(public_path($pinjam->bukti_peminjaman))) {
-            File::delete(public_path($pinjam->bukti_peminjaman));
+        $peminjaman = Peminjaman::findOrFail($id);
+        $files = json_decode($peminjaman->bukti_peminjaman) ?? [];
+        if (!is_array($files) && $peminjaman->bukti_peminjaman)
+            $files = [$peminjaman->bukti_peminjaman];
+
+        foreach ($files as $file) {
+            if (File::exists(public_path($file)))
+                File::delete(public_path($file));
         }
-        $pinjam->delete();
-        return redirect('/peminjaman')->with('success', 'Data berhasil dihapus.');
+
+        $peminjaman->delete();
+        return back()->with('success', 'Data berhasil dihapus.');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->ids;
+        if (empty($ids)) {
+            return back()->with('error', 'Tidak ada data yang dipilih.');
+        }
+
+        $count = 0;
+        foreach ($ids as $id) {
+            $detail = DetailPeminjaman::find($id);
+            if ($detail) {
+                $peminjamanId = $detail->peminjaman_id;
+                $detail->delete();
+                $count++;
+
+                // Cek apakah parent peminjaman sudah kosong
+                $remainingDetails = DetailPeminjaman::where('peminjaman_id', $peminjamanId)->count();
+                if ($remainingDetails == 0) {
+                    $peminjaman = Peminjaman::find($peminjamanId);
+                    if ($peminjaman) {
+                        // Hapus file bukti jika ada
+                        $files = json_decode($peminjaman->bukti_peminjaman) ?? [];
+                        if (!is_array($files) && $peminjaman->bukti_peminjaman)
+                            $files = [$peminjaman->bukti_peminjaman];
+
+                        foreach ($files as $file) {
+                            if (File::exists(public_path($file)))
+                                File::delete(public_path($file));
+                        }
+                        $peminjaman->delete();
+                    }
+                }
+            }
+        }
+
+        return back()->with('success', "$count data berhasil dihapus.");
     }
 
     public function export(Request $request)

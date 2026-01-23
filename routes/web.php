@@ -24,6 +24,7 @@ Route::get('/login', function () {
 // Route Custom (Wajib di atas resource)
 Route::get('/peminjaman/export', [PeminjamanController::class, 'export']);
 Route::patch('/peminjaman/{id}/complete', [PeminjamanController::class, 'complete']);
+Route::post('/peminjaman/bulk-delete', [PeminjamanController::class, 'bulkDelete']);
 
 // Route Resource (CRUD Otomatis)
 Route::resource('peminjaman', PeminjamanController::class);
@@ -34,7 +35,7 @@ Route::resource('peminjaman', PeminjamanController::class);
 // ==========================================
 // Route Custom
 Route::get('/get-klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);
-Route::get('/arsip/export', [ArsipController::class, 'export']); 
+Route::get('/arsip/export', [ArsipController::class, 'export']);
 
 // Akses input arsip lewat: /arsip/create (sesuai standar Laravel)
 // Route lama '/input-arsip' kita arahkan ke controller create saja biar rapi

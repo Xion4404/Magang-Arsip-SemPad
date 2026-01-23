@@ -1,335 +1,481 @@
 <x-layout>
-    <div x-data="{ showDeleteModal: false, deleteUrl: '', showSortModal: false, showImageModal: false, imageUrl: '' }">
+    <div x-data="{ 
+        showDeleteModal: false, 
+        deleteUrl: '', 
+        showSortModal: false, 
+        showFilesModal: false, 
+        selectedFiles: [],
+        filterStatus: '{{ request('status') ?? 'All' }}',
+        filterKeamanan: '{{ request('keamanan') ?? 'All' }}',
+        filterMedia: '{{ request('media') ?? 'All' }}',
+        selectedItems: [],
+        allSelected: false,
+        toggleSelectAll() {
+            this.allSelected = !this.allSelected;
+            if (this.allSelected) {
+                this.selectedItems = {{ json_encode($peminjaman->pluck('id')) }};
+            } else {
+                this.selectedItems = [];
+            }
+        }
+    }" class="bg-gray-50 min-h-screen pb-20">
 
-        @if(session('success'))
-        <div class="mb-6 bg-white border-l-4 border-gray-600 p-4 rounded-r shadow-sm flex items-start justify-between animate-fade-in-down">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <p class="text-sm font-medium text-gray-700">{{ session('success') }}</p>
-            </div>
-            <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-        </div>
-        @endif
-
-        @if($errors->any())
-        <div class="mb-6 bg-white border-l-4 border-red-600 p-4 rounded-r shadow-sm">
-            <div class="flex items-center">
-                <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <p class="text-sm font-medium text-red-600">{{ $errors->first() }}</p>
-            </div>
-        </div>
-        @endif
-
-        <div class="bg-gradient-to-r from-red-900 to-red-800 px-6 py-5 rounded-lg shadow-lg mb-6 flex flex-col sm:flex-row items-center justify-between relative overflow-hidden gap-4">
-            <div class="relative z-10 text-center sm:text-left">
-                <h1 class="text-2xl font-bold text-white tracking-wide">Daftar Peminjaman</h1>
-                <p class="text-red-100 text-sm mt-1 opacity-90">Kelola data peminjaman arsip perusahaan.</p>
-            </div>
-            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 rounded-full bg-white opacity-5 blur-2xl"></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm flex items-center justify-between hover:shadow-md transition">
+        {{-- NEW HEADER SECTION --}}
+        <div class="bg-[#9d1b1b] px-8 pt-6 pb-20 rounded-b-[2.5rem] shadow-lg relative">
+            <div class="flex justify-between items-center mb-2">
                 <div>
-                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Data</p>
-                    <p class="text-2xl font-bold text-gray-700 mt-1">{{ $totalPeminjaman }}</p>
+                    <h1 class="text-2xl font-bold text-white tracking-wide">Daftar Peminjaman</h1>
+                    <p class="text-red-100 text-sm mt-0.5 opacity-90">Kelola data peminjaman arsip perusahaan.</p>
                 </div>
-                <div class="p-3 bg-gray-100 rounded-full text-gray-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-5 border border-red-100 shadow-sm flex items-center justify-between hover:shadow-md transition">
                 <div>
-                    <p class="text-xs text-red-600 font-semibold uppercase tracking-wider">Sedang Dipinjam</p>
-                    <p class="text-2xl font-bold text-red-600 mt-1">{{ $masihDipinjam }}</p>
-                </div>
-                <div class="p-3 bg-red-50 rounded-full text-red-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm flex items-center justify-between hover:shadow-md transition">
-                <div>
-                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Sudah Kembali</p>
-                    <p class="text-2xl font-bold text-gray-700 mt-1">{{ $sudahDikembalikan }}</p>
-                </div>
-                <div class="p-3 bg-gray-700 text-white rounded-full">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <a href="/peminjaman/create"
+                        class="bg-white text-[#9d1b1b] px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:bg-gray-50 transition flex items-center gap-2 transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-plus-circle text-lg"></i>
+                        <span>Tambah Peminjam</span>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-            
-            <form action="/peminjaman" method="GET" class="w-full lg:w-96 relative">
-                @if(request('status')) <input type="hidden" name="status" value="{{ request('status') }}"> @endif
-                @if(request('media')) <input type="hidden" name="media" value="{{ request('media') }}"> @endif
-                @if(request('keamanan')) <input type="hidden" name="keamanan" value="{{ request('keamanan') }}"> @endif
-                @if(request('start_date')) <input type="hidden" name="start_date" value="{{ request('start_date') }}"> @endif
-                @if(request('end_date')) <input type="hidden" name="end_date" value="{{ request('end_date') }}"> @endif
-                
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </span>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari data... (Tekan Enter)" 
-                    class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-red-700 focus:border-red-700 focus:bg-white transition outline-none">
+        {{-- floating STATS CARDS (Overlap) --}}
+        <div class="px-8 -mt-12 relative z-10 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Card 1 -->
+                <div
+                    class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-[#9d1b1b] hover:-translate-y-1 transition duration-300">
+                    <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Total Arsip</p>
+                    <p class="text-4xl font-extrabold text-[#9d1b1b]">{{ $totalPeminjaman }}</p>
+                </div>
+                <!-- Card 2 -->
+                <div
+                    class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-red-400 hover:-translate-y-1 transition duration-300">
+                    <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sedang Dipinjam</p>
+                    <p class="text-4xl font-extrabold text-red-500">{{ $masihDipinjam }}</p>
+                </div>
+                <!-- Card 3 -->
+                <div
+                    class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-gray-400 hover:-translate-y-1 transition duration-300">
+                    <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sudah Kembali</p>
+                    <p class="text-4xl font-extrabold text-gray-600">{{ $sudahDikembalikan }}</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- MAIN CONTENT --}}
+        <div class="px-8">
+
+            {{-- Toolbar --}}
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-3">
+                    <form action="/peminjaman" method="GET" class="w-full md:w-[350px] relative">
+                        @foreach(request()->except('search') as $key => $value) <input type="hidden" name="{{ $key }}"
+                        value="{{ $value }}"> @endforeach
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i
+                                class="fas fa-search text-xs"></i></span>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari aktivitas, nama, atau box..."
+                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-sm font-medium text-gray-600 focus:ring-1 focus:ring-[#9d1b1b] focus:bg-white outline-none transition placeholder-gray-400">
+                    </form>
+
+                    <div class="flex items-center gap-2">
+                        <button x-show="selectedItems.length > 0" x-cloak
+                            @click="document.getElementById('bulk-delete-form').submit()"
+                            class="px-4 py-2.5 bg-red-600 border border-red-600 rounded-lg text-xs font-bold text-white hover:bg-red-700 transition shadow-sm flex items-center gap-2 animate-fade-in">
+                            <i class="fas fa-trash-alt"></i> Hapus (<span x-text="selectedItems.length"></span>)
+                        </button>
+                        <button @click="showSortModal = true"
+                            class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
+                            <i class="fas fa-filter text-gray-400"></i> Filter
+                        </button>
+                        <a href="/peminjaman/export?{{ http_build_query(request()->all()) }}" target="_blank"
+                            class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-green-50 hover:text-green-700 hover:border-green-200 transition shadow-sm flex items-center gap-2">
+                            <i class="fas fa-file-excel text-green-600"></i> Export
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Alert Success --}}
+            @if(session('success'))
+                <div
+                    class="mb-6 bg-green-50 border border-green-200 p-3 rounded-xl flex items-start justify-between animate-fade-in-down shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-green-100 p-1.5 rounded-full text-green-600"><i class="fas fa-check text-xs"></i>
+                        </div>
+                        <p class="text-xs font-bold text-green-800">{{ session('success') }}</p>
+                    </div>
+                    <button onclick="this.parentElement.remove()" class="text-green-400 hover:text-green-600 text-xs"><i
+                            class="fas fa-times"></i></button>
+                </div>
+            @endif
+
+            {{-- Hidden Form for Bulk Delete --}}
+            <form id="bulk-delete-form" action="/peminjaman/bulk-delete" method="POST" class="hidden">
+                @csrf
+                <template x-for="id in selectedItems">
+                    <input type="hidden" name="ids[]" :value="id">
+                </template>
             </form>
 
-            <div class="flex flex-wrap gap-2 w-full lg:w-auto">
-                <a href="/peminjaman/export?{{ http_build_query(request()->all()) }}" target="_blank" class="flex-1 lg:flex-none justify-center flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-red-700 transition shadow-sm">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    Export
-                </a>
-                
-                <button @click="showSortModal = true" class="flex-1 lg:flex-none justify-center flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-red-700 transition shadow-sm">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
-                    Filter
-                </button>
+            {{-- TABLE --}}
+            <div
+                class="bg-white rounded-2xl shadow-[0_2px_15px_rgb(0,0,0,0.03)] overflow-hidden border border-gray-100">
+                <div class="overflow-x-auto">
+                    <table class="min-w-[2000px] w-full">
+                        <thead>
+                            <tr class="bg-[#9d1b1b] text-white">
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider w-14 sticky left-0 bg-[#9d1b1b] z-20 border-r border-red-900/20">
+                                    No</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider min-w-[150px] border-r border-red-900/20">
+                                    Tanggal</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider min-w-[250px] border-r border-red-900/20">
+                                    Peminjam</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider min-w-[200px] border-r border-red-900/20">
+                                    NIP</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider w-48 border-r border-red-900/20">
+                                    Jabatan</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider min-w-[200px] border-r border-red-900/20">
+                                    Unit</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider min-w-[250px] border-r border-red-900/20">
+                                    Keperluan</th>
+                                <th
+                                    class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-wider min-w-[350px] border-r border-red-900/20">
+                                    Nama Arsip</th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-32 border-r border-red-900/20">
+                                    Akses</th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-32 border-r border-red-900/20">
+                                    Jenis</th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-36 border-r border-red-900/20">
+                                    Otentikasi</th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-28 border-r border-red-900/20">
+                                    Box</th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-28 border-r border-red-900/20">
+                                    Bukti</th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-32 border-r border-red-900/20">
+                                    Status</th>
+                                <th
+                                    class="px-3 py-4 text-center text-[11px] font-bold uppercase tracking-wider sticky right-[159px] bg-[#9d1b1b] z-20">
+                                    <input type="checkbox" @click="toggleSelectAll()" x-model="allSelected"
+                                        class="rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer">
+                                </th>
+                                <th
+                                    class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider w-40 min-w-[160px] sticky right-0 bg-[#9d1b1b] z-20 shadow-[-4px_0_10px_rgb(0,0,0,0.1)]">
+                                    Aksi</th>
+                            </tr>
+                        </thead>
 
-                <a href="/peminjaman/create" class="flex-1 lg:flex-none justify-center flex items-center gap-2 px-5 py-2 bg-red-800 text-white rounded-lg text-sm font-semibold hover:bg-red-900 transition shadow-md">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Tambah
-                </a>
-            </div>
-        </div>
+                        <tbody class="divide-y divide-gray-100">
+                            @forelse($peminjaman as $detail)
+                                <tr class="hover:bg-red-50/20 transition duration-150 group">
+                                    <td
+                                        class="px-6 py-4 text-gray-500 text-center text-xs font-bold sticky left-0 bg-white group-hover:bg-red-50 border-r border-gray-100">
+                                        {{ $loop->iteration + ($peminjaman->currentPage() - 1) * $peminjaman->perPage() }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600 text-xs border-r border-gray-100">
+                                        {{ \Carbon\Carbon::parse($detail->peminjaman->tanggal_pinjam)->format('d M Y') }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-800 font-bold text-xs border-r border-gray-100">
+                                        {{ $detail->peminjaman->nama_peminjam }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-500 font-mono text-xs border-r border-gray-100">
+                                        {{ $detail->peminjaman->nip }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600 text-xs border-r border-gray-100">
+                                        {{ $detail->peminjaman->jabatan_peminjam }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600 text-xs border-r border-gray-100">
+                                        {{ $detail->peminjaman->unit_peminjam }}
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-500 text-xs italic border-r border-gray-100 truncate max-w-xs"
+                                        title="{{ $detail->peminjaman->keperluan }}">
+                                        {{ $detail->peminjaman->keperluan ?? '-' }}
+                                    </td>
 
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden w-full">
-            <div class="overflow-x-auto">
-                <table class="min-w-[1800px] w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-16 sticky left-0 bg-gray-50 z-10 border-r border-gray-200">No</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-32 border-r border-gray-100">Tanggal</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-56 border-r border-gray-100">Peminjam</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40 border-r border-gray-100">NIP</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-48 border-r border-gray-100">Jabatan</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-48 border-r border-gray-100">Unit</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider min-w-[400px] border-r border-gray-100">Nama Arsip</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32 border-r border-gray-100">Keamanan</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32 border-r border-gray-100">Media</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32 border-r border-gray-100">Ket. Fisik</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-24 border-r border-gray-100">Bukti</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-32 border-r border-gray-100">Status</th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-44 sticky right-0 bg-gray-50 z-10 shadow-sm">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100 text-sm">
-                        @forelse($peminjaman as $item)
-                        <tr class="hover:bg-red-50/20 transition duration-150 group">
-                            
-                            <td class="px-6 py-4 text-gray-500 text-center sticky left-0 bg-white group-hover:bg-red-50/20 border-r border-gray-200">{{ $loop->iteration }}</td>
-                            <td class="px-6 py-4 text-gray-600 whitespace-nowrap border-r border-gray-100">{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</td>
-                            <td class="px-6 py-4 border-r border-gray-100"><span class="font-bold text-gray-700 block">{{ $item->nama_peminjam }}</span></td>
-                            <td class="px-6 py-4 text-gray-500 font-mono border-r border-gray-100">{{ $item->nip }}</td>
-                            <td class="px-6 py-4 text-gray-600 border-r border-gray-100">{{ $item->jabatan_peminjam }}</td>
-                            <td class="px-6 py-4 text-gray-600 border-r border-gray-100">{{ $item->unit_peminjam }}</td>
-                            <td class="px-6 py-4 border-r border-gray-100"><span class="text-gray-700 font-medium leading-relaxed block">{{ $item->arsip->nama_berkas ?? 'Data Terhapus' }}</span></td>
-                            
-                            <td class="px-6 py-4 text-center border-r border-gray-100">
-                                @php
-                                    $klasifikasi = $item->arsip->klasifikasi_keamanan ?? 'Biasa';
-                                    $badgeClass = match($klasifikasi) {
-                                        'Rahasia' => 'bg-red-700 text-white border-red-700',
-                                        'Terbatas' => 'bg-red-50 text-red-700 border-red-200',
-                                        default => 'bg-gray-100 text-gray-600 border-gray-200'
-                                    };
-                                @endphp
-                                <span class="px-3 py-1 rounded-full text-xs font-bold border {{ $badgeClass }}">{{ $klasifikasi }}</span>
-                            </td>
+                                    {{-- ARSIP --}}
+                                    <td class="px-6 py-4 text-gray-800 font-bold text-xs border-r border-gray-100">
+                                        {{ $detail->arsip ? $detail->arsip->nama_berkas : $detail->nama_arsip }}
+                                    </td>
 
-                            @php
-                                $fullString = $item->jenis_dokumen;
-                                $media = Str::before($fullString, ' - ');
-                                $keterangan = Str::contains($fullString, ' - ') ? Str::after($fullString, ' - ') : '-';
-                            @endphp
-
-                            <td class="px-6 py-4 text-center border-r border-gray-100">
-                                @if(Str::contains($media, 'Hardfile'))
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-700 text-white border border-gray-700">Hardfile</span>
-                                @else
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-white text-gray-600 border border-gray-300">Softfile</span>
-                                @endif
-                            </td>
-
-                            <td class="px-6 py-4 text-center text-gray-500 border-r border-gray-100">{{ $keterangan }}</td>
-
-                            <td class="px-6 py-4 text-center border-r border-gray-100">
-                                @if($item->bukti_peminjaman)
-                                    <button @click="showImageModal = true; imageUrl = '{{ asset($item->bukti_peminjaman) }}'" class="text-gray-400 hover:text-red-700 transition">
-                                        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    </button>
-                                @else
-                                    <span class="text-gray-300 text-xs italic">N/A</span>
-                                @endif
-                            </td>
-
-                            <td class="px-6 py-4 text-center border-r border-gray-100">
-                                @if($item->status == 'Sedang Dipinjam')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold text-red-700 bg-red-50 border border-red-200">
-                                        <span class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></span> Dipinjam
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold text-gray-600 bg-gray-100 border border-gray-300">
-                                        Kembali
-                                    </span>
-                                @endif
-                            </td>
-
-                            <td class="px-6 py-4 text-center whitespace-nowrap sticky right-0 bg-white group-hover:bg-red-50/20 shadow-sm border-l border-gray-200">
-                                <div class="flex justify-center items-center gap-2">
-                                    
-                                    @if($item->status == 'Sedang Dipinjam')
-                                        <form action="/peminjaman/{{ $item->id }}/complete" method="POST">
-                                            @csrf @method('PATCH')
-                                            <button type="submit" class="p-2 bg-gray-700 text-white rounded hover:bg-gray-800 transition shadow-sm border border-gray-700" title="Tandai Selesai">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span class="p-2 bg-gray-100 text-gray-400 rounded border border-gray-200 cursor-default">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    {{-- AKSES (Thematic Colors) --}}
+                                    <td class="px-6 py-4 text-center border-r border-gray-100">
+                                        @php
+                                            $akses = $detail->arsip ? $detail->arsip->klasifikasi_keamanan : $detail->hak_akses;
+                                            $aksesClass = 'bg-orange-50 text-orange-700 border-orange-200'; // Default (Cream)
+                                            if ($akses === 'Rahasia')
+                                                $aksesClass = 'bg-red-50 text-red-700 border-red-200';
+                                            elseif ($akses === 'Sangat Rahasia')
+                                                $aksesClass = 'bg-[#9d1b1b] text-white border-[#9d1b1b]';
+                                        @endphp
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $aksesClass }}">
+                                            {{ $akses }}
                                         </span>
-                                    @endif
+                                    </td>
 
-                                    <a href="/peminjaman/{{ $item->id }}/edit" class="p-2 bg-white text-gray-700 rounded border border-gray-400 hover:border-gray-700 hover:text-gray-900 transition shadow-sm" title="Edit Data">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                    </a>
+                                    {{-- JENIS (Thematic Colors) --}}
+                                    <td class="px-6 py-4 text-center border-r border-gray-100">
+                                        @php
+                                            $jenis = $detail->jenis_arsip;
+                                            $jenisClass = 'bg-rose-50 text-rose-700 border-rose-200'; // Default (Pinkish)
+                                            if ($jenis === 'Asli')
+                                                $jenisClass = 'bg-red-50 text-red-700 border-red-200';
+                                            elseif ($jenis === 'Copy' || $jenis === 'Salinan')
+                                                $jenisClass = 'bg-orange-50 text-orange-700 border-orange-200';
+                                        @endphp
+                                        <span
+                                            class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border {{ $jenisClass }}">
+                                            {{ $jenis }}
+                                        </span>
+                                    </td>
 
-                                    <button @click="showDeleteModal = true; deleteUrl = '/peminjaman/{{ $item->id }}'" class="p-2 bg-red-700 text-white rounded hover:bg-red-800 transition shadow-sm border border-red-700" title="Hapus Data">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </div>
-                            </td>
+                                    <td class="px-6 py-4 text-center text-xs text-gray-500 border-r border-gray-100">
+                                        {{ $detail->detail_fisik ?? '-' }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 text-center text-xs font-mono font-bold text-gray-600 border-r border-gray-100">
+                                        {{ ($detail->arsip && $detail->arsip->no_box) ? $detail->arsip->no_box : ($detail->no_box ?? '-') }}
+                                    </td>
 
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="13" class="px-6 py-12 text-center text-gray-400 italic bg-gray-50 border border-dashed border-gray-200 m-4 rounded-lg">Tidak ada data peminjaman ditemukan.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <div class="mt-6 text-center text-xs text-gray-400 font-medium">&copy; 2026 PT Semen Padang. All rights reserved.</div>
+                                    {{-- BUKTI --}}
+                                    <td class="px-6 py-4 text-center border-r border-gray-100">
+                                        @if($detail->peminjaman->bukti_peminjaman)
+                                            @php $files = is_array(json_decode($detail->peminjaman->bukti_peminjaman)) ? json_decode($detail->peminjaman->bukti_peminjaman) : [$detail->peminjaman->bukti_peminjaman]; @endphp
+                                            <button @click="showFilesModal = true; selectedFiles = {{ json_encode($files) }}"
+                                                class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-[#9d1b1b] hover:text-white transition mx-auto border border-gray-200">
+                                                <i class="fas fa-paperclip text-[10px]"></i>
+                                            </button>
+                                        @else <span class="text-gray-300 text-[10px]">-</span> @endif
+                                    </td>
 
-        <div x-show="showSortModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div @click.away="showSortModal = false" class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
-                <div class="flex justify-between items-center mb-5">
-                    <h3 class="text-lg font-bold text-gray-800">Filter Data</h3>
-                    <a href="/peminjaman" class="text-xs font-bold text-red-700 hover:underline">Reset Filter</a>
+                                    {{-- STATUS --}}
+                                    <td class="px-6 py-4 text-center border-r border-gray-100">
+                                        @if($detail->peminjaman->status == 'Sedang Dipinjam')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-red-700 bg-red-50 border border-red-200">Dipinjam</span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-orange-700 bg-orange-50 border border-orange-200">Kembali</span>
+                                        @endif
+                                        {{-- CHECKBOX --}}
+                                    <td
+                                        class="px-3 py-4 text-center border-gray-100 bg-white group-hover:bg-red-50 sticky right-[159px] shadow-[-4px_0_10px_rgb(0,0,0,0.02)]">
+                                        <input type="checkbox" :value="{{ $detail->id }}" x-model="selectedItems"
+                                            class="rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer">
+                                    </td>
+                                    </td>
+
+                                    {{-- AKSI --}}
+                                    <td
+                                        class="px-6 py-4 text-center whitespace-nowrap sticky right-0 bg-white group-hover:bg-red-50 border-gray-100 w-40 min-w-[160px]">
+                                        <div class="flex justify-center items-center gap-1.5">
+                                            @if($detail->peminjaman->status == 'Sedang Dipinjam')
+                                                <form action="/peminjaman/{{ $detail->peminjaman->id }}/complete" method="POST">
+                                                    @csrf @method('PATCH')
+                                                    <button type="submit"
+                                                        class="w-7 h-7 flex items-center justify-center bg-white text-green-600 rounded-lg hover:bg-green-50 transition shadow-sm border border-gray-200 hover:border-green-200"
+                                                        title="Selesai">
+                                                        <i class="fas fa-check text-[10px]"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <button disabled
+                                                    class="w-7 h-7 flex items-center justify-center bg-rose-50 text-rose-300 rounded-lg border border-rose-100 cursor-not-allowed"
+                                                    title="Sudah Selesai">
+                                                    <i class="fas fa-check text-[10px]"></i>
+                                                </button>
+                                            @endif
+                                            <a href="/peminjaman/{{ $detail->peminjaman->id }}/edit"
+                                                class="w-7 h-7 flex items-center justify-center bg-white text-amber-500 rounded-lg hover:bg-amber-50 transition shadow-sm border border-gray-200 hover:border-amber-200"
+                                                title="Edit">
+                                                <i class="fas fa-pen text-[10px]"></i>
+                                            </a>
+                                            <button
+                                                @click="showDeleteModal = true; deleteUrl = '/peminjaman/{{ $detail->peminjaman->id }}'"
+                                                class="w-7 h-7 flex items-center justify-center bg-white text-red-500 rounded-lg hover:bg-red-50 transition shadow-sm border border-gray-200 hover:border-red-200"
+                                                title="Hapus">
+                                                <i class="fas fa-trash-alt text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15"
+                                        class="px-6 py-12 text-center text-gray-400 italic bg-gray-50/50 text-xs">Tidak ada
+                                        data arsip peminjaman ditemukan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-                <form action="/peminjaman" method="GET">
+            </div>
+
+            {{-- PAGINATION --}}
+            <div class="mt-6 mb-10">
+                {{ $peminjaman->links() }}
+            </div>
+
+        </div>
+
+        {{-- MODALS (UNCHANGED LOGIC, JUST STYLING) --}}
+        {{-- Filter Modal --}}
+        <div x-show="showSortModal" style="display: none;"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div @click.away="showSortModal = false"
+                class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-[#9d1b1b]"></div>
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Filter Data</h3>
+                    <button @click="showSortModal = false" class="text-gray-400 hover:text-gray-600"><i
+                            class="fas fa-times text-lg"></i></button>
+                </div>
+                <form action="/peminjaman" method="GET" class="space-y-6">
                     @if(request('search')) <input type="hidden" name="search" value="{{ request('search') }}"> @endif
-                    
-                    <div class="space-y-6">
-                        
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Status</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="status" value="All" {{ request('status') == 'All' || !request('status') ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Semua</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="status" value="Sedang Dipinjam" {{ request('status') == 'Sedang Dipinjam' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-red-700 peer-checked:font-bold">Dipinjam</span>
-                                    <div class="absolute inset-0 border-2 border-red-700 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="status" value="Sudah Dikembalikan" {{ request('status') == 'Sudah Dikembalikan' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Kembali</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                            </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Keamanan</label>
-                            <div class="grid grid-cols-4 gap-2">
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="keamanan" value="All" {{ request('keamanan') == 'All' || !request('keamanan') ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Semua</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
+                    {{-- Status --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Status
+                            Peminjaman</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            @foreach(['All' => 'Semua', 'Sedang Dipinjam' => 'Dipinjam', 'Sudah Dikembalikan' => 'Kembali'] as $val => $lbl)
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="status" value="{{ $val }}" class="hidden"
+                                        x-model="filterStatus">
+                                    <div class="text-center py-3 px-2 rounded-xl border text-xs font-bold transition duration-200"
+                                        :class="filterStatus == '{{ $val }}' ? 'bg-[#9d1b1b] text-white border-[#9d1b1b] shadow-md' : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-red-50 hover:border-red-200'">
+                                        {{ $lbl }}
+                                    </div>
                                 </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="keamanan" value="Rahasia" {{ request('keamanan') == 'Rahasia' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-red-700 peer-checked:font-bold">Rahasia</span>
-                                    <div class="absolute inset-0 border-2 border-red-700 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="keamanan" value="Terbatas" {{ request('keamanan') == 'Terbatas' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-red-700 peer-checked:font-bold">Terbatas</span>
-                                    <div class="absolute inset-0 border-2 border-red-700 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="keamanan" value="Biasa/Terbuka" {{ request('keamanan') == 'Biasa/Terbuka' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Biasa</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Media</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="media" value="All" {{ request('media') == 'All' || !request('media') ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Semua</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="media" value="Softfile" {{ request('media') == 'Softfile' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Softfile</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                                <label class="cursor-pointer border border-gray-200 rounded-lg p-2 text-center hover:bg-gray-50 transition relative">
-                                    <input type="radio" name="media" value="Hardfile" {{ request('media') == 'Hardfile' ? 'checked' : '' }} class="hidden peer">
-                                    <span class="text-xs text-gray-600 peer-checked:text-gray-800 peer-checked:font-bold">Hardfile</span>
-                                    <div class="absolute inset-0 border-2 border-gray-600 rounded-lg opacity-0 peer-checked:opacity-100 transition"></div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Rentang Tanggal</label>
-                            <div class="flex items-center gap-2">
-                                <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 focus:ring-2 focus:ring-red-700 outline-none">
-                                <span class="text-gray-400 font-bold">-</span>
-                                <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full border border-gray-300 rounded-lg p-2 text-sm text-gray-600 focus:ring-2 focus:ring-red-700 outline-none">
-                            </div>
+                            @endforeach
                         </div>
                     </div>
 
-                    <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
-                        <button type="button" @click="showSortModal = false" class="px-5 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-bold transition">Batal</button>
-                        <button type="submit" class="px-6 py-2 bg-red-800 text-white rounded-lg text-sm font-bold hover:bg-red-900 shadow-md transition">Terapkan Filter</button>
+                    {{-- Hak Akses --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Hak
+                            Akses</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            @foreach(['All' => 'Semua', 'Biasa' => 'Biasa', 'Terbatas' => 'Terbatas', 'Rahasia' => 'Rahasia'] as $val => $lbl)
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="keamanan" value="{{ $val }}" class="hidden"
+                                        x-model="filterKeamanan">
+                                    <div class="text-center py-2 px-1 rounded-xl border text-[10px] font-bold transition duration-200"
+                                        :class="filterKeamanan == '{{ $val }}' ? 'bg-[#9d1b1b] text-white border-[#9d1b1b] shadow-md' : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-red-50 hover:border-red-200'">
+                                        {{ $lbl }}
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Media --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Jenis
+                            Arsip</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            @foreach(['All' => 'Semua', 'Hardfile' => 'Hardfile', 'Softfile' => 'Softfile'] as $val => $lbl)
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="media" value="{{ $val }}" class="hidden"
+                                        x-model="filterMedia">
+                                    <div class="text-center py-3 px-2 rounded-xl border text-xs font-bold transition duration-200"
+                                        :class="filterMedia == '{{ $val }}' ? 'bg-[#9d1b1b] text-white border-[#9d1b1b] shadow-md' : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-red-50 hover:border-red-200'">
+                                        {{ $lbl }}
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Tanggal --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Rentang
+                            Tanggal</label>
+                        <div class="flex items-center gap-3">
+                            <input type="date" name="start_date" value="{{ request('start_date') }}"
+                                class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 text-xs text-gray-700 focus:border-[#9d1b1b] focus:ring-1 focus:ring-[#9d1b1b] outline-none transition">
+                            <span class="text-gray-300 font-bold">-</span>
+                            <input type="date" name="end_date" value="{{ request('end_date') }}"
+                                class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 text-xs text-gray-700 focus:border-[#9d1b1b] focus:ring-1 focus:ring-[#9d1b1b] outline-none transition">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-2">
+                        <a href="/peminjaman"
+                            class="px-6 py-3 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100 transition">Reset</a>
+                        <button type="submit"
+                            class="px-8 py-3 bg-[#9d1b1b] text-white rounded-xl text-xs font-bold hover:bg-red-800 shadow-lg transform hover:scale-105 transition">Terapkan
+                            Filter</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div x-show="showDeleteModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div @click.away="showDeleteModal = false" class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 text-center">
-                <h3 class="text-lg font-bold text-gray-800 mb-2">Hapus Data?</h3>
-                <div class="flex justify-center gap-3 mt-4">
-                    <button @click="showDeleteModal = false" class="px-5 py-2 bg-white border border-gray-300 text-gray-600 rounded-lg">Batal</button>
-                    <form :action="deleteUrl" method="POST">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="px-5 py-2 bg-red-700 text-white rounded-lg font-bold shadow-md hover:bg-red-800">Ya, Hapus</button>
-                    </form>
+        {{-- Files Modal --}}
+        <div x-show="showFilesModal" style="display: none;"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div @click.away="showFilesModal = false"
+                class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-2xl w-full max-h-[80vh] flex flex-col relative">
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-100">
+                    <h3 class="font-bold text-gray-800">Bukti Peminjaman</h3>
+                    <button @click="showFilesModal = false"
+                        class="w-8 h-8 rounded-full bg-white text-gray-400 hover:text-red-600 flex items-center justify-center shadow-sm"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="p-6 overflow-y-auto flex-1 bg-white grid gap-4">
+                    <template x-for="(file, index) in selectedFiles" :key="index">
+                        <div
+                            class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl hover:border-red-100 transition">
+                            <div class="flex items-center gap-4 overflow-hidden">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600">
+                                    <i class="fas fa-file-alt text-lg"></i>
+                                </div>
+                                <span x-text="file.split('/').pop()"
+                                    class="text-sm truncate font-medium text-gray-700"></span>
+                            </div>
+                            <a :href="`{{ asset('') }}${file}`" target="_blank"
+                                class="px-4 py-2 text-xs font-bold text-red-700 bg-red-50 rounded-xl hover:bg-red-600 hover:text-white transition">Download</a>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
 
-        <div x-show="showImageModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-            <div @click.away="showImageModal = false" class="bg-white rounded-xl shadow-2xl overflow-hidden max-w-3xl w-full relative flex flex-col max-h-[90vh]">
-                <div class="p-1 flex-1 flex justify-center items-center bg-gray-100 overflow-auto">
-                    <img :src="imageUrl" class="max-w-full max-h-[80vh] object-contain shadow-lg rounded">
+        {{-- Delete Modal --}}
+        <div x-show="showDeleteModal" style="display: none;"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div @click.away="showDeleteModal = false"
+                class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl">
+                <div class="absolute top-0 left-0 w-full h-2 bg-red-500"></div>
+                <div
+                    class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500 shadow-sm animate-bounce">
+                    <i class="fas fa-trash-alt text-3xl"></i>
                 </div>
-                <div class="px-4 py-3 bg-white border-t border-gray-200 flex justify-end">
-                    <button @click="showImageModal = false" class="px-4 py-2 bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-700 rounded-lg text-sm font-bold">Tutup</button>
+                <h3 class="text-xl font-extrabold text-gray-800 mb-2">Hapus Transaksi?</h3>
+                <p class="text-gray-500 mb-8 leading-relaxed">Data peminjaman beserta detail arsipnya akan dihapus
+                    permanen.</p>
+                <div class="flex flex-col gap-3">
+                    <form :action="deleteUrl" method="POST" class="w-full">
+                        @csrf @method('DELETE')
+                        <button
+                            class="w-full py-3.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 shadow-lg transform hover:scale-[1.02] transition">Ya,
+                            Hapus Sekarang</button>
+                    </form>
+                    <button @click="showDeleteModal = false"
+                        class="w-full py-3.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-50 transition">Batalkan</button>
                 </div>
             </div>
         </div>
