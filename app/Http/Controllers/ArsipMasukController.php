@@ -11,7 +11,7 @@ class ArsipMasukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ArsipMasuk::orderBy('id', 'asc');
+        $query = ArsipMasuk::orderBy('id', 'desc');
 
         // Filter by Search (General)
         if ($request->has('search') && $request->search != '') {
@@ -76,6 +76,42 @@ class ArsipMasukController extends Controller
 
         return redirect()->route('arsip-masuk.index')
             ->with('success', 'Data Arsip Masuk berhasil disimpan.');
+    }
+
+    public function edit($id)
+    {
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        $users = User::all();
+        return view('arsip-masuk.edit', compact('arsipMasuk', 'users'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'unit_asal' => 'required|string|max:255',
+            'nomor_berita_acara' => 'required|string|max:100',
+            'tanggal_terima' => 'required|date',
+            'jumlah_box_masuk' => 'required|integer',
+            'user_penerima' => 'required|exists:users,id',
+        ]);
+
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        $arsipMasuk->update($request->all());
+
+        return redirect()->route('arsip-masuk.index')
+            ->with('success', 'Data Arsip Masuk berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        
+        // Optional: Check dependencies (e.g. berkas logs) before deleting?
+        // Standard delete for now.
+        $arsipMasuk->delete();
+
+        return redirect()->route('arsip-masuk.index')
+            ->with('success', 'Data Arsip Masuk berhasil dihapus.');
     }
 
     public function createBerkas($id)

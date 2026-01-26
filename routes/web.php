@@ -13,7 +13,7 @@ use App\Http\Controllers\ArsipController;
 // ==========================================
 
 // Halaman utama langsung buka daftar peminjaman
-Route::get('/', [DashboardController::class, 'index']);
+Route::get('/', [\App\Http\Controllers\LandingController::class, 'index']);
 
 // Halaman Login (Cadangan)
 Route::get('/login', function () {
@@ -72,6 +72,9 @@ Route::patch('/monitoring/{id}/advance-stage', [MonitoringKaryawanController::cl
 // ==========================================
 Route::get('/arsip-masuk', [ArsipMasukController::class, 'index'])->name('arsip-masuk.index');
 Route::get('/arsip-masuk/create', [ArsipMasukController::class, 'create'])->name('arsip-masuk.create');
+Route::get('/arsip-masuk/{id}/edit', [ArsipMasukController::class, 'edit'])->name('arsip-masuk.edit');
+Route::put('/arsip-masuk/{id}', [ArsipMasukController::class, 'update'])->name('arsip-masuk.update');
+Route::delete('/arsip-masuk/{id}', [ArsipMasukController::class, 'destroy'])->name('arsip-masuk.destroy');
 Route::get('/arsip-masuk/{id}', [ArsipMasukController::class, 'show'])->name('arsip-masuk.show');
 Route::post('/arsip-masuk', [ArsipMasukController::class, 'store'])->name('arsip-masuk.store');
 Route::get('/arsip-masuk/{id}/berkas', [ArsipMasukController::class, 'createBerkas'])->name('arsip-masuk.berkas.create');

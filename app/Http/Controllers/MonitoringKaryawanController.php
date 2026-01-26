@@ -15,7 +15,7 @@ class MonitoringKaryawanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = LogAktivitas::with('user')->orderBy('id', 'asc');
+        $query = LogAktivitas::with('user')->orderBy('id', 'desc');
 
         // Search Filter
         if ($request->has('search') && $request->search != '') {
