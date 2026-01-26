@@ -217,8 +217,21 @@
                         <div class="relative" x-data="{ openDropdown: false }">
                             <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Cari Arsip</label>
                             <div class="relative group"><span class="absolute inset-y-0 left-0 pl-3 flex items-center text-red-500 group-focus-within:text-red-700 transition"><i class="fas fa-search"></i></span><input type="text" x-model="searchQuery" @focus="openDropdown = true" @click="openDropdown = true" @click.away="openDropdown = false" placeholder="Klik untuk memilih atau ketik..." class="w-full border border-red-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:ring-2 focus:ring-red-100 focus:border-red-400 transition outline-none bg-white" autocomplete="off"></div>
-                            <div x-show="openDropdown" class="absolute z-20 w-full bg-white border border-red-200 mt-2 rounded-lg shadow-xl max-h-60 overflow-y-auto" style="display: none;"><ul x-show="filteredArsip.length > 0" class="divide-y divide-red-100"><template x-for="opt in filteredArsip" :key="opt.id"><li @click="selectArsip(opt); openDropdown = false" class="px-4 py-3 hover:bg-red-50 cursor-pointer transition group"><div class="flex justify-between items-start"><div><div class="font-bold text-sm text-gray-800 group-hover:text-red-900" x-text="opt.nama_berkas"></div><div class="text-[11px] text-gray-600 mt-1 flex gap-2">
-                                <span class="bg-red-50 px-1.5 py-0.5 rounded border border-red-100">Box: <span x-text="opt.no_box || '-'"></span></span></div></div><div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-red-800 border border-red-200 shadow-sm" x-text="opt.klasifikasi_keamanan"></div></div></li></template></ul></div>
+                            <div x-show="openDropdown" class="absolute z-20 w-full bg-white border border-red-200 mt-2 rounded-lg shadow-xl max-h-60 overflow-y-auto" style="display: none;">
+                                <ul x-show="filteredArsip.length > 0" class="divide-y divide-red-100">
+                                    <template x-for="opt in filteredArsip" :key="opt.id">
+                                        <li @click="selectArsip(opt); openDropdown = false" class="px-4 py-3 hover:bg-red-50 cursor-pointer flex justify-between items-center group transition">
+                                            <div>
+                                                <div class="font-bold text-sm text-gray-800 group-hover:text-red-900" x-text="opt.nama_berkas"></div>
+                                                <div class="text-[11px] text-gray-600 mt-1 flex gap-2">
+                                                    <span class="bg-red-50 px-1.5 py-0.5 rounded border border-red-100">Box: <span x-text="opt.no_box || '-'"></span></span>
+                                                </div>
+                                            </div>
+                                            <div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-red-800 border border-red-200 shadow-sm whitespace-nowrap" x-text="opt.klasifikasi_keamanan"></div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                     <div x-show="tempItem.source === 'manual'" class="space-y-4">

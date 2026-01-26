@@ -239,11 +239,17 @@
                                 <ul x-show="filteredArsip.length > 0" class="divide-y divide-red-100">
                                     <template x-for="opt in filteredArsip" :key="opt.id">
                                         <li @click="selectArsip(opt); openDropdown = false"
-                                            class="px-4 py-3 hover:bg-red-50 cursor-pointer">
-                                            <div class="font-bold text-sm text-gray-800" x-text="opt.nama_berkas"></div>
-                                            <div class="text-[11px] text-gray-600 mt-1 flex gap-2"><span
-                                                    class="bg-red-50 px-1.5 rounded border border-red-100">Box: <span
-                                                        x-text="opt.no_box || '-'"></span></span></div>
+                                            class="px-4 py-3 hover:bg-red-50 cursor-pointer flex justify-between items-center group transition">
+                                            <div>
+                                                <div class="font-bold text-sm text-gray-800" x-text="opt.nama_berkas">
+                                                </div>
+                                                <div class="text-[11px] text-gray-600 mt-1 flex gap-2">
+                                                    <span class="bg-red-50 px-1.5 rounded border border-red-100">Box:
+                                                        <span x-text="opt.no_box || '-'"></span></span>
+                                                </div>
+                                            </div>
+                                            <div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-red-800 border border-red-200 shadow-sm whitespace-nowrap"
+                                                x-text="opt.klasifikasi_keamanan"></div>
                                         </li>
                                     </template>
                                 </ul>
