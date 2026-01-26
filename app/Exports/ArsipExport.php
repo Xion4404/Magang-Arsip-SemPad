@@ -20,12 +20,16 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
     protected $ids;
     protected $search;
     protected $sort;
+    protected $filter_tindakan;
+    protected $filter_tahun;
 
-    public function __construct($ids = null, $search = null, $sort = null)
+    public function __construct($ids = null, $search = null, $sort = null, $filter_tindakan = null, $filter_tahun = null)
     {
         $this->ids = $ids;
         $this->search = $search;
         $this->sort = $sort;
+        $this->filter_tindakan = $filter_tindakan;
+        $this->filter_tahun = $filter_tahun;
     }
 
     public function query()
@@ -34,16 +38,27 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
 
         if (!empty($this->ids)) {
             $query->whereIn('id', $this->ids);
-        } elseif ($this->search) {
-            $search = $this->search;
-            $query->where(function($q) use ($search) {
-                $q->where('nama_berkas', 'like', "%{$search}%")
-                  ->orWhere('no_berkas', 'like', "%{$search}%")
-                  ->orWhere('isi_berkas', 'like', "%{$search}%")
-                  ->orWhereHas('klasifikasi', function($q2) use ($search) {
-                      $q2->where('kode_klasifikasi', 'like', "%{$search}%");
-                  });
-            });
+        } else {
+            // Apply Filters (Search & Tindakan)
+            if ($this->search) {
+                $search = $this->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nama_berkas', 'like', "%{$search}%")
+                      ->orWhere('no_berkas', 'like', "%{$search}%")
+                      ->orWhere('isi_berkas', 'like', "%{$search}%") // Note: This column might be removed/empty if using relation, but keeping for legacy compatibility
+                      ->orWhereHas('klasifikasi', function($q2) use ($search) {
+                          $q2->where('kode_klasifikasi', 'like', "%{$search}%");
+                      });
+                });
+            }
+
+            if ($this->filter_tindakan) {
+                $query->where('tindakan_akhir', $this->filter_tindakan);
+            }
+
+            if ($this->filter_tahun) {
+                $query->where('tahun', $this->filter_tahun);
+            }
         }
 
         // Apply same sorting as index
@@ -89,12 +104,12 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
             $arsip->no_berkas,
             $arsip->klasifikasi->kode_klasifikasi ?? '-',
             $arsip->nama_berkas,
-            $arsip->isi_berkas,
+            $arsip->isi,
             $arsip->tahun,
             $arsip->tanggal_masuk,
             $arsip->jumlah,
-            $arsip->klasifikasi->masa_simpan ?? '-',
-            $arsip->klasifikasi->tindakan_akhir ?? '-',
+            $arsip->masa_simpan,
+            $arsip->tindakan_akhir,
             $arsip->no_box,
             $arsip->jenis_media,
         ];

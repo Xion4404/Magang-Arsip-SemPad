@@ -89,5 +89,5 @@ Route::put('/arsip-masuk/{id}/berkas/{berkasId}', [ArsipMasukController::class, 
 Route::get('/arsip', [ArsipController::class, 'index']);
 Route::post('/arsip/export', [ArsipController::class, 'export']); // Handle Export
 Route::get('/input-arsip', [ArsipController::class, 'create']);
-Route::post('/input-arsip', [ArsipController::class, 'store']);
+Route::post('/input-arsip', [ArsipController::class, 'store'])->name('arsip.store');
 Route::get('/api/klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);

@@ -1,16 +1,19 @@
 <x-layout>
     <div x-data="{
         formStep: 1,
-        isiBerkas: [],
+        isiBerkas: {{ json_encode(old('isi_berkas', [])) }},
         newIsi: '',
         newTahun: '',
         newTanggal: '',
         newJumlah: 1,
         newNoBox: '',
         newHakAkses: '', 
-        newMedia: 'Kertas',
+        newMedia: '',
         newMasaSimpan: '',
         newTindakan: 'Musnah',
+        namaBerkas: '',
+        unitPengolah: '',
+        kodeKlasifikasi: '',
         addIsi() {
             if (this.newIsi.trim() !== '') {
                 this.isiBerkas.push({
@@ -20,31 +23,50 @@
                     jumlah: this.newJumlah,
                     no_box: this.newNoBox,
                     hak_akses: this.newHakAkses,
-                    jenis_media: this.newMedia,
+                    jenis_media: this.newMedia || 'Kertas', 
                     masa_simpan: this.newMasaSimpan,
-                    tindakan_akhir: this.newTindakan
+                    tindakan_akhir: this.newTindakan,
+                    unit_pengolah: this.unitPengolah,
+                    kode_klasifikasi: this.kodeKlasifikasi,
+                    klasifikasi_id: this.klasifikasiId
                 });
+                
+                /* Reset Item Fields */
                 this.newIsi = '';
-                // Optional resets
-                // this.newTahun = ''; 
-                // this.newTanggal = '';
+                this.newTahun = ''; 
+                this.newTanggal = '';
                 this.newJumlah = 1;
-                // this.newNoBox = '';
-                // this.newHakAkses = '';
-                // this.newMasaSimpan = '';
+                this.newNoBox = '';
+                this.newMedia = '';
+                this.unitPengolah = '';
+                this.kodeKlasifikasi = '';
+                this.klasifikasiId = '';
+
+                /* Reset Unit & Metadata Fields */
+                /* Reset Unit & Metadata Fields */
+                // Valid reset via x-model
+                
+                this.newHakAkses = '';
+                this.newMasaSimpan = '';
+                this.newTindakan = '';
+
+                /* Reset Classification Dropdown */
+                this.$dispatch('reset-selection');
+                
+                /* Focus back to Unit Pengolah to start over */
+                this.$nextTick(() => {
+                    const unitInput = document.querySelector('[name=unit_pengolah]');
+                    if(unitInput) unitInput.focus();
+                });
             }
         },
         removeIsi(index) {
             this.isiBerkas.splice(index, 1);
         },
         validateStep1() {
-            // Simple validation check before next
-            const unit = document.querySelector('[name=unit_pengolah]').value;
-            const klasifikasi = document.querySelector('[name=klasifikasi_id]').value;
             const nama = document.querySelector('[name=nama_berkas]').value;
-            
-            if (!unit || !klasifikasi || !nama) {
-                alert('Mohon lengkapi Unit, Klasifikasi, dan Nama Berkas terlebih dahulu.');
+            if (!nama) {
+                alert('Mohon lengkapi Nama Berkas terlebih dahulu.');
                 return;
             }
             this.formStep = 2;
@@ -52,367 +74,484 @@
         updateDefaults(data) {
             this.newHakAkses = data.hak_akses || '';
             this.newMasaSimpan = data.masa_simpan || '';
-            this.newTindakan = data.tindakan || 'Musnah';
+            this.newTindakan = data.tindakan || '';
+            this.kodeKlasifikasi = data.code || '';
+            this.klasifikasiId = data.id || '';
         }
     }" @classification-selected="updateDefaults($event.detail)">
-        <div class="bg-red-800 text-white p-6 rounded-t-2xl shadow-lg border-b-2 border-red-900 flex justify-between items-center">
-            <h2 class="text-2xl font-bold italic tracking-wide">Input Daftar Arsip</h2>
-            <div class="text-sm font-medium bg-red-900/50 px-4 py-2 rounded-lg">
-                Langkah <span x-text="formStep"></span> dari 2
-            </div>
-        </div>
 
-        <div class="bg-red-50 p-6 md:p-10 rounded-b-2xl shadow-inner border border-gray-100">
-            <div class="bg-white p-6 md:p-12 rounded-[3.5rem] shadow-xl max-w-6xl mx-auto min-h-[500px]">
-                <form action="/input-arsip" method="POST" class="space-y-8">
+        {{-- Error Alert --}}
+        @if ($errors->any())
+        <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 animate-bounce">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+                <strong class="font-bold">Terjadi Kesalahan!</strong>
+                <ul class="list-disc ml-5 text-sm mt-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        @endif
+
+        
+        {{-- Main Card Container --}}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col min-h-[600px]">
+                
+                <form action="{{ route('arsip.store') }}" method="POST" class="flex flex-col flex-1 h-full">
                     @csrf
                     
-                    {{-- STEP 1 --}}
-                    <div x-show="formStep === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-[-20px]" x-transition:enter-end="opacity-100 translate-x-0">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
-                            
-                            {{-- Unit Pengolah --}}
-                            <div class="group">
-                                <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-red-700">Unit Pengolah</label>
-                                <select name="unit_pengolah" class="w-full p-4 border border-red-100 rounded-2xl bg-red-50/10 focus:ring-1 focus:ring-red-500 outline-none transition shadow-sm appearance-none cursor-pointer">
-                                    <option value="" disabled selected>Pilih Unit Asal</option>
-                                    <option value="Sistem Manajemen">Sistem Manajemen</option>
-                                    <option value="Internal Audit">Internal Audit</option>
-                                    <option value="Komunikasi & Kesekretariatan">Komunikasi & Kesekretariatan</option>
-                                    <option value="CSR">CSR</option>
-                                    <option value="Hukum">Hukum</option>
-                                    <option value="Keamanan">Keamanan</option>
-                                    <option value="Staf Dept. Komunikasi & Hukum Perusahaan">Staf Dept. Komunikasi & Hukum Perusahaan</option>
-                                    <option value="Bisnis Inkubasi Non Semen">Bisnis Inkubasi Non Semen</option>
-                                    <option value="Quality Assurance">Quality Assurance</option>
-                                    <option value="SHE">SHE</option>
-                                    <option value="Perencanaan & Evaluasi Produksi">Perencanaan & Evaluasi Produksi</option>
-                                    <option value="Penunjang Produksi">Penunjang Produksi</option>
-                                    <option value="Quality Control">Quality Control</option>
-                                    <option value="Staf AFR">Staf AFR</option>
-                                    <option value="Operasi Tambang">Operasi Tambang</option>
-                                    <option value="Produksi Bahan Baku">Produksi Bahan Baku</option>
-                                    <option value="Perencanaan & Pengawasan Tambang">Perencanaan & Pengawasan Tambang</option>
-                                    <option value="WHRPG & Utilitas">WHRPG & Utilitas</option>
-                                    <option value="Produksi Terak">Produksi Terak</option>
-                                    <option value="Produksi Semen">Produksi Semen</option>
-                                    <option value="Pabrik Kantong">Pabrik Kantong</option>
-                                    <option value="Pabrik Dumai">Pabrik Dumai</option>
-                                    <option value="Pemeliharaan Mesin">Pemeliharaan Mesin</option>
-                                    <option value="Pemeliharaan Listrik & Instrumen">Pemeliharaan Listrik & Instrumen</option>
-                                    <option value="Maintenance Reliability">Maintenance Reliability</option>
-                                    <option value="Capex">Capex</option>
-                                    <option value="Site Engineering">Site Engineering</option>
-                                    <option value="Project Management">Project Management</option>
-                                    <option value="Perencanaan Suku Cadang">Perencanaan Suku Cadang</option>
-                                    <option value="TPM Officer">TPM Officer</option>
-                                    <option value="Produksi Mesin & Teknikal Support">Produksi Mesin & Teknikal Support</option>
-                                    <option value="Produksi BIP & Aplikasi">Produksi BIP & Aplikasi</option>
-                                    <option value="Operasional SDM">Operasional SDM</option>
-                                    <option value="Sarana Umum">Sarana Umum</option>
-                                    <option value="GRC & Internal Control">GRC & Internal Control</option>
-                                    <option value="Kinerja & Anggaran">Kinerja & Anggaran</option>
-                                    <option value="Keuangan">Keuangan</option>
-                                    <option value="Akuntansi">Akuntansi</option>
-                                    <option value="Lainnya">Lainnya</option>
-                                </select>
+                    {{-- Header --}}
+                    <div class="px-8 py-6 border-b border-gray-50 bg-gradient-to-r from-red-600 to-red-800 flex justify-between items-center shrink-0">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm text-white shadow-inner">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
-
-                            {{-- Kode Klasifikasi --}}
-                             <div x-data="{
-                                open: false,
-                                step: 1, // Start directly at step 1 since types are merged
-                                breadcrumbs: [],
-                                options: [],
-                                loading: false,
-                                selectedItem: null,
-                                displayText: 'Pilih Kode Klasifikasi',
-                                selectedJraType: null,
-
-                                init() {
-                                    this.fetchOptions(1);
-                                },
-                                
-                                toggle() {
-                                    this.open = !this.open;
-                                    if(this.open && this.options.length === 0) {
-                                        this.fetchOptions(1);
-                                    }
-                                },
-
-                                fetchOptions(level, parent = null) {
-                                    this.loading = true;
-                                    let url = `/api/klasifikasi-options?level=${level}&parent=${parent}`;
-                                    
-                                    fetch(url)
-                                        .then(res => res.json())
-                                        .then(data => {
-                                            this.options = data;
-                                            this.loading = false;
-                                        });
-                                },
-
-                                selectOption(opt) {
-                                    if (this.step === 1) {
-                                        // Selected Pokok Masalah
-                                        this.breadcrumbs.push({ level: 1, label: opt.label, value: opt.code });
-                                        this.step = 2;
-                                        this.fetchOptions(2, opt.code);
-                                    } else if (this.step === 2) {
-                                        // Selected Sub Masalah
-                                        this.breadcrumbs.push({ level: 2, label: opt.label, value: opt.code });
-                                        this.step = 3;
-                                        this.fetchOptions(3, opt.code);
-                                    } else if (this.step === 3) {
-                                        // Selected Final Item
-                                        this.selectedItem = opt;
-                                        this.displayText = opt.label;
-                                        
-                                        // Fill hidden inputs
-                                        document.querySelector('[name=klasifikasi_id]').value = opt.id;
-                                        
-                                        // Update Step 2 Autos (Display)
-                                        document.querySelector('#display_masa_simpan').innerText = opt.masa_simpan;
-                                        document.querySelector('#display_tindakan').innerText = opt.tindakan_akhir;
-                                        document.querySelector('#display_hak_akses').innerText = opt.hak_akses || '-';
-                                        
-                                        // Set hidden value for Hak Akses to be submitted
-                                        document.querySelector('[name=hak_akses]').value = opt.hak_akses || '-';
-
-                                        // Dispatch event to update parent state
-                                        this.$dispatch('classification-selected', { 
-                                            hak_akses: opt.hak_akses, 
-                                            masa_simpan: opt.masa_simpan, 
-                                            tindakan: opt.tindakan_akhir 
-                                        });
-
-                                        this.open = false;
-                                    }
-                                },
-
-                                reset() {
-                                    this.step = 1;
-                                    this.breadcrumbs = [];
-                                    this.selectedItem = null;
-                                    this.displayText = 'Pilih Kode Klasifikasi';
-                                    document.querySelector('[name=klasifikasi_id]').value = '';
-                                    document.querySelector('[name=hak_akses]').value = '';
-                                    this.fetchOptions(1);
-                                    this.open = false; 
-                                },
-                                
-                                goBack() {
-                                    if (this.step > 1) {
-                                        this.step--;
-                                        this.breadcrumbs.pop();
-                                        const parent = this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1].value : null;
-                                        this.fetchOptions(this.step, parent);
-                                    }
-                                }
-                            }" class="relative group">
-                                <label class="block font-bold text-gray-700 mb-2">Kode Klasifikasi</label>
-                                <input type="hidden" name="klasifikasi_id" required>
-                                
-                                {{-- Trigger --}}
-                                <div @click="toggle()" class="w-full p-4 border border-red-100 rounded-2xl bg-red-50/10 focus:ring-1 focus:ring-red-500 cursor-pointer flex justify-between items-center shadow-sm">
-                                    <span x-text="displayText" :class="{'text-gray-500': !selectedItem, 'text-gray-900 font-medium': selectedItem}"></span>
-                                    <svg class="w-5 h-5 text-red-300 transition" :class="{'rotate-180': open, 'text-red-500': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </div>
-
-                                {{-- Dropdown --}}
-                                <div x-show="open" @click.away="open = false" 
-                                     class="absolute z-50 w-full mt-2 bg-white border border-red-100 rounded-2xl shadow-xl max-h-80 overflow-y-auto"
-                                     style="display: none;">
-                                    
-                                    {{-- Header --}}
-                                    <div class="px-5 py-3 bg-red-50/50 border-b border-red-100 flex items-center gap-3 sticky top-0 backdrop-blur-sm">
-                                        <template x-if="step > 1">
-                                            <button type="button" @click.stop="goBack()" class="p-1 hover:bg-red-100 rounded-full text-red-600">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                                            </button>
-                                        </template>
-                                        <span class="text-xs font-bold text-red-800 tracking-wider uppercase" 
-                                              x-text="step === 1 ? 'Pilih Pokok Masalah' : (step === 2 ? 'Pilih Sub Masalah' : 'Pilih Jenis Arsip')">
-                                        </span>
-                                    </div>
-
-                                    <ul x-show="!loading" class="py-2">
-                                        <template x-for="opt in options" :key="step === 3 ? opt.id : opt.code">
-                                            <li @click="selectOption(opt)" 
-                                                class="px-5 py-3 hover:bg-red-50 cursor-pointer text-sm text-gray-700 flex justify-between items-center group">
-                                                <span x-text="opt.label"></span>
-                                                <svg class="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                            </li>
-                                        </template>
-                                        <template x-if="options.length === 0 && !loading">
-                                            <li class="px-5 py-4 text-gray-400 italic text-center">Data tidak ditemukan</li>
-                                        </template>
-                                    </ul>
-                                </div>
+                            <div>
+                                <h1 class="text-2xl font-black text-white tracking-tight">Input Daftar Arsip</h1>
+                                <p class="text-red-100 text-sm font-medium">Kelola dokumen anda dengan mudah dan rapi.</p>
                             </div>
-
-                            {{-- No Berkas (Readonly) --}}
-                            <div class="group">
-                                <label class="block font-bold text-gray-700 mb-2">No Berkas</label>
-                                <input type="text" placeholder="Dibuat Otomatis (Format: 1)" disabled
-                                    class="w-full p-4 border border-gray-100 rounded-2xl bg-gray-100 text-gray-500 cursor-not-allowed italic">
-                                <p class="text-xs text-gray-400 mt-1">*Penomoran otomatis melanjutkan urutan terakhir</p>
-                            </div>
-
-                            {{-- Nama Berkas --}}
-                            <div class="group">
-                                <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-red-700">Nama Berkas</label>
-                                <input type="text" name="nama_berkas" placeholder="Nama dokumen atau berkas" 
-                                    class="w-full p-4 border border-red-100 rounded-2xl bg-red-50/10 focus:ring-1 focus:ring-red-500 outline-none transition shadow-sm">
-                            </div>
-
                         </div>
-                        
-                        <div class="text-right mt-10">
-                            <button type="button" @click="validateStep1()" class="bg-red-800 text-white px-10 py-3 rounded-xl font-bold hover:bg-red-900 transition shadow-lg flex items-center gap-2 ml-auto">
-                                Selanjutnya
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </button>
+
+                        {{-- Step Indicator --}}
+                        <div class="hidden md:flex items-center gap-3 bg-black/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+                            <div class="flex items-center gap-2" :class="{'opacity-100': formStep === 1, 'opacity-50': formStep !== 1}">
+                                <span class="w-6 h-6 rounded-full bg-white text-red-700 flex items-center justify-center text-xs font-bold">1</span>
+                                <span class="text-white text-xs font-bold uppercase tracking-wider">Identitas</span>
+                            </div>
+                            <div class="w-8 h-px bg-white/30"></div>
+                            <div class="flex items-center gap-2" :class="{'opacity-100': formStep === 2, 'opacity-50': formStep !== 2}">
+                                <span class="w-6 h-6 rounded-full bg-white text-red-700 flex items-center justify-center text-xs font-bold">2</span>
+                                <span class="text-white text-xs font-bold uppercase tracking-wider">Rincian</span>
+                            </div>
                         </div>
                     </div>
+
+                    {{-- Scrollable Content Area --}}
+                    <div class="flex-1 overflow-y-auto overflow-x-hidden p-8 bg-gray-50/50">
+                        
+                        {{-- STEP 1 --}}
+                        <div x-show="formStep === 1" x-transition:enter="transition ease-[cubic-bezier(0.34,1.56,0.64,1)] duration-500" x-transition:enter-start="opacity-0 translate-y-10 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100">
+                            
+                            <div class="max-w-xl mx-auto py-12 space-y-12">
+                                <div class="text-center space-y-4">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-red-50 rounded-3xl text-red-600 mb-2 shadow-sm transform transition hover:scale-110 hover:rotate-3 duration-300">
+                                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <h3 class="text-4xl font-extrabold text-gray-800 tracking-tight">Identitas Berkas</h3>
+                                    <p class="text-gray-500 text-lg">Mulai dengan mengisi identitas dasar dokumen.</p>
+                                </div>
+
+                                <div class="space-y-8 bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100/50">
+                                    {{-- No Berkas (Readonly) --}}
+                                    <div class="group relative">
+                                        <label class="block font-bold text-gray-700 mb-3 pl-2 text-sm uppercase tracking-wide">No Berkas</label>
+                                        <div class="relative transition-all duration-300 transform group-hover:-translate-y-1">
+                                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                                <span class="text-red-400 font-black text-xl">#</span>
+                                            </div>
+                                            <input type="text" placeholder="Dibuat Otomatis" disabled
+                                                class="w-full pl-12 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-gray-50/50 text-gray-400 font-bold text-lg shadow-sm cursor-not-allowed">
+                                            <div class="absolute inset-y-0 right-0 pr-5 flex items-center">
+                                                 <span class="px-3 py-1 bg-gray-200 text-gray-500 text-xs font-bold rounded-full">AUTO</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Nama Berkas --}}
+                                    <div class="group relative">
+                                        <label class="block font-bold text-gray-700 mb-3 pl-2 text-sm uppercase tracking-wide group-focus-within:text-red-600 transition-colors">Nama Berkas</label>
+                                        <div class="relative transition-all duration-300 transform group-focus-within:-translate-y-1 group-hover:-translate-y-1">
+                                             <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                                <svg class="w-6 h-6 text-gray-300 group-focus-within:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            </div>
+                                            <input type="text" name="nama_berkas" x-model="namaBerkas" placeholder="Contoh: Laporan Keuangan 2024" 
+                                                class="w-full pl-14 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-white text-gray-800 font-bold text-lg shadow-sm focus:border-red-500 focus:ring-[6px] focus:ring-red-100 outline-none transition-all placeholder:font-normal placeholder:text-gray-300">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-4">
+                                    <button type="button" @click="validateStep1()" class="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-red-800 to-red-600 p-0.5 shadow-xl transition-all duration-300 hover:shadow-red-900/40 hover:-translate-y-1 active:scale-95 active:translate-y-0">
+                                        <div class="relative flex items-center justify-center gap-3 bg-transparent px-8 py-5 font-bold text-white text-xl uppercase tracking-widest transition-all group-hover:bg-opacity-0">
+                                            Selanjutnya
+                                            <svg class="h-6 w-6 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
 
                     {{-- STEP 2 --}}
                     <div x-show="formStep === 2" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-[20px]" x-transition:enter-end="opacity-100 translate-x-0">
                         
-                        {{-- Info Panel (Auto Fields) --}}
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6 bg-red-50/50 rounded-2xl border border-red-100">
-                            <div>
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Hak Akses</label>
-                                <p id="display_hak_akses" class="text-lg font-bold text-red-800 mt-1">-</p>
-                                <input type="hidden" name="hak_akses" required>
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Masa Simpan</label>
-                                <p id="display_masa_simpan" class="text-lg font-bold text-gray-800 mt-1">-</p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tindakan Akhir</label>
-                                <p id="display_tindakan" class="text-lg font-bold text-gray-800 mt-1">-</p>
-                            </div>
-                        </div>
-
-                        {{-- Inputs removed: No Box & Media moved to Isi Berkas --}}
-
-                        {{-- Isi Berkas Section --}}
-                        <div class="mb-10 border-t border-gray-100 pt-8">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Daftar Isi Berkas</h3>
+                        <div class="space-y-8">
                             
-                            <div class="bg-red-50/50 p-6 rounded-2xl border border-red-100 mb-6">
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                                    <div class="md:col-span-12 space-y-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">Isi Berkas</label>
-                                        <input type="text" x-model="newIsi" placeholder="Deskripsi dokumen..." 
-                                            class="w-full p-3 border border-red-100 rounded-xl bg-white focus:ring-1 focus:ring-red-500 outline-none">
+                            {{-- SECTION 1: CLASSIFICATION & UNIT --}}
+                            <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    {{-- Unit Pengolah --}}
+                                    <div class="group">
+                                        <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-red-700 text-sm uppercase tracking-wide">Unit Pengolah</label>
+                                        <select name="unit_pengolah" x-model="unitPengolah" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition shadow-sm font-bold text-gray-800 appearance-none cursor-pointer">
+                                            <option value="" disabled selected>Pilih Unit Asal</option>
+                                            <option value="Sistem Manajemen">Sistem Manajemen</option>
+                                            <option value="Internal Audit">Internal Audit</option>
+                                            <option value="Komunikasi & Kesekretariatan">Komunikasi & Kesekretariatan</option>
+                                            <option value="CSR">CSR</option>
+                                            <option value="Hukum">Hukum</option>
+                                            <option value="Keamanan">Keamanan</option>
+                                            <option value="Staf Dept. Komunikasi & Hukum Perusahaan">Staf Dept. Komunikasi & Hukum Perusahaan</option>
+                                            <option value="Bisnis Inkubasi Non Semen">Bisnis Inkubasi Non Semen</option>
+                                            <option value="Quality Assurance">Quality Assurance</option>
+                                            <option value="SHE">SHE</option>
+                                            <option value="Perencanaan & Evaluasi Produksi">Perencanaan & Evaluasi Produksi</option>
+                                            <option value="Penunjang Produksi">Penunjang Produksi</option>
+                                            <option value="Quality Control">Quality Control</option>
+                                            <option value="Staf AFR">Staf AFR</option>
+                                            <option value="Operasi Tambang">Operasi Tambang</option>
+                                            <option value="Produksi Bahan Baku">Produksi Bahan Baku</option>
+                                            <option value="Perencanaan & Pengawasan Tambang">Perencanaan & Pengawasan Tambang</option>
+                                            <option value="WHRPG & Utilitas">WHRPG & Utilitas</option>
+                                            <option value="Produksi Terak">Produksi Terak</option>
+                                            <option value="Produksi Semen">Produksi Semen</option>
+                                            <option value="Pabrik Kantong">Pabrik Kantong</option>
+                                            <option value="Pabrik Dumai">Pabrik Dumai</option>
+                                            <option value="Pemeliharaan Mesin">Pemeliharaan Mesin</option>
+                                            <option value="Pemeliharaan Listrik & Instrumen">Pemeliharaan Listrik & Instrumen</option>
+                                            <option value="Maintenance Reliability">Maintenance Reliability</option>
+                                            <option value="Capex">Capex</option>
+                                            <option value="Site Engineering">Site Engineering</option>
+                                            <option value="Project Management">Project Management</option>
+                                            <option value="Perencanaan Suku Cadang">Perencanaan Suku Cadang</option>
+                                            <option value="TPM Officer">TPM Officer</option>
+                                            <option value="Produksi Mesin & Teknikal Support">Produksi Mesin & Teknikal Support</option>
+                                            <option value="Produksi BIP & Aplikasi">Produksi BIP & Aplikasi</option>
+                                            <option value="Operasional SDM">Operasional SDM</option>
+                                            <option value="Sarana Umum">Sarana Umum</option>
+                                            <option value="GRC & Internal Control">GRC & Internal Control</option>
+                                            <option value="Kinerja & Anggaran">Kinerja & Anggaran</option>
+                                            <option value="Keuangan">Keuangan</option>
+                                            <option value="Akuntansi">Akuntansi</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
+                                    </div>
+
+                                    {{-- Kode Klasifikasi --}}
+                                    <div x-data="{
+                                        open: false,
+                                        step: 1, 
+                                        breadcrumbs: [],
+                                        options: [],
+                                        loading: false,
+                                        selectedItem: null,
+                                        displayText: 'Pilih Kode Klasifikasi',
+                                        selectedJraType: null,
+
+                                        init() {
+                                            this.fetchOptions(1);
+                                        },
+                                        
+                                        toggle() {
+                                            this.open = !this.open;
+                                            if(this.open && this.options.length === 0) {
+                                                this.fetchOptions(1);
+                                            }
+                                        },
+
+                                        fetchOptions(level, parent = null) {
+                                            this.loading = true;
+                                            let url = `/api/klasifikasi-options?level=${level}&parent=${parent}`;
+                                            
+                                            fetch(url)
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    this.options = data;
+                                                    this.loading = false;
+                                                });
+                                        },
+
+                                        selectOption(opt) {
+                                            if (this.step === 1) {
+                                                this.breadcrumbs.push({ level: 1, label: opt.label, value: opt.code });
+                                                this.step = 2;
+                                                this.fetchOptions(2, opt.code);
+                                            } else if (this.step === 2) {
+                                                this.breadcrumbs.push({ level: 2, label: opt.label, value: opt.code });
+                                                this.step = 3;
+                                                this.fetchOptions(3, opt.code);
+                                            } else if (this.step === 3) {
+                                                this.selectedItem = opt;
+                                                this.displayText = opt.label;
+                                                
+                                                // document.querySelector('[name=klasifikasi_id]').value = opt.id; // Removed, handled by parent state
+                                                
+                                                // Metadata displays now handled by x-text in parent
+                                                // document.querySelector('#display_masa_simpan').innerText = opt.masa_simpan;
+                                                // document.querySelector('#display_tindakan').innerText = opt.tindakan_akhir;
+                                                // document.querySelector('#display_hak_akses').innerText = opt.hak_akses || '-';
+                                                
+                                                // document.querySelector('[name=hak_akses]').value = opt.hak_akses || '-'; // Removed, bound in parent
+
+                                                this.$dispatch('classification-selected', { 
+                                                    hak_akses: opt.hak_akses, 
+                                                    masa_simpan: opt.masa_simpan, 
+                                                    tindakan: opt.tindakan_akhir,
+                                                    code: opt.code,
+                                                    id: opt.id
+                                                });
+
+                                                this.open = false;
+                                            }
+                                        },
+
+                                        reset() {
+                                            this.step = 1;
+                                            this.breadcrumbs = [];
+                                            this.selectedItem = null;
+                                            this.displayText = 'Pilih Kode Klasifikasi';
+                                            this.displayText = 'Pilih Kode Klasifikasi';
+                                            // document.querySelector('[name=klasifikasi_id]').value = ''; // Removed
+                                            // document.querySelector('[name=hak_akses]').value = ''; // Removed
+                                            this.fetchOptions(1);
+                                            this.open = false; 
+                                        },
+                                        
+                                        goBack() {
+                                            if (this.step > 1) {
+                                                this.step--;
+                                                this.breadcrumbs.pop();
+                                                const parent = this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1].value : null;
+                                                this.fetchOptions(this.step, parent);
+                                            }
+                                        }
+                                    }" class="relative group" @reset-selection.window="reset()">
+                                        <label class="block font-bold text-gray-700 mb-2 text-sm uppercase tracking-wide">Kode Klasifikasi</label>
+                                        {{-- Bind validation input to parent state
+                                        <input type="hidden" name="klasifikasi_id" x-model="klasifikasiId"> --}}
+                                        
+                                        {{-- Trigger --}}
+                                        <div @click="toggle()" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:ring-4 ring-offset-0 focus:ring-red-100 ring-red-500 cursor-pointer flex justify-between items-center shadow-sm hover:bg-gray-50 transition-colors">
+                                            <span x-text="displayText" :class="{'text-gray-400': !selectedItem, 'text-gray-800 font-bold': selectedItem}"></span>
+                                            <svg class="w-5 h-5 text-gray-400 transition" :class="{'rotate-180 text-red-500': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+
+                                        {{-- Dropdown --}}
+                                        <div x-show="open" @click.away="open = false" 
+                                            class="absolute z-50 w-full mt-2 bg-white border border-red-100 rounded-2xl shadow-2xl max-h-80 overflow-y-auto"
+                                            style="display: none;">
+                                            
+                                            {{-- Header --}}
+                                            <div class="px-5 py-3 bg-red-50/50 border-b border-red-100 flex items-center gap-3 sticky top-0 backdrop-blur-sm z-10">
+                                                <template x-if="step > 1">
+                                                    <button type="button" @click.stop="goBack()" class="p-1 hover:bg-red-100 rounded-full text-red-600 transition">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                                    </button>
+                                                </template>
+                                                <span class="text-xs font-bold text-red-800 tracking-wider uppercase" 
+                                                    x-text="step === 1 ? 'Pilih Pokok Masalah' : (step === 2 ? 'Pilih Sub Masalah' : 'Pilih Jenis Arsip')">
+                                                </span>
+                                            </div>
+
+                                            <ul x-show="!loading" class="py-2">
+                                                <template x-for="option in options" :key="option.code">
+                                                    <li @click="selectOption(option)" 
+                                                        class="px-5 py-3 hover:bg-red-50 cursor-pointer text-sm text-gray-700 flex justify-between items-center group transition">
+                                                        <span x-text="option.label" class="group-hover:text-red-700 font-medium"></span>
+                                                        <svg class="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                                    </li>
+                                                </template>
+                                                <template x-if="options.length === 0 && !loading">
+                                                    <li class="px-5 py-4 text-gray-400 italic text-center">Data tidak ditemukan</li>
+                                                </template>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Metadata Grid --}}
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Akses</span>
+                                        <div class="text-right">
+                                            <span x-text="newHakAkses || '-'" class="block text-sm font-bold text-red-600 truncate"></span>
+                                            {{-- <input type="hidden" name="hak_akses" required> --}} 
+                                        </div>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Masa Simpan</span>
+                                        <span x-text="newMasaSimpan || '-'" class="block text-sm font-bold text-gray-700 truncate"></span>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                                        <span class="text-xs font-bold text-gray-400 uppercase">Tindakan</span>
+                                        <span x-text="newTindakan || '-'" class="block text-sm font-bold text-gray-700 truncate"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {{-- SECTION 2: INPUT FORM --}}
+                            <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-3xl border border-red-100 shadow-sm space-y-4">
+                                <h3 class="text-sm font-black text-red-900 uppercase tracking-wide flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs">02</span>
+                                    Input Isi Berkas
+                                </h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                                    <div class="md:col-span-12 space-y-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Deskripsi Berkas</label>
+                                        <input type="text" x-ref="uraian" x-model="newIsi" @keydown.enter.prevent="addIsi()" placeholder="Misal: Kwitansi Pembelian ATK..." 
+                                        class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition shadow-sm font-medium">
                                     </div>
                                     
-                                    {{-- Row 2 --}}
-                                    <div class="md:col-span-3 space-y-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">Jenis Arsip</label>
-                                        <select x-model="newMedia" class="w-full p-3 border border-red-100 rounded-xl bg-white focus:ring-1 focus:ring-red-500 outline-none">
+                                    <div class="md:col-span-3 space-y-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Jenis</label>
+                                        <select x-model="newMedia" @keydown.enter.prevent="addIsi()" class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm">
+                                            <option value="" disabled selected>Pilih...</option>
                                             <option value="Kertas">Kertas</option>
                                             <option value="Foto">Foto</option>
                                             <option value="Kartografi">Kartografi</option>
                                         </select>
                                     </div>
-                                    <div class="md:col-span-2 space-y-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">No. Box</label>
-                                        <input type="text" x-model="newNoBox" placeholder="Box 1" 
-                                            class="w-full p-3 border border-red-100 rounded-xl bg-white focus:ring-1 focus:ring-red-500 outline-none">
-                                    </div>
-                                    <div class="md:col-span-2 space-y-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">Tahun</label>
-                                        <input type="number" x-model="newTahun" placeholder="YYYY" 
-                                            class="w-full p-3 border border-red-100 rounded-xl bg-white focus:ring-1 focus:ring-red-500 outline-none">
-                                    </div>
-                                    <div class="md:col-span-3 space-y-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">Tanggal</label>
-                                        <input type="date" x-model="newTanggal" 
-                                            class="w-full p-3 border border-red-100 rounded-xl bg-white focus:ring-1 focus:ring-red-500 outline-none">
-                                    </div>
-                                    <div class="md:col-span-1 space-y-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">Jumlah</label>
-                                        <input type="number" x-model="newJumlah" placeholder="1" min="1"
-                                            class="w-full p-3 border border-red-100 rounded-xl bg-white focus:ring-1 focus:ring-red-500 outline-none text-center">
+                                    <div class="md:col-span-2 space-y-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Box</label>
+                                        <input type="text" x-model="newNoBox" @keydown.enter.prevent="addIsi()" placeholder="Box 1" 
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center font-bold">
                                     </div>
 
-                                    <div class="md:col-span-1">
-                                        <button type="button" @click="addIsi()" 
-                                            class="w-full bg-red-800 text-white p-3 rounded-xl font-bold hover:bg-red-900 transition flex justify-center items-center">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    <div class="md:col-span-2 space-y-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Tahun</label>
+                                        <input type="number" x-model="newTahun" @keydown.enter.prevent="addIsi()" placeholder="YYYY" 
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center">
+                                    </div>
+                                    <div class="md:col-span-3 space-y-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Tanggal</label>
+                                        <input type="date" x-model="newTanggal" @keydown.enter.prevent="addIsi()" 
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center text-gray-600">
+                                    </div>
+
+                                    <div class="md:col-span-2 space-y-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Jml</label>
+                                        <input type="number" x-model="newJumlah" placeholder="1" min="1"
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center font-bold">
+                                    </div>
+                                </div>
+
+                                <div class="pt-2">
+                                    <button type="button" @click="addIsi()" 
+                                        class="w-full bg-gradient-to-r from-red-600 to-red-800 text-white p-3 rounded-xl font-bold shadow-lg shadow-red-200 hover:shadow-red-300 hover:scale-[1.01] active:scale-95 transition flex justify-center items-center gap-2 group-btn">
+                                        <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        TAMBAH KE DAFTAR
+                                    </button>
+                                </div>
+                            </div>
+
+                            {{-- SECTION 3: TABLE PREVIEW --}}
+                            <div class="w-full">
+                                <div class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden flex flex-col">
+                                    <div class="p-6 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-lg font-black text-gray-800 text-transparent bg-clip-text bg-gradient-to-r from-red-900 to-red-600">Preview Berkas</h3>
+                                            <p class="text-xs text-gray-400 font-medium">Pastikan data sudah benar sebelum disimpan.</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-3xl font-black text-gray-800" x-text="isiBerkas.length">0</span>
+                                            <span class="text-xs text-gray-400 font-bold uppercase block">Items</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="overflow-x-auto custom-scrollbar max-h-[500px]">
+                                        <table class="w-full text-sm text-left relative">
+                                            <thead class="bg-white text-gray-400 font-bold uppercase text-[10px] tracking-wider sticky top-0 z-10 shadow-sm">
+                                                <tr>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Kode Klasifikasi</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur">Nama Berkas</th>
+                                                    <th class="px-3 py-4 w-1/4 bg-gray-50/90 backdrop-blur">Isi Berkas</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Tahun</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Tanggal</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Jml</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Hak Akses</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Masa Simpan</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Tindakan</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Box</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-left">Unit Pengolah</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-center">Jenis</th>
+                                                    <th class="px-3 py-4 bg-gray-50/90 backdrop-blur text-right">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-50">
+                                                <template x-for="(item, index) in isiBerkas" :key="index">
+                                                    <tr x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="group hover:bg-red-50/20 transition-colors">
+                                                        <td class="px-3 py-4 text-center font-bold text-red-600" x-text="item.kode_klasifikasi"></td>
+                                                        <td class="px-3 py-4 font-bold text-gray-700" x-text="namaBerkas"></td>
+                                                        <td class="px-3 py-4 text-gray-600 font-medium" x-text="item.isi"></td>
+                                                        <td class="px-3 py-4 text-center font-bold text-gray-700" x-text="item.tahun"></td>
+                                                        <td class="px-3 py-4 text-center text-xs text-gray-500" x-text="item.tanggal"></td>
+                                                        <td class="px-3 py-4 text-center font-bold text-gray-700" x-text="item.jumlah"></td>
+                                                        <td class="px-3 py-4 text-center text-xs">
+                                                            <span class="px-2 py-1 rounded-full bg-red-50 text-red-600 font-bold" x-text="item.hak_akses || '-'"></span>
+                                                        </td>
+                                                        <td class="px-3 py-4 text-center text-xs font-bold text-gray-600" x-text="item.masa_simpan"></td>
+                                                        <td class="px-3 py-4 text-center text-xs font-bold text-gray-600" x-text="item.tindakan_akhir"></td>
+                                                        <td class="px-3 py-4 text-center font-mono font-bold text-gray-700" x-text="item.no_box"></td>
+                                                        <td class="px-3 py-4 text-sm font-bold text-gray-600" x-text="item.unit_pengolah"></td>
+                                                        <td class="px-3 py-4 text-center">
+                                                            <span class="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold text-gray-500" x-text="item.jenis_media"></span>
+                                                        </td>
+                                                        <td class="px-3 py-4 text-right">
+                                                            <button type="button" @click="removeIsi(index)" class="p-2 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-full transition-all">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                            </button>
+                                                            {{-- Hidden Inputs --}}
+                                                            <input type="hidden" :name="`isi_berkas[${index}][isi]`" :value="item.isi">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][tahun]`" :value="item.tahun">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][tanggal]`" :value="item.tanggal">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][jumlah]`" :value="item.jumlah">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][no_box]`" :value="item.no_box">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][hak_akses]`" :value="item.hak_akses">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][jenis_media]`" :value="item.jenis_media">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][masa_simpan]`" :value="item.masa_simpan">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][tindakan_akhir]`" :value="item.tindakan_akhir">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][unit_pengolah]`" :value="item.unit_pengolah">
+                                                            <input type="hidden" :name="`isi_berkas[${index}][klasifikasi_id]`" :value="item.klasifikasi_id">
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                                <tr x-show="isiBerkas.length === 0">
+                                                    <td colspan="6" class="px-6 py-20 text-center">
+                                                        <div class="flex flex-col items-center justify-center text-gray-300">
+                                                            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                                            <p class="text-sm font-medium">Belum ada data arsip.</p>
+                                                            <p class="text-xs mt-1">Isi formulir di atas untuk menambahkan item.</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {{-- Footer / Submit --}}
+                                    <div class="p-6 bg-white border-t border-gray-100 flex justify-between items-center gap-4">
+                                        <button type="button" @click="formStep = 1" class="text-gray-500 font-bold px-4 py-2 text-sm hover:text-red-800 transition">
+                                            Kembali
+                                        </button>
+                                        <button type="submit" 
+                                            :disabled="isiBerkas.length === 0"
+                                            :class="{'opacity-50 cursor-not-allowed': isiBerkas.length === 0}"
+                                            class="flex-1 bg-gradient-to-r from-red-700 to-red-900 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
+                                            <span>SIMPAN SEMUA</span>
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- List Preview (Table) --}}
-                            <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                                <table class="w-full text-sm text-center">
-                                    <thead class="bg-gray-100 text-gray-600 font-bold uppercase text-xs">
-                                        <tr>
-                                            <th class="px-4 py-3 w-10">No</th>
-                                            <th class="px-4 py-3 text-left">Isi Berkas</th>
-                                            <th class="px-4 py-3">Jenis Arsip</th>
-                                            <th class="px-4 py-3">No. Box</th>
-                                            <th class="px-4 py-3">Tahun</th>
-                                            <th class="px-4 py-3">Tanggal</th>
-                                            <th class="px-4 py-3">Jumlah</th>
-                                            <th class="px-4 py-3">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100 bg-white">
-                                        <template x-for="(item, index) in isiBerkas" :key="index">
-                                                <tr class="hover:bg-gray-50">
-                                                <td class="px-4 py-3 font-medium text-gray-900" x-text="index + 1"></td>
-                                                <td class="px-4 py-3 text-gray-700 text-left" x-text="item.isi"></td>
-                                                <td class="px-4 py-3 text-gray-600" x-text="item.jenis_media"></td>
-                                                <td class="px-4 py-3 text-gray-600" x-text="item.no_box"></td>
-                                                <td class="px-4 py-3 text-gray-600" x-text="item.tahun"></td>
-                                                <td class="px-4 py-3 text-gray-600" x-text="item.tanggal"></td>
-                                                <td class="px-4 py-3 text-gray-600" x-text="item.jumlah"></td>
-                                                <td class="px-4 py-3">
-                                                    <button type="button" @click="removeIsi(index)" class="text-red-400 hover:text-red-600 transition">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                    </button>
-                                                    {{-- Hidden Inputs --}}
-                                                    <input type="hidden" :name="`isi_berkas[${index}][isi]`" :value="item.isi">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][tahun]`" :value="item.tahun">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][tanggal]`" :value="item.tanggal">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][jumlah]`" :value="item.jumlah">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][no_box]`" :value="item.no_box">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][hak_akses]`" :value="item.hak_akses">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][jenis_media]`" :value="item.jenis_media">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][masa_simpan]`" :value="item.masa_simpan">
-                                                    <input type="hidden" :name="`isi_berkas[${index}][tindakan_akhir]`" :value="item.tindakan_akhir">
-                                                </td>
-                                            </tr>
-                                        </template>
-                                        <tr x-show="isiBerkas.length === 0">
-                                            <td colspan="8" class="px-4 py-8 text-center text-gray-400 italic">
-                                                Belum ada rincian berkas yang ditambahkan
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div class="flex justify-between md:justify-end gap-4 pt-4 border-t border-gray-100">
-                             <button type="button" @click="formStep = 1" class="text-gray-500 font-bold px-8 py-3 hover:text-red-800 transition">
-                                Kembali
-                            </button>
-                            <button type="submit" 
-                                :disabled="isiBerkas.length === 0"
-                                :class="{'opacity-50 cursor-not-allowed': isiBerkas.length === 0}"
-                                class="bg-red-800 text-white px-14 py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-red-900 transition flex items-center gap-3">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                SUBMIT
-                            </button>
                         </div>
                     </div>
 

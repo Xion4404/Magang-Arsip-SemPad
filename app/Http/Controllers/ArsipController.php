@@ -10,7 +10,7 @@ class ArsipController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Arsip::with(['klasifikasi', 'isiArsip']);
+        $query = Arsip::with(['klasifikasi']); // Removed isiArsip relation
 
         // Search logic
         if ($request->has('search') && $request->search) {
@@ -18,13 +18,21 @@ class ArsipController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('nama_berkas', 'like', "%{$search}%")
                   ->orWhere('no_berkas', 'like', "%{$search}%")
-                  ->orWhereHas('isiArsip', function($q2) use ($search) {
-                      $q2->where('isi', 'like', "%{$search}%");
-                  })
+                  ->orWhere('isi', 'like', "%{$search}%") // Direct column search
                   ->orWhereHas('klasifikasi', function($q3) use ($search) {
                       $q3->where('kode_klasifikasi', 'like', "%{$search}%");
                   });
             });
+        }
+
+        // Filter by Tindakan Akhir (Permanen / Musnah)
+        if ($request->has('filter_tindakan') && $request->filter_tindakan != '') {
+            $query->where('tindakan_akhir', $request->filter_tindakan);
+        }
+
+        // Filter by Tahun (Specific Year)
+        if ($request->has('filter_tahun') && $request->filter_tahun != '') {
+            $query->where('tahun', $request->filter_tahun);
         }
 
         // Sorting logic
@@ -44,13 +52,16 @@ class ArsipController extends Controller
                 break;
         }
 
-        $arsips = $query->paginate(10); // Use paginate instead of take(10) for better lists
+        $arsips = $query->paginate(10);
         
+        // Get available years for filter
+        $availableYears = Arsip::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+
         if ($request->ajax()) {
             return view('arsip.partials.table', compact('arsips'));
         }
 
-        return view('arsip.arsip', compact('arsips'));
+        return view('arsip.arsip', compact('arsips', 'availableYears'));
     }
 
     public function create()
@@ -62,14 +73,13 @@ class ArsipController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            // 'no_berkas' => 'nullable|string', // We will generate this if empty or validate uniqueness
-            'klasifikasi_id' => 'required|exists:master_klasifikasi,id',
             'nama_berkas' => 'required|string',
-            'unit_pengolah' => 'required|string',
-            'hak_akses' => 'required|string',
-            // 'isi_berkas' => 'nullable|string', // Removed single string validation
-            'isi_berkas' => 'required|array|min:1', // Must have at least one content
+            // 'unit_pengolah' => 'required|string', // Moved to per-item
+            // 'klasifikasi_id' => 'required|exists:master_klasifikasi,id', // Moved to per-item
+            'isi_berkas' => 'required|array|min:1',
             'isi_berkas.*.isi' => 'required|string',
+            'isi_berkas.*.unit_pengolah' => 'required|string',
+            'isi_berkas.*.klasifikasi_id' => 'required|exists:master_klasifikasi,id',
             'isi_berkas.*.tahun' => 'nullable|integer',
             'isi_berkas.*.tanggal' => 'nullable|date',
             'isi_berkas.*.jumlah' => 'nullable|integer',
@@ -80,33 +90,18 @@ class ArsipController extends Controller
             'isi_berkas.*.tindakan_akhir' => 'nullable|string',
         ]);
 
-        // Derive Parent Data from First/All Items
-        $firstItem = $validated['isi_berkas'][0];
-        $year = $firstItem['tahun'] ?? date('Y');
-        $tanggalMasuk = $firstItem['tanggal'] ?? date('Y-m-d');
+        // Auto Generate No Berkas (Shared for the batch)
+        $firstYear = $validated['isi_berkas'][0]['tahun'] ?? date('Y');
         
-        // Parent Metadata Defaults (using first item as representative)
-        $mainHakAkses = $firstItem['hak_akses'] ?? '-';
-        $mainNoBox = $firstItem['no_box'] ?? '-';
-        $mainMedia = $firstItem['jenis_media'] ?? 'Kertas';
-        
-        // Jumlah: Sum of all items' jumlah
-        $totalJumlah = 0;
-        foreach ($validated['isi_berkas'] as $item) {
-            $totalJumlah += ($item['jumlah'] ?? 1);
-        }
-
-        // Auto Generate No Berkas
-        // Format: ARS-{YEAR}-{XXX}
-        $lastArsip = Arsip::where('no_berkas', 'like', "ARS-{$year}-%")->orderBy('id', 'desc')->first();
+        $lastArsip = Arsip::where('no_berkas', 'like', "ARS-{$firstYear}-%")->orderBy('id', 'desc')->first();
         
         if ($lastArsip) {
-            $lastNo = substr($lastArsip->no_berkas, -3); // Get last 3 digits
+            $lastNo = substr($lastArsip->no_berkas, -3);
             $nextNo = intval($lastNo) + 1;
         } else {
             $nextNo = 1;
         }
-        $no_berkas = sprintf("ARS-%s-%03d", $year, $nextNo);
+        $no_berkas = sprintf("ARS-%s-%03d", $firstYear, $nextNo);
 
         // Ensure user exists
         $user = \App\Models\User::first();
@@ -118,33 +113,27 @@ class ArsipController extends Controller
             ]);
         }
 
-        $arsip = Arsip::create([
-            'no_berkas' => $no_berkas,
-            'klasifikasi_id' => $validated['klasifikasi_id'],
-            'nama_berkas' => $validated['nama_berkas'],
-            'unit_pengolah' => $validated['unit_pengolah'],
-            'hak_akses' => $mainHakAkses, // Saved parent value for reference
-            'jenis_media' => $mainMedia,
-            'tahun' => $year,
-            'tanggal_masuk' => $tanggalMasuk,
-            'jumlah' => $totalJumlah,
-            'no_box' => $mainNoBox,
-            'user_id' => $user->id,
-        ]);
-
-        // Save Isi Berkas (Multiple with Details)
+        // Loop and Create Individual Records
+        // This effectively "flattens" the structure: 1 Item = 1 Row in Arsip Table
         foreach ($validated['isi_berkas'] as $item) {
-            \App\Models\IsiArsip::create([
-                'arsip_id' => $arsip->id,
-                'isi' => $item['isi'],
-                'tahun' => $item['tahun'] ?? null,
-                'tanggal' => $item['tanggal'] ?? null,
-                'jumlah' => $item['jumlah'] ?? 1,
-                'hak_akses' => $item['hak_akses'] ?? null,
-                'no_box' => $item['no_box'] ?? null,
-                'jenis_media' => $item['jenis_media'] ?? null,
-                'masa_simpan' => $item['masa_simpan'] ?? null,
-                'tindakan_akhir' => $item['tindakan_akhir'] ?? null,
+            Arsip::create([
+                // Shared Identity
+                'no_berkas'     => $no_berkas,
+                'klasifikasi_id'=> $item['klasifikasi_id'],
+                'nama_berkas'   => $validated['nama_berkas'],
+                'unit_pengolah' => $item['unit_pengolah'],
+                'user_id'       => $user->id,
+                
+                // Item Specifics (Now directly in Arsip table)
+                'isi'           => $item['isi'],
+                'tahun'         => $item['tahun'] ?? $firstYear,
+                'tanggal_masuk' => $item['tanggal'] ?? date('Y-m-d'),
+                'jumlah'        => $item['jumlah'] ?? 1,
+                'no_box'        => $item['no_box'] ?? '-',
+                'hak_akses'     => $item['hak_akses'] ?? '-',
+                'jenis_media'   => $item['jenis_media'] ?? 'Kertas',
+                'masa_simpan'   => $item['masa_simpan'] ?? '-',
+                'tindakan_akhir'=> $item['tindakan_akhir'] ?? '-',
             ]);
         }
 
@@ -157,10 +146,12 @@ class ArsipController extends Controller
         $ids = json_decode($request->input('ids'), true);
         $search = $request->input('search');
         $sort = $request->input('sort');
+        $filter_tindakan = $request->input('filter_tindakan');
+        $filter_tahun = $request->input('filter_tahun');
 
         // Prepare query for PDF (Excel uses Export class)
         // Ideally, we reuse logic. Let's extract query logic or use the Export class query.
-        $export = new \App\Exports\ArsipExport($ids, $search, $sort);
+        $export = new \App\Exports\ArsipExport($ids, $search, $sort, $filter_tindakan, $filter_tahun);
         $filename = 'arsip-all-' . date('Y-m-d') . ($type === 'pdf' ? '.pdf' : '.xlsx');
 
         if ($type === 'excel') {
