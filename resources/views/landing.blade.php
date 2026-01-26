@@ -14,16 +14,21 @@
 <body class="bg-white">
 
     <!-- Navigation -->
-    <nav class="absolute top-0 left-0 w-full z-50 bg-transparent py-4">
+    <!-- Navigation -->
+    <nav x-data="{ isScrolled: false }" 
+         @scroll.window="isScrolled = (window.pageYOffset > 50)"
+         :class="isScrolled ? 'bg-white shadow-md py-6' : 'bg-transparent py-4'"
+         class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
         <div class="container mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                 <img src="{{ asset('images/logo-semen-padang.png') }}" alt="Logo Semen Padang" class="h-12 drop-shadow-lg filter brightness-100 bg-white/80 rounded px-2 py-1">
+                 <img :src="isScrolled ? '{{ asset('images/sp-black.png') }}' : '{{ asset('images/sp-white.png') }}'" alt="Logo Semen Padang" class="h-20 drop-shadow-lg filter brightness-100 rounded px-2 py-1 transition-all duration-300">
             </div>
-            <div class="hidden md:flex gap-6 text-white font-medium drop-shadow-md">
-                <a href="#" class="hover:text-red-200 transition">Beranda</a>
-                <a href="#tentang" class="hover:text-red-200 transition">Tentang</a>
-                <a href="#fitur" class="hover:text-red-200 transition">Fitur</a>
-                <a href="#kontak" class="hover:text-red-200 transition">Kontak</a>
+            <div class="hidden md:flex gap-6 font-medium drop-shadow-md transition-colors duration-300"
+                 :class="isScrolled ? 'text-gray-800' : 'text-white'">
+                <a href="#" class="hover:text-red-600 transition">Beranda</a>
+                <a href="#tentang" class="hover:text-red-600 transition">Tentang</a>
+                <a href="#fitur" class="hover:text-red-600 transition">Fitur</a>
+                <a href="#kontak" class="hover:text-red-600 transition">Kontak</a>
             </div>
         </div>
     </nav>
@@ -32,9 +37,10 @@
     <div x-data="{ 
             activeSlide: 0, 
             slides: [
-                { img: 'hp 1.jpg', text: 'Sistem Informasi e-Arsip' },
-                { img: 'hp 2.jpeg', text: 'Pengelolaan Arsip Digital' },
-                { img: 'hp 3.jpeg', text: 'Efisien dan Terintegrasi' }
+                { img: 'hp 4.jpeg', text: 'Sistem Informasi e-Arsip' },
+                { img: 'hp 5.jpeg', text: 'Pengelolaan Arsip Digital' },
+                { img: 'hp 6.jpeg', text: 'Efisien dan Terintegrasi' },
+                { img: 'hp 7.jpeg', text: 'Efisien dan Terintegrasi' }
             ],
             autoplay() {
                 setInterval(() => {
@@ -94,40 +100,37 @@
     </div>
 
     <!-- Tentang Kami Section -->
-    <section id="tentang" class="py-20 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row gap-12 items-center">
-                <!-- Red Box Image Placeholder -->
-                <div class="w-full md:w-1/3">
-                    <div class="aspect-square bg-[#b91c1c] rounded-2xl shadow-xl flex items-center justify-center relative overflow-hidden group">
-                        <!-- Decorative Pattern -->
-                        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                         <div class="text-white text-center p-8">
-                            <span class="text-6xl font-bold block mb-2">SP</span>
-                            <span class="text-xl uppercase tracking-widest">Semen Padang</span>
+    <section id="tentang" class="py-20 bg-cover bg-center" style="background-image: url('{{ asset('images/white-bg.jpg') }}');">
+        <div class="container mx-auto px-12">
+            <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12 max-w-6xl mx-auto transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border border-transparent hover:border-red-100">
+                <div class="flex flex-col md:flex-row gap-12 items-center">
+                    <!-- Image Section -->
+                    <div class="w-full md:w-1/3">
+                        <div class="aspect-square rounded-2xl shadow-xl overflow-hidden group">
+                            <img src="{{ asset('images/hp 6.jpeg') }}" alt="Tentang Semen Padang" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
                         </div>
                     </div>
-                </div>
-                
-                <!-- Text Content -->
-                <div class="w-full md:w-2/3">
-                    <h2 class="text-red-700 font-bold text-xl uppercase tracking-wider mb-2">Tentang Kami</h2>
-                    <h3 class="text-4xl font-bold text-gray-800 mb-6">Kearsipan PT Semen Padang</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed text-lg">
-                        Kearsipan di PT Semen Padang merupakan bagian penting dalam mendukung tertib administrasi dan kelancaran operasional perusahaan. Setiap arsip dikelola sebagai sumber informasi yang memiliki nilai guna bagi perusahaan, baik sebagai bukti kegiatan, bahan pengambilan keputusan, maupun sebagai bentuk pertanggungjawaban organisasi.
-                    </p>
-                    <p class="text-gray-600 mb-6 leading-relaxed text-lg">
-                        Pengelolaan kearsipan di PT Semen Padang dilaksanakan secara terkoordinasi oleh Unit Sistem Manajemen dengan mengedepankan keteraturan, keamanan, dan kemudahan akses sesuai kebutuhan kerja. Melalui pengelolaan arsip yang baik, perusahaan berupaya menjaga keberlangsungan informasi serta mendukung penerapan tata kelola perusahaan yang efektif dan berkelanjutan.
-                    </p>
+                    
+                    <!-- Text Content -->
+                    <div class="w-full md:w-2/3">
+                        <h2 class="text-red-700 font-bold text-xl uppercase tracking-wider mb-2">Tentang Kami</h2>
+                        <h3 class="text-4xl font-bold text-gray-800 mb-6">Kearsipan PT Semen Padang</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed text-lg">
+                            Kearsipan di PT Semen Padang merupakan bagian penting dalam mendukung tertib administrasi dan kelancaran operasional perusahaan. Setiap arsip dikelola sebagai sumber informasi yang memiliki nilai guna bagi perusahaan, baik sebagai bukti kegiatan, bahan pengambilan keputusan, maupun sebagai bentuk pertanggungjawaban organisasi.
+                        </p>
+                        <p class="text-gray-600 mb-6 leading-relaxed text-lg">
+                            Pengelolaan kearsipan di PT Semen Padang dilaksanakan secara terkoordinasi oleh Unit Sistem Manajemen dengan mengedepankan keteraturan, keamanan, dan kemudahan akses sesuai kebutuhan kerja. Melalui pengelolaan arsip yang baik, perusahaan berupaya menjaga keberlangsungan informasi serta mendukung penerapan tata kelola perusahaan yang efektif dan berkelanjutan.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Statistik Arsip Section -->
-    <section class="py-20 bg-[#b91c1c] relative overflow-hidden">
-        <!-- Background Pattern -->
-         <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+    <section class="py-20 relative overflow-hidden bg-cover bg-center bg-fixed" style="background-image: url('{{ asset('images/hp 5.jpeg') }}');">
+        <!-- Red Overlay with Blur -->
+         <div class="absolute inset-0 bg-red-900/35 backdrop-blur-sm z-0"></div>
         
         <div class="container mx-auto px-6 relative z-10">
             <div class="text-center mb-12">
@@ -221,21 +224,21 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Image 1 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-xl h-72 cursor-pointer">
-                    <img src="{{ asset('images/hp 1.jpg') }}" alt="Dokumentasi 1" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                    <img src="{{ asset('images/hp 4.jpeg') }}" alt="Dokumentasi 1" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end justify-center pb-6">
                         <span class="text-white font-medium tracking-wide">Kegiatan Arsip</span>
                     </div>
                 </div>
                 <!-- Image 2 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-xl h-72 cursor-pointer">
-                    <img src="{{ asset('images/hp 2.jpeg') }}" alt="Dokumentasi 2" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                    <img src="{{ asset('images/hp 7.jpeg') }}" alt="Dokumentasi 2" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end justify-center pb-6">
                         <span class="text-white font-medium tracking-wide">Pengelolaan Dokumen</span>
                     </div>
                 </div>
                 <!-- Image 3 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-xl h-72 cursor-pointer">
-                    <img src="{{ asset('images/hp 3.jpeg') }}" alt="Dokumentasi 3" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                    <img src="{{ asset('images/hp 5.jpeg') }}" alt="Dokumentasi 3" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end justify-center pb-6">
                         <span class="text-white font-medium tracking-wide">Monitoring Aktivitas</span>
                     </div>
@@ -246,8 +249,11 @@
 
     <!-- Fitur Section -->
     <section id="fitur" class="relative bg-white">
-        <!-- Red Background Top -->
-        <div class="absolute top-0 left-0 w-full h-[300px] bg-[#b91c1c]"></div>
+        <!-- Red Background Top with CSS Spotlight (Fixed) -->
+        <div class="absolute top-0 left-0 w-full h-[300px] bg-[#7f1d1d] overflow-hidden">
+             <!-- CSS Spotlight Effect -->
+             <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 0%, #ef4444 0%, #991b1b 60%, #7f1d1d 100%);"></div>
+        </div>
 
         <div class="container mx-auto px-6 relative z-10 pt-15 pb-20">
             <div class="text-center mb-16">
@@ -353,7 +359,7 @@
                 </div>
                 <!-- Logo Footer -->
                 <div class="flex flex-col items-start gap-4">
-                    <img src="{{ asset('images/logo-semen-padang.png') }}" class="h-16 bg-white p-2 rounded">
+                    <img src="{{ asset('images/sp-black.png') }}" class="h-20 p-2 rounded">
                     <div class="text-right w-full">
                         <p class="text-xs text-gray-500 font-bold tracking-widest uppercase">Hotline Coverage</p>
                         <p class="text-2xl font-black text-red-700">0800 1000 800</p>
