@@ -156,8 +156,8 @@
                                             <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                                                 <span class="text-red-400 font-black text-xl">#</span>
                                             </div>
-                                            <input type="text" placeholder="Dibuat Otomatis" disabled
-                                                class="w-full pl-12 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-gray-50/50 text-gray-400 font-bold text-lg shadow-sm cursor-not-allowed">
+                                            <input type="text" value="{{ $nextNumber ?? 'AUTO' }}" disabled
+                                                class="w-full pl-12 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-gray-50/50 text-gray-800 font-bold text-lg shadow-sm cursor-not-allowed">
                                             <div class="absolute inset-y-0 right-0 pr-5 flex items-center">
                                                  <span class="px-3 py-1 bg-gray-200 text-gray-500 text-xs font-bold rounded-full">AUTO</span>
                                             </div>

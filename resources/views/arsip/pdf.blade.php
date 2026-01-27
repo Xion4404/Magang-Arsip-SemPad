@@ -77,17 +77,20 @@
     <table class="data">
         <thead>
             <tr>
-                <th>No</th>
-                <th>No Berkas</th>
-                <th>Kode Klasifikasi</th>
-                <th>Nama Berkas</th>
-                <th>Isi Berkas</th>
-                <th>Tahun</th>
-                <th>Tanggal Masuk</th>
-                <th>Jumlah</th>
-                <th>Masa Simpan</th>
-                <th>Status</th>
-                <th>Lokasi</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 10%;">No Berkas</th>
+                <th style="width: 8%;">Kode Klas.</th>
+                <th style="width: 15%;">Nama Berkas</th>
+                <th style="width: 20%;">Isi Berkas</th> 
+                <th style="width: 5%;">Tahun</th>
+                <th style="width: 8%;">Tanggal</th>
+                <th style="width: 5%;">Jml</th>
+                <th style="width: 8%;">Hak Akses</th>
+                <th style="width: 8%;">Masa Simpan</th>
+                <th style="width: 8%;">Tindakan</th>
+                <th style="width: 5%;">Box</th>
+                <th style="width: 10%;">Unit Pengolah</th>
+                <th style="width: 5%;">Jenis</th>
             </tr>
         </thead>
         <tbody>
@@ -97,13 +100,16 @@
                 <td>{{ $arsip->no_berkas }}</td>
                 <td>{{ $arsip->klasifikasi->kode_klasifikasi ?? '-' }}</td>
                 <td>{{ $arsip->nama_berkas }}</td>
-                <td>{{ $arsip->isi_berkas }}</td>
+                <td>{{ $arsip->isi ?? '-' }}</td>
                 <td style="text-align: center;">{{ $arsip->tahun }}</td>
-                <td style="text-align: center;">{{ \Carbon\Carbon::parse($arsip->tanggal_masuk)->format('d/m/Y') }}</td>
+                <td style="text-align: center;">{{ $arsip->tanggal_masuk ? \Carbon\Carbon::parse($arsip->tanggal_masuk)->format('d/m/Y') : '-' }}</td>
                 <td style="text-align: center;">{{ $arsip->jumlah }}</td>
-                <td>{{ $arsip->klasifikasi->masa_simpan ?? '-' }}</td>
-                <td>{{ $arsip->klasifikasi->tindakan_akhir ?? '-' }}</td>
-                <td>{{ $arsip->no_box }}</td>
+                <td style="text-align: center;">{{ $arsip->hak_akses ?? '-' }}</td>
+                <td>{{ $arsip->masa_simpan ?? '-' }}</td>
+                <td style="text-align: center;">{{ $arsip->tindakan_akhir ?? '-' }}</td>
+                <td style="text-align: center;">{{ $arsip->no_box ?? '-' }}</td>
+                <td>{{ $arsip->unit_pengolah ?? '-' }}</td>
+                <td style="text-align: center;">{{ $arsip->jenis_media ?? '-' }}</td>
             </tr>
             @endforeach
         </tbody>

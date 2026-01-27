@@ -5,9 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Arsip;
 use App\Models\MasterKlasifikasi;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ArsipImport;
 
 class ArsipController extends Controller
 {
+    public function import(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+        
+        try {
+            Excel::import(new ArsipImport, $request->file('file'));
+            return back()->with('success', 'Data arsip berhasil diimport!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['file' => 'Gagal import: ' . $e->getMessage()]);
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Arsip::with(['klasifikasi']); // Removed isiArsip relation
@@ -35,6 +51,11 @@ class ArsipController extends Controller
             $query->where('tahun', $request->filter_tahun);
         }
 
+        // Filter by Box
+        if ($request->has('filter_box') && $request->filter_box != '') {
+             $query->where('no_box', $request->filter_box);
+        }
+
         // Sorting logic
         switch ($request->input('sort')) {
             case 'oldest':
@@ -46,6 +67,12 @@ class ArsipController extends Controller
             case 'year_asc':
                 $query->orderBy('tahun', 'asc');
                 break;
+            case 'box_desc':
+                $query->orderBy('no_box', 'desc');
+                break;
+            case 'box_asc':
+                $query->orderBy('no_box', 'asc');
+                break;
             case 'newest':
             default:
                 $query->orderBy('id', 'desc');
@@ -54,20 +81,66 @@ class ArsipController extends Controller
 
         $arsips = $query->paginate(10);
         
-        // Get available years for filter
-        $availableYears = Arsip::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
-
-        if ($request->ajax()) {
-            return view('arsip.partials.table', compact('arsips'));
+        // Calculate grouping and numbering based on Entry Order (First ID)
+        $groupData = [];
+        $lastNoBerkasOnPage = null;
+        
+        // Fetch all unique no_berkas ordered by the time they were first created (min id)
+        // This ensures Number 1 is the first file ever inserted, regardless of Year.
+        $allGroups = Arsip::selectRaw('no_berkas, MIN(id) as first_id')
+                        ->groupBy('no_berkas')
+                        ->orderBy('first_id', 'asc')
+                        ->get();
+                        
+        // Create a fast lookup map: no_berkas => Rank (1 based)
+        $rankMap = [];
+        foreach ($allGroups as $index => $g) {
+            $rankMap[$g->no_berkas] = $index + 1;
+        }
+        
+        foreach ($arsips as $arsip) {
+            $currentNo = $arsip->no_berkas;
+            $number = $rankMap[$currentNo] ?? 0;
+            
+            // Determine visibility (Start of group on this page)
+            $isStart = ($currentNo !== $lastNoBerkasOnPage);
+            
+            $groupData[$arsip->id] = [
+                'number' => $number,
+                'is_start' => $isStart
+            ];
+            
+            $lastNoBerkasOnPage = $currentNo;
         }
 
-        return view('arsip.arsip', compact('arsips', 'availableYears'));
+        // Get available years for filter
+        $availableYears = Arsip::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+        
+        // Get available boxes for filter
+        // Sort effectively might need raw query if box is numeric string, but simple orderBy is usually okay 
+        // unless mix of numbers and letters heavily implies numeric sort needed.
+        // Assuming simple string sort or numeric sort.
+        $availableBoxes = Arsip::select('no_box')
+                            ->whereNotNull('no_box')
+                            ->where('no_box', '!=', '-') 
+                            ->distinct()
+                            ->orderByRaw('CAST(no_box AS UNSIGNED) ASC') // Try numeric sort first
+                            ->pluck('no_box');
+
+        if ($request->ajax()) {
+            return view('arsip.partials.table', compact('arsips', 'groupData'));
+        }
+
+        return view('arsip.arsip', compact('arsips', 'availableYears', 'availableBoxes', 'groupData'));
     }
 
     public function create()
     {
         $klasifikasis = MasterKlasifikasi::all();
-        return view('arsip.input-arsip', compact('klasifikasis'));
+        // Calculate next number (Global Rank)
+        $nextNumber = Arsip::distinct('no_berkas')->count() + 1;
+        
+        return view('arsip.input-arsip', compact('klasifikasis', 'nextNumber'));
     }
 
     public function store(Request $request)
@@ -90,18 +163,11 @@ class ArsipController extends Controller
             'isi_berkas.*.tindakan_akhir' => 'nullable|string',
         ]);
 
-        // Auto Generate No Berkas (Shared for the batch)
-        $firstYear = $validated['isi_berkas'][0]['tahun'] ?? date('Y');
-        
-        $lastArsip = Arsip::where('no_berkas', 'like', "ARS-{$firstYear}-%")->orderBy('id', 'desc')->first();
-        
-        if ($lastArsip) {
-            $lastNo = substr($lastArsip->no_berkas, -3);
-            $nextNo = intval($lastNo) + 1;
-        } else {
-            $nextNo = 1;
-        }
-        $no_berkas = sprintf("ARS-%s-%03d", $firstYear, $nextNo);
+        // Auto Generate No Berkas (Simple Sequential Number)
+        // Count distinct existing groups to determine next number
+        $currentCount = Arsip::distinct('no_berkas')->count();
+        $nextNo = $currentCount + 1;
+        $no_berkas = (string) $nextNo;
 
         // Ensure user exists
         $user = \App\Models\User::first();
@@ -127,7 +193,7 @@ class ArsipController extends Controller
                 // Item Specifics (Now directly in Arsip table)
                 'isi'           => $item['isi'],
                 'tahun'         => $item['tahun'] ?? $firstYear,
-                'tanggal_masuk' => $item['tanggal'] ?? date('Y-m-d'),
+                'tanggal_masuk' => $item['tanggal'],
                 'jumlah'        => $item['jumlah'] ?? 1,
                 'no_box'        => $item['no_box'] ?? '-',
                 'hak_akses'     => $item['hak_akses'] ?? '-',
@@ -161,7 +227,7 @@ class ArsipController extends Controller
         if ($type === 'pdf') {
             // Fetch data manually for the view
             $query = $export->query(); 
-            $arsips = $query->with('isiArsip')->get(); // Eager load isiArsip
+            $arsips = $query->get(); // isiArsip relationship removed
             
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('arsip.pdf', compact('arsips'));
             $pdf->setPaper('a4', 'landscape');

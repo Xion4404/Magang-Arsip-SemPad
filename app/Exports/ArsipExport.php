@@ -45,7 +45,7 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
                 $query->where(function($q) use ($search) {
                     $q->where('nama_berkas', 'like', "%{$search}%")
                       ->orWhere('no_berkas', 'like', "%{$search}%")
-                      ->orWhere('isi_berkas', 'like', "%{$search}%") // Note: This column might be removed/empty if using relation, but keeping for legacy compatibility
+                      ->orWhere('isi', 'like', "%{$search}%")
                       ->orWhereHas('klasifikasi', function($q2) use ($search) {
                           $q2->where('kode_klasifikasi', 'like', "%{$search}%");
                       });
@@ -84,23 +84,29 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
     public function headings(): array
     {
         return [
+            'No',
             'No Berkas',
             'Kode Klasifikasi',
             'Nama Berkas',
             'Isi Berkas',
-            'Tahun Berkas',
-            'Tanggal Masuk Berkas',
+            'Tahun',
+            'Tanggal',
             'Jumlah',
+            'Hak Akses',
             'Masa Simpan',
-            'Permanen/Musnah',
-            'No. Box/Lokasi',
-            'Jenis Arsip'
+            'Tindakan',
+            'Box',
+            'Unit Pengolah',
+            'Jenis'
         ];
     }
 
     public function map($arsip): array
     {
+        static $no = 0;
+        $no++;
         return [
+            $no,
             $arsip->no_berkas,
             $arsip->klasifikasi->kode_klasifikasi ?? '-',
             $arsip->nama_berkas,
@@ -108,23 +114,25 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
             $arsip->tahun,
             $arsip->tanggal_masuk,
             $arsip->jumlah,
-            $arsip->masa_simpan,
-            $arsip->tindakan_akhir,
-            $arsip->no_box,
-            $arsip->jenis_media,
+            $arsip->hak_akses ?? '-',
+            $arsip->masa_simpan ?? '-',
+            $arsip->tindakan_akhir ?? '-',
+            $arsip->no_box ?? '-',
+            $arsip->unit_pengolah ?? '-',
+            $arsip->jenis_media ?? '-',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         return [
-            5 => ['font' => ['bold' => true]], // Header row is now at row 5
+            5 => ['font' => ['bold' => true]],
         ];
     }
 
     public function startCell(): string
     {
-        return 'A5'; // Start data at A5 to make room for header
+        return 'A5';
     }
 
     public function drawings()
@@ -144,11 +152,13 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet;
+                $highestRow = $sheet->getHighestRow();
+                $lastColumn = 'N'; // 14 Columns (A-N)
 
-                // Merge cells for Title
-                $sheet->mergeCells('B1:K1');
-                $sheet->mergeCells('B2:K2');
-                $sheet->mergeCells('B3:K3');
+                // Merge cells for Title (Centered across table)
+                $sheet->mergeCells("B1:{$lastColumn}1");
+                $sheet->mergeCells("B2:{$lastColumn}2");
+                $sheet->mergeCells("B3:{$lastColumn}3");
 
                 // Set Title Text
                 $sheet->setCellValue('B1', 'PT SEMEN PADANG');
@@ -160,15 +170,27 @@ class ArsipExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSiz
                 $sheet->getStyle('B2')->getFont()->setBold(true)->setSize(14);
                 $sheet->getStyle('B3')->getFont()->setSize(10);
 
-                // Align Center
-                $sheet->getStyle('B1:B3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                // Align Title
+                $sheet->getStyle("B1:B3")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
                 // Style Table Header (Row 5)
-                $sheet->getStyle('A5:K5')->getFill()
+                $headerRange = "A5:{$lastColumn}5";
+                $sheet->getStyle($headerRange)->getFill()
                       ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                       ->getStartColor()->setARGB('FFFCE4E4'); // Light red
                 
-                $sheet->getStyle('A5:K5')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                // Style Whole Table (Borders)
+                $tableRange = "A5:{$lastColumn}{$highestRow}";
+                $sheet->getStyle($tableRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                
+                // Center Align specific columns: No(A), Tahun(F), Tanggal(G), Jumlah(H), Box(L), Jenis(N)
+                // Columns: A B C D E F G H I J K L M N
+                $sheet->getStyle("A6:A{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // No
+                $sheet->getStyle("F6:H{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Tahun, Tanggal, Jumlah
+                $sheet->getStyle("L6:L{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Box
+                $sheet->getStyle("N6:N{$highestRow}")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Jenis
             },
         ];
     }
