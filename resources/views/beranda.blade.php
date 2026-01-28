@@ -7,14 +7,19 @@
         {{-- HERO SECTION --}}
         <div class="bg-[#9d1b1b] px-8 pt-6 pb-20 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
             <div class="container mx-auto px-4 relative z-10 text-center md:text-left">
-                <h1 class="text-2xl md:text-3xl font-bold text-white tracking-wide mb-2">Dashboard Arsip & Peminjaman</h1>
+                <h1 class="text-2xl md:text-3xl font-bold text-white tracking-wide mb-2">Dashboard Arsip & Peminjaman
+                </h1>
                 <p class="text-red-100 text-sm opacity-90 font-light max-w-2xl">
                     Sistem informasi pengelolaan arsip dan monitoring peminjaman PT Semen Padang.
                 </p>
             </div>
             {{-- Decorative Elements --}}
-            <div class="hidden md:block absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-            <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            <div
+                class="hidden md:block absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none">
+            </div>
+            <div
+                class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent">
+            </div>
         </div>
 
         {{-- NAVIGATION TABS (Floating) --}}
@@ -53,21 +58,26 @@
                 {{-- STATS SUMMARY ROW --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <!-- Card 1: Total Transaksi -->
-                    <div class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-gray-400 hover:-translate-y-1 transition duration-300">
-                        <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Total Transaksi</p>
+                    <div
+                        class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-gray-400 hover:-translate-y-1 transition duration-300">
+                        <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Total Transaksi
+                        </p>
                         <p class="text-4xl font-extrabold text-gray-600">{{ $dipinjam + $kembali }}</p>
                     </div>
-                    
+
                     <!-- Card 2: Sedang Dipinjam -->
-                    <div class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-[#9d1b1b] hover:-translate-y-1 transition duration-300">
-                        <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sedang Dipinjam</p>
+                    <div
+                        class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-[#9d1b1b] hover:-translate-y-1 transition duration-300">
+                        <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sedang Dipinjam
+                        </p>
                         <p class="text-4xl font-extrabold text-[#9d1b1b]">{{ $dipinjam }}</p>
                     </div>
 
                     <!-- Card 3: Sudah Kembali -->
-                    <div class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-green-500 hover:-translate-y-1 transition duration-300">
+                    <div
+                        class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-red-300 hover:-translate-y-1 transition duration-300">
                         <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sudah Kembali</p>
-                        <p class="text-4xl font-extrabold text-green-500">{{ $kembali }}</p>
+                        <p class="text-4xl font-extrabold text-red-300">{{ $kembali }}</p>
                     </div>
                 </div>
 
@@ -78,9 +88,10 @@
 
                 {{-- CHART ROW 1: Donut & Pie (Balanced) --}}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    
+
                     <!-- 1. RASIO STATUS (Donut) -->
-                    <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300 flex flex-col relative overflow-hidden">
+                    <div
+                        class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300 flex flex-col relative overflow-hidden">
                         <div class="flex justify-between items-center mb-6 z-10 relative">
                             <div>
                                 <h3 class="text-gray-800 font-bold text-lg">Rasio Status</h3>
@@ -88,32 +99,39 @@
                             </div>
                             <div class="bg-red-50 p-2 rounded-lg text-[#9d1b1b]"><span class="text-lg">📉</span></div>
                         </div>
-                        
+
                         <div class="relative h-52 w-full flex justify-center items-center z-10">
                             <canvas id="statusChart"></canvas>
                         </div>
 
                         {{-- Decorative Blob --}}
-                        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                        <div
+                            class="absolute -bottom-10 -right-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50 pointer-events-none">
+                        </div>
                     </div>
 
                     <!-- 2. MEDIA ARSIP (Pie) - Moved here for Balance -->
-                    <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300 flex flex-col relative overflow-hidden">
+                    <div
+                        class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300 flex flex-col relative overflow-hidden">
                         <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-3">
-                            <h3 class="text-gray-800 font-bold text-lg flex items-center gap-2"><span class="text-blue-500">💿</span> Media Arsip</h3>
+                            <h3 class="text-gray-800 font-bold text-lg flex items-center gap-2"><span
+                                    class="text-blue-500">💿</span> Media Arsip</h3>
                             <div class="bg-blue-50 p-2 rounded-lg text-blue-600"><span class="text-lg">📊</span></div>
                         </div>
                         <div class="relative h-52 w-full flex justify-center items-center">
                             <canvas id="mediaChart"></canvas>
                         </div>
                         <div class="mt-4 text-center">
-                            <span class="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-200">Fisik (Hardfile) vs Digital (Softfile)</span>
+                            <span
+                                class="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-200">Fisik
+                                (Hardfile) vs Digital (Softfile)</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. TREN BULANAN (Bar) - Full Width at Bottom -->
-                <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300 flex flex-col relative overflow-hidden">
+                <div
+                    class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100/50 hover:shadow-2xl transition-all duration-300 flex flex-col relative overflow-hidden">
                     <div class="flex justify-between items-center mb-6 z-10 relative">
                         <div>
                             <h3 class="text-gray-800 font-bold text-lg">Tren Bulanan</h3>
@@ -121,20 +139,26 @@
                         </div>
                         <div class="bg-red-50 p-2 rounded-lg text-[#9d1b1b]"><span class="text-lg">📈</span></div>
                     </div>
-                    
+
                     <div class="relative h-64 w-full z-10">
                         <canvas id="trenChart"></canvas>
                     </div>
 
                     {{-- Decorative Blob --}}
-                    <div class="absolute -top-10 -left-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                    <div
+                        class="absolute -top-10 -left-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50 pointer-events-none">
+                    </div>
                 </div>
             </div>
 
             <div class="flex justify-center mb-12 mt-8">
-                <a href="/peminjaman" class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-[#9d1b1b] rounded-2xl shadow-lg hover:bg-[#801010] hover:shadow-xl transition-all transform hover:-translate-y-1">
+                <a href="/peminjaman"
+                    class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-[#9d1b1b] rounded-2xl shadow-lg hover:bg-[#801010] hover:shadow-xl transition-all transform hover:-translate-y-1">
                     <span>Kelola Data Peminjaman</span>
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
                 </a>
             </div>
 
@@ -168,7 +192,7 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             // Konfigurasi Default Font
-            Chart.defaults.font.family = "'Inter', 'sans-serif'";
+            Chart.defaults.font.family = "'Montserrat', 'sans-serif'";
             Chart.defaults.font.size = window.innerWidth < 768 ? 10 : 12; // Responsif font
 
             // --- 1. STATUS (DONUT) ---
@@ -180,7 +204,7 @@
                         labels: ['Dipinjam', 'Kembali'],
                         datasets: [{
                             data: [{{ $dipinjam }}, {{ $kembali }}],
-                            backgroundColor: ['#b91c1c', '#16a34a'],
+                            backgroundColor: ['#9d1b1b', '#fca5a5'], // Red Primary & Faded Red
                             borderWidth: 0,
                             hoverOffset: 4
                         }]
@@ -205,13 +229,13 @@
                             {
                                 label: 'Dipinjam',
                                 data: @json($dataDipinjam),
-                                backgroundColor: '#b91c1c',
+                                backgroundColor: '#9d1b1b', // Red Primary
                                 borderRadius: 2,
                             },
                             {
                                 label: 'Kembali',
                                 data: @json($dataKembali),
-                                backgroundColor: '#16a34a',
+                                backgroundColor: '#fca5a5', // Faded Red
                                 borderRadius: 2,
                             }
                         ]
@@ -237,7 +261,7 @@
                         labels: ['Hardfile', 'Softfile'],
                         datasets: [{
                             data: [{{ $mediaHardfile }}, {{ $mediaSoftfile }}],
-                            backgroundColor: ['#1f2937', '#3b82f6'],
+                            backgroundColor: ['#7f1d1d', '#fc8181'], // Dark Maroon & Soft Red
                             borderWidth: 2,
                             borderColor: '#ffffff'
                         }]
@@ -248,7 +272,7 @@
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { boxWidth: 10, padding: 10 }
+                                labels: { boxWidth: 10, padding: 10, font: { family: 'Montserrat' } }
                             }
                         }
                     }

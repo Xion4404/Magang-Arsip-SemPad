@@ -3,6 +3,7 @@
         showDeleteModal: false, 
         deleteUrl: '', 
         showSortModal: false, 
+        showSortDropdown: false,
         showFilesModal: false, 
         selectedFiles: [],
         filterStatus: '{{ request('status') ?? 'All' }}',
@@ -83,6 +84,33 @@
                             class="px-4 py-2.5 bg-red-600 border border-red-600 rounded-lg text-xs font-bold text-white hover:bg-red-700 transition shadow-sm flex items-center gap-2 animate-fade-in">
                             <i class="fas fa-trash-alt"></i> Hapus (<span x-text="selectedItems.length"></span>)
                         </button>
+                        <div class="relative">
+                            <button @click="showSortDropdown = !showSortDropdown" @click.away="showSortDropdown = false"
+                                class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
+                                <i class="fas fa-sort-amount-down text-gray-400"></i> Urutkan
+                            </button>
+                            <div x-show="showSortDropdown" style="display: none;"
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100">
+                                <ul class="text-xs font-medium text-gray-600">
+                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'latest_added']) }}"
+                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort', 'latest_added') == 'latest_added' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Terbaru
+                                            Ditambahkan</a></li>
+                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest_added']) }}"
+                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort') == 'oldest_added' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Terlama
+                                            Ditambahkan</a></li>
+                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'latest_date']) }}"
+                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort') == 'latest_date' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Tanggal
+                                            Pinjam Terbaru</a></li>
+                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest_date']) }}"
+                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort') == 'oldest_date' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Tanggal
+                                            Pinjam Terlama</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <button @click="showSortModal = true"
                             class="px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
                             <i class="fas fa-filter text-gray-400"></i> Filter
@@ -262,12 +290,13 @@
 
                                     {{-- STATUS --}}
                                     <td class="px-6 py-4 text-center border-r border-gray-100">
-                                        @if($detail->peminjaman->status == 'Sedang Dipinjam')
+                                        @if($detail->jenis_arsip != 'Softfile' && $detail->peminjaman->status == 'Sedang Dipinjam')
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-red-700 bg-red-50 border border-red-200">Dipinjam</span>
                                         @else
                                             <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-orange-700 bg-orange-50 border border-orange-200">Kembali</span>
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-red-300 bg-white border border-red-100">Sudah
+                                                Dikembalikan</span>
                                         @endif
                                         {{-- CHECKBOX --}}
                                     <td
@@ -281,7 +310,7 @@
                                     <td
                                         class="px-6 py-4 text-center whitespace-nowrap sticky right-0 bg-white group-hover:bg-red-50 border-gray-100 w-40 min-w-[160px]">
                                         <div class="flex justify-center items-center gap-1.5">
-                                            @if($detail->peminjaman->status == 'Sedang Dipinjam')
+                                            @if($detail->jenis_arsip != 'Softfile' && $detail->peminjaman->status == 'Sedang Dipinjam')
                                                 <form action="/peminjaman/{{ $detail->peminjaman->id }}/complete" method="POST">
                                                     @csrf @method('PATCH')
                                                     <button type="submit"
@@ -292,7 +321,7 @@
                                                 </form>
                                             @else
                                                 <button disabled
-                                                    class="w-7 h-7 flex items-center justify-center bg-rose-50 text-rose-300 rounded-lg border border-rose-100 cursor-not-allowed"
+                                                    class="w-7 h-7 flex items-center justify-center bg-gray-50 text-gray-300 rounded-lg border border-gray-100 cursor-not-allowed"
                                                     title="Sudah Selesai">
                                                     <i class="fas fa-check text-[10px]"></i>
                                                 </button>

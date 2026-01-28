@@ -17,26 +17,10 @@
     <div class="max-w-5xl mx-auto px-6 -mt-20 relative z-20 mb-10" x-data="peminjamanForm()">
 
         {{-- Alert Error --}}
-        @if ($errors->any())
-            <div class="mb-6 bg-red-50 border-l-4 border-red-700 p-4 rounded-r shadow-sm">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0"><svg class="h-5 w-5 text-red-700" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clip-rule="evenodd" />
-                        </svg></div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-bold text-red-800">Gagal Menyimpan Data!</h3>
-                        <ul class="mt-2 list-disc list-inside text-sm text-red-700">@foreach ($errors->all() as $error)<li>
-                            {{ $error }}
-                        </li>@endforeach</ul>
-                    </div>
-                </div>
-            </div>
-        @endif
+        {{-- Validasi Error dipindah ke Modal --}}
 
         <form action="/peminjaman" method="POST" enctype="multipart/form-data" @submit.prevent="submitForm($el)"
-            class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden" novalidate>
             @csrf
 
             <div class="p-8 space-y-8">
@@ -310,9 +294,49 @@
                 </div>
             </div>
         </div>
+
+        {{-- UPDATED SCRIPT: ADDED openDropdown to main scope --}}
+        <!-- Validation Modal -->
+        <div x-show="showValidationModal" style="display: none;"
+            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
+            <div @click.away="showValidationModal = false"
+                class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl border-t-8 border-[#9d1b1b]">
+
+                <div
+                    class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#9d1b1b] shadow-sm animate-bounce">
+                    <i class="fas fa-exclamation-triangle text-3xl"></i>
+                </div>
+
+                <h3 class="text-xl font-extrabold text-gray-800 mb-2">Perhatian!</h3>
+
+                <!-- Dynamic Error Message -->
+                <template x-if="serverErrors.length > 0">
+                    <div class="text-gray-500 mb-8 text-sm text-left bg-red-50 p-4 rounded-xl border border-red-100">
+                        <ul class="list-disc list-inside space-y-1">
+                            <template x-for="error in serverErrors">
+                                <li x-text="error" class="text-red-700 font-medium"></li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
+                <template x-if="serverErrors.length === 0">
+                    <p class="text-gray-500 mb-8 leading-relaxed">Mohon lengkapi semua field yang bertanda bintang
+                        (<span class="text-red-600">*</span>) sebelum menyimpan.</p>
+                </template>
+
+                <button @click="showValidationModal = false"
+                    class="w-full py-3.5 bg-[#9d1b1b] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-lg transform hover:scale-[1.02] transition">
+                    OK, Saya Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
     </div>
 
-    {{-- UPDATED SCRIPT: ADDED openDropdown to main scope --}}
     <script>
         const daftarArsip = @json($daftarArsip ?? []);
         document.addEventListener('alpine:init', () => {
@@ -321,10 +345,18 @@
                 items: [],
                 files: [{ id: Date.now(), name: null }],
                 showModal: false,
+                showValidationModal: false, // State Modal Validasi
+                serverErrors: @json($errors->all()),
                 searchQuery: '',
-                openDropdown: false, // DEFINISI VARIABEL DISINI
+                openDropdown: false,
 
                 tempItem: { source: 'db', id: null, display_name: '', nama_manual: '', no_box: '', akses: 'Biasa', media: 'Softfile', fisik: 'Berkas Asli' },
+
+                init() {
+                    if (this.serverErrors.length > 0) {
+                        this.showValidationModal = true;
+                    }
+                },
 
                 openModal() { this.tempItem = { source: 'db', id: null, display_name: '', nama_manual: '', no_box: '', akses: 'Biasa', media: 'Softfile', fisik: 'Berkas Asli' }; this.searchQuery = ''; this.showModal = true; },
                 closeModal() { this.showModal = false; },
@@ -336,17 +368,76 @@
                     }).slice(0, 10);
                 },
                 selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.klasifikasi_keamanan; this.searchQuery = arsip.nama_berkas; },
+
                 addItem() {
-                    if (this.tempItem.source === 'db' && !this.tempItem.id) return alert('Pilih arsip!');
-                    if (this.tempItem.source === 'manual' && !this.tempItem.nama_manual) return alert('Isi nama arsip!');
+                    if (this.tempItem.source === 'db' && !this.tempItem.id) {
+                        this.serverErrors = ['Silakan pilih arsip dari database!'];
+                        this.showValidationModal = true;
+                        return;
+                    }
+                    if (this.tempItem.source === 'manual' && !this.tempItem.nama_manual) {
+                        this.serverErrors = ['Isi nama arsip untuk input manual!'];
+                        this.showValidationModal = true;
+                        return;
+                    }
                     if (this.tempItem.source === 'manual') this.tempItem.display_name = this.tempItem.nama_manual;
                     this.items.push({ ...this.tempItem }); this.closeModal();
                 },
+
                 removeItem(index) { this.items.splice(index, 1); },
                 addFile() { this.files.push({ id: Date.now(), name: null }); },
                 removeFile(index) { if (this.files.length > 1) this.files.splice(index, 1); else this.files[0].name = null; },
                 handleFileChange(e, i) { this.files[i].name = e.target.files[0] ? e.target.files[0].name : null; },
-                submitForm(form) { if (!this.jabatan) return alert('Pilih Jabatan!'); if (!this.items.length) return alert('Minimal 1 arsip!'); if (!this.files.some(f => f.name)) return alert('Upload bukti!'); form.submit(); }
+
+                submitForm(form) {
+                    this.serverErrors = [];
+                    let formValid = true;
+
+                    // Mapping field names for friendly validation messages
+                    const fieldLabels = {
+                        'tanggal': 'Tanggal Peminjaman',
+                        'nama_peminjam': 'Nama Peminjam',
+                        'nip': 'NIP',
+                        'unit': 'Unit Kerja',
+                        'keperluan': 'Keperluan'
+                    };
+
+                    // CHECK ALL REQUIRED FIELDS MANUALLY
+                    const requiredFields = ['tanggal', 'nama_peminjam', 'nip', 'unit', 'keperluan'];
+
+                    requiredFields.forEach(field => {
+                        const input = form.querySelector(`[name="${field}"]`);
+                        if (!input || !input.value.trim()) {
+                            this.serverErrors.push(`Kotak ${fieldLabels[field]} harus diisi`);
+                            formValid = false;
+                        }
+                    });
+
+                    if (!this.jabatan) {
+                        this.serverErrors.push('Kotak Jabatan harus dipilih');
+                        formValid = false;
+                    }
+
+                    // ITEMS CHECK
+                    if (this.items.length === 0) {
+                        this.serverErrors.push('Minimal harus ada 1 arsip yang dipinjam');
+                        formValid = false;
+                    }
+
+                    // FILE CHECK (New Files)
+                    const hasFile = this.files.some(f => f.name !== null);
+                    if (!hasFile) {
+                        this.serverErrors.push('Bukti Peminjaman (File) harus diupload');
+                        formValid = false;
+                    }
+
+                    if (!formValid) {
+                        this.showValidationModal = true;
+                        return;
+                    }
+
+                    form.submit();
+                }
             }));
         });
     </script>
