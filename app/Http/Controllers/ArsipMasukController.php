@@ -11,7 +11,7 @@ class ArsipMasukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ArsipMasuk::orderBy('id', 'asc');
+        $query = ArsipMasuk::orderBy('id', 'desc');
 
         // Filter by Search (General)
         if ($request->has('search') && $request->search != '') {
@@ -35,13 +35,19 @@ class ArsipMasukController extends Controller
             $query->where('user_penerima', $request->penerima);
         }
 
+        // Filter by Year
+        if ($request->has('year') && $request->year != '') {
+            $query->whereYear('tanggal_terima', $request->year);
+        }
+
         $arsipMasuk = $query->get();
         
         // Get Options for Filters
         $unitAsalOptions = ArsipMasuk::select('unit_asal')->distinct()->pluck('unit_asal');
+        $yearOptions = ArsipMasuk::selectRaw('YEAR(tanggal_terima) as year')->distinct()->orderBy('year', 'desc')->pluck('year');
         $users = User::all();
 
-        return view('arsip-masuk.index', compact('arsipMasuk', 'unitAsalOptions', 'users'));
+        return view('arsip-masuk.index', compact('arsipMasuk', 'unitAsalOptions', 'yearOptions', 'users'));
     }
 
     public function show($id)
@@ -68,8 +74,44 @@ class ArsipMasukController extends Controller
 
         $arsipMasuk = ArsipMasuk::create($request->all());
 
-        return redirect()->route('arsip-masuk.berkas.create', $arsipMasuk->id)
-            ->with('success', 'Data Arsip Masuk berhasil disimpan. Silakan input berkas per box.');
+        return redirect()->route('arsip-masuk.index')
+            ->with('success', 'Data Arsip Masuk berhasil disimpan.');
+    }
+
+    public function edit($id)
+    {
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        $users = User::all();
+        return view('arsip-masuk.edit', compact('arsipMasuk', 'users'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'unit_asal' => 'required|string|max:255',
+            'nomor_berita_acara' => 'required|string|max:100',
+            'tanggal_terima' => 'required|date',
+            'jumlah_box_masuk' => 'required|integer',
+            'user_penerima' => 'required|exists:users,id',
+        ]);
+
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        $arsipMasuk->update($request->all());
+
+        return redirect()->route('arsip-masuk.index')
+            ->with('success', 'Data Arsip Masuk berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $arsipMasuk = ArsipMasuk::findOrFail($id);
+        
+        // Optional: Check dependencies (e.g. berkas logs) before deleting?
+        // Standard delete for now.
+        $arsipMasuk->delete();
+
+        return redirect()->route('arsip-masuk.index')
+            ->with('success', 'Data Arsip Masuk berhasil dihapus.');
     }
 
     public function createBerkas($id)

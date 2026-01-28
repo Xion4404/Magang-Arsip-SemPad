@@ -15,7 +15,7 @@ class MonitoringKaryawanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = LogAktivitas::with('user')->orderBy('id', 'asc');
+        $query = LogAktivitas::with('user')->orderBy('id', 'desc');
 
         // Search Filter
         if ($request->has('search') && $request->search != '') {
@@ -53,8 +53,9 @@ class MonitoringKaryawanController extends Controller
         $pemilahan = LogAktivitas::where('tahapan', 'Pemilahan')->count();
         $pendataan = LogAktivitas::where('tahapan', 'Pendataan')->count();
         $pelabelan = LogAktivitas::where('tahapan', 'Pelabelan')->count();
+        $inputEArsip = LogAktivitas::where('tahapan', 'Input E-Arsip')->count();
         
-        return view('monitoring.index', compact('monitoring', 'total', 'bulanIni', 'pemilahan', 'pendataan', 'pelabelan', 'users'));
+        return view('monitoring.index', compact('monitoring', 'total', 'bulanIni', 'pemilahan', 'pendataan', 'pelabelan', 'inputEArsip', 'users'));
     }
 
     /**
@@ -63,10 +64,8 @@ class MonitoringKaryawanController extends Controller
     public function create()
     {
         $users = User::all();
-        $allBerkas = BerkasArsipMasuk::with('arsipMasuk')->get();
-        // Get unique ArsipMasuk for the NBA dropdown
-        $arsipMasuk = ArsipMasuk::all();
-        return view('monitoring.create', compact('users', 'allBerkas', 'arsipMasuk'));
+        $arsipMasuk = ArsipMasuk::all(); // Get all ArsipMasuk for dropdown
+        return view('monitoring.create', compact('users', 'arsipMasuk'));
     }
 
     /**
@@ -76,29 +75,14 @@ class MonitoringKaryawanController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'berkas_id' => 'required|exists:berkas_arsip_masuk,id',
-            'tahapan' => 'required|string|in:Pemilahan,Pendataan,Pelabelan,Input E Arsip',
+            'arsip_masuk_id' => 'required|exists:arsip_masuk,id',
+            'tahapan' => 'required|string|in:Pemilahan,Pendataan,Pelabelan,Input E-Arsip',
             'jumlah_box_selesai' => 'nullable|integer',
             'tanggal_kerja' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
 
-        $berkas = BerkasArsipMasuk::with('arsipMasuk')->findOrFail($request->berkas_id);
-        $arsipMasuk = $berkas->arsipMasuk;
-
-        // Append box and file info to keterangan
-        $keterangan = $request->keterangan;
-        $boxInfo = " | Pengerjaan Box: " . $berkas->no_box;
-        $fileInfo = " | Berkas: " . $berkas->nama_berkas;
-        
-        // Handle Box Info
-        if (strpos($keterangan, "Pengerjaan Box:") === false) {
-             $keterangan .= $boxInfo;
-        }
-        // Handle File Info
-        if (strpos($keterangan, "Berkas:") === false) {
-             $keterangan .= $fileInfo;
-        }
+        $arsipMasuk = ArsipMasuk::findOrFail($request->arsip_masuk_id);
 
         LogAktivitas::create([
             'user_id' => $request->user_id,
@@ -109,9 +93,11 @@ class MonitoringKaryawanController extends Controller
             'jumlah_box_selesai' => $request->jumlah_box_selesai ?? 0,
             'tanggal_kerja' => $request->tanggal_kerja,
             'unit_kerja' => $arsipMasuk->unit_asal,
-            'keterangan' => $keterangan,
+            'keterangan' => $request->keterangan,
             'status_kerja' => 'Proses', // Default status
         ]);
+        
+        return redirect()->route('monitoring.index')->with('success', 'Data Monitoring berhasil ditambahkan!');
     }
 
     /**
@@ -129,44 +115,24 @@ class MonitoringKaryawanController extends Controller
     {
         $monitoring = LogAktivitas::findOrFail($id);
         $users = User::all();
-        $allBerkas = BerkasArsipMasuk::with('arsipMasuk')->get();
-        return view('monitoring.edit', compact('monitoring', 'users', 'allBerkas'));
+        $arsipMasuk = ArsipMasuk::all();
+        return view('monitoring.edit', compact('monitoring', 'users', 'arsipMasuk'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'berkas_id' => 'required|exists:berkas_arsip_masuk,id',
-            'tahapan' => 'required|string|in:Pemilahan,Pendataan,Pelabelan,Input E Arsip',
+            'arsip_masuk_id' => 'required|exists:arsip_masuk,id',
+            'tahapan' => 'required|string|in:Pemilahan,Pendataan,Pelabelan,Input E-Arsip',
             'jumlah_box_selesai' => 'nullable|integer',
             'tanggal_kerja' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
 
         $logAktivitas = LogAktivitas::findOrFail($id);
-        $berkas = BerkasArsipMasuk::with('arsipMasuk')->findOrFail($request->berkas_id);
-        $arsipMasuk = $berkas->arsipMasuk;
-        
-        // Append/Update box and file info in keterangan
-        $keterangan = $request->keterangan;
-        $boxInfo = " | Pengerjaan Box: " . $berkas->no_box;
-        $fileInfo = " | Berkas: " . $berkas->nama_berkas;
-
-        // Update Box Info
-        if (preg_match('/ \| Pengerjaan Box: .*/', $keterangan)) {
-            $keterangan = preg_replace('/ \| Pengerjaan Box: [^|]*/', $boxInfo, $keterangan);
-        } else {
-             $keterangan .= $boxInfo;
-        }
-
-        // Update File Info
-        if (preg_match('/ \| Berkas: .*/', $keterangan)) {
-            $keterangan = preg_replace('/ \| Berkas: .*/', $fileInfo, $keterangan);
-        } else {
-             $keterangan .= $fileInfo;
-        }
-
+        $arsipMasuk = ArsipMasuk::findOrFail($request->arsip_masuk_id);
+    
         $logAktivitas->update([
             'user_id' => $request->user_id,
             'arsip_masuk_id' => $arsipMasuk->id,
@@ -176,7 +142,7 @@ class MonitoringKaryawanController extends Controller
             'jumlah_box_selesai' => $request->jumlah_box_selesai ?? 0,
             'tanggal_kerja' => $request->tanggal_kerja,
             'unit_kerja' => $arsipMasuk->unit_asal,
-            'keterangan' => $keterangan,
+            'keterangan' => $request->keterangan,
         ]);
 
         return redirect()->route('monitoring.index')->with('success', 'Data berhasil diperbarui!');
@@ -198,7 +164,7 @@ class MonitoringKaryawanController extends Controller
     public function advanceStage($id)
     {
         $monitoring = LogAktivitas::findOrFail($id);
-        $stages = ['Pemilahan', 'Pendataan', 'Pelabelan', 'Input E Arsip'];
+        $stages = ['Pemilahan', 'Pendataan', 'Pelabelan', 'Input E-Arsip'];
         
         $currentStageIndex = array_search($monitoring->tahapan, $stages);
         

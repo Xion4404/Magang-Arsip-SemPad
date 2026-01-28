@@ -31,26 +31,14 @@
                          <input type="date" name="tanggal_kerja" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
                      </div>
 
-                     <!-- Nomor Box (Filter) -->
+                     <!-- Nomor Berita Acara -->
                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Box</label>
-                         <select id="box_filter" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
-                             <option value="" disabled selected>Pilih Nomor Box</option>
-                             @php
-                                 $uniqueBoxes = $allBerkas->unique('no_box')->sortBy('no_box');
-                             @endphp
-                             @foreach($uniqueBoxes as $box)
-                                 <option value="{{ $box->no_box }}">Box {{ $box->no_box }}</option>
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Berita Acara</label>
+                         <select name="arsip_masuk_id" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                             <option value="" disabled selected>Pilih Nomor Berita Acara</option>
+                             @foreach($arsipMasuk as $arsip)
+                                 <option value="{{ $arsip->id }}">{{ $arsip->nomor_berita_acara }} ({{ $arsip->unit_asal }})</option>
                              @endforeach
-                         </select>
-                     </div>
-
-                     <!-- Nama Berkas -->
-                     <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nama Berkas</label>
-                         <select name="berkas_id" id="berkas_select" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
-                             <option value="" disabled selected>Pilih Nomor Box Terlebih Dahulu</option>
-                             <!-- Options populated by JS -->
                          </select>
                      </div>
 
@@ -74,49 +62,10 @@
                             <option value="Pemilahan">Pemilahan</option>
                             <option value="Pendataan">Pendataan</option>
                             <option value="Pelabelan">Pelabelan</option>
+                            <option value="Input E-Arsip">Input E-Arsip</option>
                          </select>
                      </div>
                      
-                     <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const boxFilter = document.getElementById('box_filter');
-                            const berkasSelect = document.getElementById('berkas_select');
-                            
-                            // Pass data from Blade to JS
-                            const allBerkas = @json($allBerkas);
-
-                            function filterBerkas() {
-                                const selectedBox = boxFilter.value;
-                                
-                                // Reset Berkas Dropdown
-                                berkasSelect.innerHTML = '<option value="" disabled selected>Pilih Nama Berkas</option>';
-                                
-                                if (!selectedBox) return;
-
-                                // Filter berkas based on selected box
-                                const filtered = allBerkas.filter(item => item.no_box == selectedBox);
-                                
-                                if (filtered.length === 0) {
-                                    berkasSelect.innerHTML = '<option value="" disabled>Tidak ada berkas di box ini</option>';
-                                    return;
-                                }
-
-                                filtered.forEach(item => {
-                                    const option = document.createElement('option');
-                                    option.value = item.id;
-                                    // Display format: Nama Berkas (Unit Asal)
-                                    // We need safety check for nested relation
-                                    const unitAsal = item.arsip_masuk ? item.arsip_masuk.unit_asal : '-';
-                                    option.textContent = `${item.nama_berkas} (${unitAsal})`;
-                                    berkasSelect.appendChild(option);
-                                });
-                            }
-
-                            if(boxFilter) {
-                                boxFilter.addEventListener('change', filterBerkas);
-                            }
-                        });
-                     </script>
     
                  </div>
     

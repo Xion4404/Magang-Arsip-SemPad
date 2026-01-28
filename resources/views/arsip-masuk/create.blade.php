@@ -3,7 +3,7 @@
         <div class="bg-[#8B1A1A] rounded-t-2xl shadow-lg relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-red-900 to-[#8B1A1A]"></div>
             <div class="p-8 relative z-10">
-                <h2 class="text-3xl font-bold text-white">Input Arsip Masuk (Tahap 1/2)</h2>
+                <h2 class="text-3xl font-bold text-white">Input Arsip Masuk</h2>
                 <p class="text-red-100 mt-2">Data awal arsip masuk</p>
             </div>
         </div>
@@ -93,7 +93,7 @@
                          Batal
                      </a>
                      <button type="submit" class="bg-[#8B1A1A] hover:bg-[#6e1515] text-white font-bold py-3 px-10 rounded-lg shadow-lg transform transition hover:scale-105">
-                         Lanjut ke Data Berkas
+                         Simpan
                      </button>
                  </div>
             </form>

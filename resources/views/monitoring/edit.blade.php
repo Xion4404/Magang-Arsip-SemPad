@@ -32,53 +32,14 @@
                          <input type="date" name="tanggal_kerja" value="{{ $monitoring->tanggal_kerja }}" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
                      </div>
 
-                     <!-- Nomor Box (Filter) -->
+                     <!-- Nomor Berita Acara -->
                      <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Box</label>
-                         @php
-                            $currentBox = null;
-                            if (preg_match('/Pengerjaan Box:\s*([^\s|]+)/', $monitoring->keterangan, $matches)) {
-                                $currentBox = $matches[1];
-                            }
-                            $uniqueBoxes = $allBerkas->unique('no_box')->sortBy('no_box');
-                         @endphp
-                         <select id="box_filter" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
-                             <option value="" disabled {{ is_null($currentBox) ? 'selected' : '' }}>Pilih Nomor Box</option>
-                             @foreach($uniqueBoxes as $box)
-                                 <option value="{{ $box->no_box }}" {{ $currentBox == $box->no_box ? 'selected' : '' }}>Box {{ $box->no_box }}</option>
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Berita Acara</label>
+                         <select name="arsip_masuk_id" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                             <option value="" disabled>Pilih Nomor Berita Acara</option>
+                             @foreach($arsipMasuk as $arsip)
+                                 <option value="{{ $arsip->id }}" {{ $monitoring->arsip_masuk_id == $arsip->id ? 'selected' : '' }}>{{ $arsip->nomor_berita_acara }} ({{ $arsip->unit_asal }})</option>
                              @endforeach
-                         </select>
-                     </div>
-
-                     <!-- Jumlah Box Selesai -->
-                     <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Jumlah Box Selesai</label>
-                         <input type="number" name="jumlah_box_selesai" value="{{ $monitoring->jumlah_box_selesai }}" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="0">
-                     </div>
-
-                     <!-- Nama Berkas -->
-                     <div>
-                         <label class="block text-gray-800 font-bold mb-2 text-sm">Nama Berkas</label>
-                         @php
-                            $currentBerkasName = null;
-                            $currentBerkasId = null;
-                            if (preg_match('/Berkas:\s*([^|]+)/', $monitoring->keterangan, $matches)) {
-                                $currentBerkasName = trim($matches[1]);
-                                // Try to find the ID based on name and box/arsip if possible, 
-                                // but name is unique enough for display. 
-                                // To find ID, we check $allBerkas.
-                                // We filtered by Box, so we should look for name in that box? 
-                                // Actually we just need to find *a* berkas that matches to set the ID.
-                                $foundBerkas = $allBerkas->first(function($item) use ($currentBerkasName, $currentBox) {
-                                    return $item->nama_berkas === $currentBerkasName && 
-                                           ($currentBox ? $item->no_box == $currentBox : true);
-                                });
-                                if($foundBerkas) $currentBerkasId = $foundBerkas->id;
-                            }
-                         @endphp
-                         <select name="berkas_id" id="berkas_select" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" data-selected="{{ $currentBerkasId }}">
-                             <option value="" disabled selected>Pilih Nomor Box Terlebih Dahulu</option>
-                             <!-- Options populated by JS -->
                          </select>
                      </div>
 
@@ -90,7 +51,14 @@
                             <option value="Pemilahan" {{ $monitoring->tahapan == 'Pemilahan' ? 'selected' : '' }}>Pemilahan</option>
                             <option value="Pendataan" {{ $monitoring->tahapan == 'Pendataan' ? 'selected' : '' }}>Pendataan</option>
                             <option value="Pelabelan" {{ $monitoring->tahapan == 'Pelabelan' ? 'selected' : '' }}>Pelabelan</option>
+                            <option value="Input E-Arsip" {{ $monitoring->tahapan == 'Input E-Arsip' ? 'selected' : '' }}>Input E-Arsip</option>
                          </select>
+                     </div>
+
+                     <!-- Jumlah Box Selesai -->
+                     <div>
+                         <label class="block text-gray-800 font-bold mb-2 text-sm">Jumlah Box Selesai</label>
+                         <input type="number" name="jumlah_box_selesai" value="{{ $monitoring->jumlah_box_selesai }}" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="0">
                      </div>
 
                      <!-- Keterangan -->
@@ -99,51 +67,7 @@
                          <textarea name="keterangan" rows="3" class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="Opsional">{{ $monitoring->keterangan }}</textarea>
                      </div>
 
-                     <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const boxFilter = document.getElementById('box_filter');
-                            const berkasSelect = document.getElementById('berkas_select');
-                            const allBerkas = @json($allBerkas);
-                            const initialSelectedBerkasId = berkasSelect.getAttribute('data-selected');
 
-                            function filterBerkas(selectedId = null) {
-                                const selectedBox = boxFilter.value;
-                                
-                                berkasSelect.innerHTML = '<option value="" disabled selected>Pilih Nama Berkas</option>';
-                                
-                                if (!selectedBox) return;
-
-                                const filtered = allBerkas.filter(item => item.no_box == selectedBox);
-                                
-                                if (filtered.length === 0) {
-                                    berkasSelect.innerHTML = '<option value="" disabled>Tidak ada berkas di box ini</option>';
-                                    return;
-                                }
-
-                                filtered.forEach(item => {
-                                    const option = document.createElement('option');
-                                    option.value = item.id;
-                                    const unitAsal = item.arsip_masuk ? item.arsip_masuk.unit_asal : '-';
-                                    option.textContent = `${item.nama_berkas} (${unitAsal})`;
-                                    
-                                    if(selectedId && item.id == selectedId) {
-                                        option.selected = true;
-                                    }
-                                    
-                                    berkasSelect.appendChild(option);
-                                });
-                            }
-
-                            if(boxFilter) {
-                                boxFilter.addEventListener('change', () => filterBerkas());
-                                
-                                // Initial load
-                                if(boxFilter.value) {
-                                    filterBerkas(initialSelectedBerkasId);
-                                }
-                            }
-                        });
-                     </script>
     
                      <!-- Empty Div for Spacing -->
                      <div class="hidden md:block"></div>
