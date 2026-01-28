@@ -14,6 +14,7 @@ use App\Http\Controllers\ManagementAkunController;
 // ==========================================
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandingController;
 
 // ==========================================
 // 1. AUTHENTICATION
@@ -23,13 +24,14 @@ Route::post('/login', [LoginController::class, 'authenticate'])->name('login.aut
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ==========================================
+// 1b. LANDING PAGE (PUBLIC)
+// ==========================================
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+
+// ==========================================
 // 2. PROTECTED ROUTES (Requires Login)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
-
-    Route::get('/', function () {
-        return redirect('/beranda');
-    });
 
     Route::get('/beranda', [DashboardController::class, 'index'])->name('beranda');
 
@@ -100,6 +102,11 @@ Route::middleware(['auth'])->group(function () {
 // ==========================================
 // ==========================================
     Route::resource('management-akun', ManagementAkunController::class);
+
+    // ==========================================
+    // 8. FITUR MANAJEMEN MEDIA
+    // ==========================================
+    Route::resource('manajemen-media', \App\Http\Controllers\ManajemenMediaController::class);
 
 
 

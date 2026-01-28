@@ -1,8 +1,11 @@
 <aside class="bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out"
     :class="sidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full opacity-0 overflow-hidden'">
-    <div class="p-6 flex items-center justify-center gap-2 border-b border-gray-100 min-w-[16rem]">
-        <img src="{{ asset('images/logo-semen-padang.png') }}" alt="Logo PT Semen Padang" class="h-12 w-auto">
-        <span class="font-bold text-gray-800 text-sm">PT SEMEN PADANG</span>
+    <div class="p-6 border-b border-gray-100 min-w-[16rem]">
+        <a href="{{ route('landing') }}" class="flex items-center justify-center gap-2 hover:opacity-80 transition"
+            title="Kembali ke Landing Page">
+            <img src="{{ asset('images/logo-semen-padang.png') }}" alt="Logo PT Semen Padang" class="h-12 w-auto">
+            <span class="font-bold text-gray-800 text-sm">PT SEMEN PADANG</span>
+        </a>
     </div>
 
     <div class="px-6 py-6 text-center min-w-[16rem]">
@@ -85,7 +88,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span class="whitespace-nowrap">Management Akun</span>
+                <span class="whitespace-nowrap">Manajemen Akun</span>
             </a>
 
             <a href="#"
@@ -97,7 +100,7 @@
                 <span class="whitespace-nowrap">Manajemen Unit</span>
             </a>
 
-            <a href="#"
+            <a href="{{ route('manajemen-media.index') }}"
                 class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('manajemen-media*') ? 'bg-red-800 text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-red-700' }} rounded-lg transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

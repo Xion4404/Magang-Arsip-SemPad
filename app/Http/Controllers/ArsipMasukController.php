@@ -8,7 +8,11 @@ class ArsipMasukController extends Controller
 {
     public function index()
     {
-        return view('arsip-masuk.index');
+        $arsipMasuk = \App\Models\ArsipMasuk::with('penerima')
+            ->latest('tanggal_terima')
+            ->paginate(10);
+
+        return view('arsip-masuk.index', compact('arsipMasuk'));
     }
 
     public function create()
