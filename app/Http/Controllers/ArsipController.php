@@ -192,7 +192,7 @@ class ArsipController extends Controller
                 
                 // Item Specifics (Now directly in Arsip table)
                 'isi'           => $item['isi'],
-                'tahun'         => $item['tahun'] ?? $firstYear,
+                'tahun'         => $item['tahun'] ?? null,
                 'tanggal_masuk' => $item['tanggal'],
                 'jumlah'        => $item['jumlah'] ?? 1,
                 'no_box'        => $item['no_box'] ?? '-',
@@ -204,6 +204,83 @@ class ArsipController extends Controller
         }
 
         return redirect('/arsip')->with('success', "Data arsip berhasil ditambahkan! Nomor Berkas: $no_berkas");
+    }
+
+    public function edit($id)
+    {
+        $arsip = Arsip::with('klasifikasi')->findOrFail($id);
+        
+        // Use existing nextNumber logic (though we won't use it for creation, just to keep view happy or we pass actual)
+        // Actually, we should pass the existing no_berkas
+        $nextNumber = $arsip->no_berkas;
+
+        // Format data for the view's JS (similar to isi_berkas structure)
+        // We only have ONE item here because we are editing a single row ID from the index
+        $initialData = [
+            [
+                'isi' => $arsip->isi,
+                'tahun' => $arsip->tahun,
+                'tanggal' => $arsip->tanggal_masuk,
+                'jumlah' => $arsip->jumlah,
+                'no_box' => $arsip->no_box,
+                'hak_akses' => $arsip->hak_akses,
+                'jenis_media' => $arsip->jenis_media,
+                'masa_simpan' => $arsip->masa_simpan,
+                'tindakan_akhir' => $arsip->tindakan_akhir,
+                'unit_pengolah' => $arsip->unit_pengolah,
+                'kode_klasifikasi' => $arsip->klasifikasi->kode_klasifikasi ?? '',
+                'klasifikasi_id' => $arsip->klasifikasi_id,
+            ]
+        ];
+
+        return view('arsip.input-arsip', compact('arsip', 'nextNumber', 'initialData'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $arsip = Arsip::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_berkas' => 'required|string',
+            'isi_berkas' => 'required|array|min:1',
+            'isi_berkas.*.isi' => 'required|string',
+            'isi_berkas.*.unit_pengolah' => 'required|string',
+            'isi_berkas.*.klasifikasi_id' => 'required|exists:master_klasifikasi,id',
+            'isi_berkas.*.tahun' => 'nullable|integer',
+            'isi_berkas.*.tanggal' => 'nullable|date',
+            'isi_berkas.*.jumlah' => 'nullable|integer',
+            'isi_berkas.*.no_box' => 'nullable|string',
+            'isi_berkas.*.hak_akses' => 'nullable|string',
+            'isi_berkas.*.jenis_media' => 'nullable|string',
+            'isi_berkas.*.masa_simpan' => 'nullable|string',
+            'isi_berkas.*.tindakan_akhir' => 'nullable|string',
+        ]);
+
+        // Since we are editing a SPECIFIC Single Row ID, we only take the FIRST item from the list
+        // (The UI enforces 1 item in edit mode usually, or we just take the first one if they added multiple - but logically edit is for one item)
+        // However, if the user "Adds" more items in Edit Mode, it's ambiguous. 
+        // For SAFETY in this specific "Edit Row" context, we update the CURRENT ID with the FIRST item data.
+        // If they added *new* items in the list, we optionally could create them, but that complicates "Edit Single Item".
+        // Let's assume strict 1-to-1 update for simplicity as per "Edit Data" on a row context.
+        
+        $item = $validated['isi_berkas'][0];
+
+        $arsip->update([
+            'nama_berkas'   => $validated['nama_berkas'],
+            'klasifikasi_id'=> $item['klasifikasi_id'],
+            'unit_pengolah' => $item['unit_pengolah'],
+            'isi'           => $item['isi'],
+            'tahun'         => $item['tahun'] ?? null,
+            'tanggal_masuk' => $item['tanggal'],
+            'jumlah'        => $item['jumlah'] ?? 1,
+            'no_box'        => $item['no_box'] ?? '-',
+            'hak_akses'     => $item['hak_akses'] ?? '-',
+            'jenis_media'   => $item['jenis_media'] ?? 'Kertas',
+            'masa_simpan'   => $item['masa_simpan'] ?? '-',
+            'tindakan_akhir'=> $item['tindakan_akhir'] ?? '-',
+        ]);
+
+        return redirect('/arsip')->with('success', 'Data arsip berhasil diperbarui!');
     }
 
     public function export(Request $request) 

@@ -1,84 +1,5 @@
 <x-layout>
-    <div x-data="{
-        formStep: 1,
-        isiBerkas: {{ json_encode(old('isi_berkas', [])) }},
-        newIsi: '',
-        newTahun: '',
-        newTanggal: '',
-        newJumlah: 1,
-        newNoBox: '',
-        newHakAkses: '', 
-        newMedia: '',
-        newMasaSimpan: '',
-        newTindakan: 'Musnah',
-        namaBerkas: '',
-        unitPengolah: '',
-        kodeKlasifikasi: '',
-        addIsi() {
-            if (this.newIsi.trim() !== '') {
-                this.isiBerkas.push({
-                    isi: this.newIsi.trim(),
-                    tahun: this.newTahun,
-                    tanggal: this.newTanggal,
-                    jumlah: this.newJumlah,
-                    no_box: this.newNoBox,
-                    hak_akses: this.newHakAkses,
-                    jenis_media: this.newMedia || 'Kertas', 
-                    masa_simpan: this.newMasaSimpan,
-                    tindakan_akhir: this.newTindakan,
-                    unit_pengolah: this.unitPengolah,
-                    kode_klasifikasi: this.kodeKlasifikasi,
-                    klasifikasi_id: this.klasifikasiId
-                });
-                
-                /* Reset Item Fields */
-                this.newIsi = '';
-                this.newTahun = ''; 
-                this.newTanggal = '';
-                this.newJumlah = 1;
-                this.newNoBox = '';
-                this.newMedia = '';
-                this.unitPengolah = '';
-                this.kodeKlasifikasi = '';
-                this.klasifikasiId = '';
-
-                /* Reset Unit & Metadata Fields */
-                /* Reset Unit & Metadata Fields */
-                // Valid reset via x-model
-                
-                this.newHakAkses = '';
-                this.newMasaSimpan = '';
-                this.newTindakan = '';
-
-                /* Reset Classification Dropdown */
-                this.$dispatch('reset-selection');
-                
-                /* Focus back to Unit Pengolah to start over */
-                this.$nextTick(() => {
-                    const unitInput = document.querySelector('[name=unit_pengolah]');
-                    if(unitInput) unitInput.focus();
-                });
-            }
-        },
-        removeIsi(index) {
-            this.isiBerkas.splice(index, 1);
-        },
-        validateStep1() {
-            const nama = document.querySelector('[name=nama_berkas]').value;
-            if (!nama) {
-                alert('Mohon lengkapi Nama Berkas terlebih dahulu.');
-                return;
-            }
-            this.formStep = 2;
-        },
-        updateDefaults(data) {
-            this.newHakAkses = data.hak_akses || '';
-            this.newMasaSimpan = data.masa_simpan || '';
-            this.newTindakan = data.tindakan || '';
-            this.kodeKlasifikasi = data.code || '';
-            this.klasifikasiId = data.id || '';
-        }
-    }" @classification-selected="updateDefaults($event.detail)">
+    <div x-data="arsipForm()" @classification-selected="updateDefaults($event.detail)">
 
         {{-- Error Alert --}}
         @if ($errors->any())
@@ -104,8 +25,11 @@
             
             <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col min-h-[600px]">
                 
-                <form action="{{ route('arsip.store') }}" method="POST" class="flex flex-col flex-1 h-full">
+                <form action="{{ isset($arsip) ? route('arsip.update', $arsip->id) : route('arsip.store') }}" method="POST" class="flex flex-col flex-1 h-full">
                     @csrf
+                    @if(isset($arsip))
+                        @method('PUT')
+                    @endif
                     
                     {{-- Header --}}
                     <div class="px-8 py-6 border-b border-gray-50 bg-gradient-to-r from-red-600 to-red-800 flex justify-between items-center shrink-0">
@@ -114,7 +38,7 @@
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
                             <div>
-                                <h1 class="text-2xl font-black text-white tracking-tight">Input Daftar Arsip</h1>
+                                <h1 class="text-2xl font-black text-white tracking-tight">{{ isset($arsip) ? 'Edit Arsip' : 'Input Daftar Arsip' }}</h1>
                                 <p class="text-red-100 text-sm font-medium">Kelola dokumen anda dengan mudah dan rapi.</p>
                             </div>
                         </div>
@@ -159,7 +83,7 @@
                                             <input type="text" value="{{ $nextNumber ?? 'AUTO' }}" disabled
                                                 class="w-full pl-12 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-gray-50/50 text-gray-800 font-bold text-lg shadow-sm cursor-not-allowed">
                                             <div class="absolute inset-y-0 right-0 pr-5 flex items-center">
-                                                 <span class="px-3 py-1 bg-gray-200 text-gray-500 text-xs font-bold rounded-full">AUTO</span>
+                                                 <span class="px-3 py-1 bg-gray-200 text-gray-500 text-xs font-bold rounded-full">{{ isset($arsip) ? 'EXISTING' : 'AUTO' }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -200,7 +124,7 @@
                                     {{-- Unit Pengolah --}}
                                     <div class="group">
                                         <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-red-700 text-sm uppercase tracking-wide">Unit Pengolah</label>
-                                        <select name="unit_pengolah" x-model="unitPengolah" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition shadow-sm font-bold text-gray-800 appearance-none cursor-pointer">
+                                        <select :name="isEdit ? 'isi_berkas[0][unit_pengolah]' : 'unit_pengolah'" x-model="unitPengolah" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition shadow-sm font-bold text-gray-800 appearance-none cursor-pointer">
                                             <option value="" disabled selected>Pilih Unit Asal</option>
                                             <option value="Sistem Manajemen">Sistem Manajemen</option>
                                             <option value="Internal Audit">Internal Audit</option>
@@ -244,95 +168,13 @@
                                         </select>
                                     </div>
 
+                                    {{-- Hidden Input for Classification (Must be in parent scope) --}}
+                                    <template x-if="isEdit">
+                                        <input type="hidden" name="isi_berkas[0][klasifikasi_id]" :value="klasifikasiId">
+                                    </template>
+
                                     {{-- Kode Klasifikasi --}}
-                                    <div x-data="{
-                                        open: false,
-                                        step: 1, 
-                                        breadcrumbs: [],
-                                        options: [],
-                                        loading: false,
-                                        selectedItem: null,
-                                        displayText: 'Pilih Kode Klasifikasi',
-                                        selectedJraType: null,
-
-                                        init() {
-                                            this.fetchOptions(1);
-                                        },
-                                        
-                                        toggle() {
-                                            this.open = !this.open;
-                                            if(this.open && this.options.length === 0) {
-                                                this.fetchOptions(1);
-                                            }
-                                        },
-
-                                        fetchOptions(level, parent = null) {
-                                            this.loading = true;
-                                            let url = `/api/klasifikasi-options?level=${level}&parent=${parent}`;
-                                            
-                                            fetch(url)
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    this.options = data;
-                                                    this.loading = false;
-                                                });
-                                        },
-
-                                        selectOption(opt) {
-                                            if (this.step === 1) {
-                                                this.breadcrumbs.push({ level: 1, label: opt.label, value: opt.code });
-                                                this.step = 2;
-                                                this.fetchOptions(2, opt.code);
-                                            } else if (this.step === 2) {
-                                                this.breadcrumbs.push({ level: 2, label: opt.label, value: opt.code });
-                                                this.step = 3;
-                                                this.fetchOptions(3, opt.code);
-                                            } else if (this.step === 3) {
-                                                this.selectedItem = opt;
-                                                this.displayText = opt.label;
-                                                
-                                                // document.querySelector('[name=klasifikasi_id]').value = opt.id; // Removed, handled by parent state
-                                                
-                                                // Metadata displays now handled by x-text in parent
-                                                // document.querySelector('#display_masa_simpan').innerText = opt.masa_simpan;
-                                                // document.querySelector('#display_tindakan').innerText = opt.tindakan_akhir;
-                                                // document.querySelector('#display_hak_akses').innerText = opt.hak_akses || '-';
-                                                
-                                                // document.querySelector('[name=hak_akses]').value = opt.hak_akses || '-'; // Removed, bound in parent
-
-                                                this.$dispatch('classification-selected', { 
-                                                    hak_akses: opt.hak_akses, 
-                                                    masa_simpan: opt.masa_simpan, 
-                                                    tindakan: opt.tindakan_akhir,
-                                                    code: opt.code,
-                                                    id: opt.id
-                                                });
-
-                                                this.open = false;
-                                            }
-                                        },
-
-                                        reset() {
-                                            this.step = 1;
-                                            this.breadcrumbs = [];
-                                            this.selectedItem = null;
-                                            this.displayText = 'Pilih Kode Klasifikasi';
-                                            this.displayText = 'Pilih Kode Klasifikasi';
-                                            // document.querySelector('[name=klasifikasi_id]').value = ''; // Removed
-                                            // document.querySelector('[name=hak_akses]').value = ''; // Removed
-                                            this.fetchOptions(1);
-                                            this.open = false; 
-                                        },
-                                        
-                                        goBack() {
-                                            if (this.step > 1) {
-                                                this.step--;
-                                                this.breadcrumbs.pop();
-                                                const parent = this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1].value : null;
-                                                this.fetchOptions(this.step, parent);
-                                            }
-                                        }
-                                    }" class="relative group" @reset-selection.window="reset()">
+<div x-data="classificationDropdown({{ json_encode($initialData[0] ?? null) }})" class="relative group" @reset-selection.window="reset()" @set-classification.window="setFromParent($event.detail)">
                                         <label class="block font-bold text-gray-700 mb-2 text-sm uppercase tracking-wide">Kode Klasifikasi</label>
                                         {{-- Bind validation input to parent state
                                         <input type="hidden" name="klasifikasi_id" x-model="klasifikasiId"> --}}
@@ -340,7 +182,7 @@
                                         {{-- Trigger --}}
                                         <div @click="toggle()" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:ring-4 ring-offset-0 focus:ring-red-100 ring-red-500 cursor-pointer flex justify-between items-center shadow-sm hover:bg-gray-50 transition-colors">
                                             <span x-text="displayText" :class="{'text-gray-400': !selectedItem, 'text-gray-800 font-bold': selectedItem}"></span>
-                                            <svg class="w-5 h-5 text-gray-400 transition" :class="{'rotate-180 text-red-500': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            <svg class="w-5 h-5 text-gray-400 transition" :class="{'rotate-180 text-red-500': open}" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </div>
 
                                         {{-- Dropdown --}}
@@ -392,6 +234,13 @@
                                     <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                                         <span class="text-xs font-bold text-gray-400 uppercase">Tindakan</span>
                                         <span x-text="newTindakan || '-'" class="block text-sm font-bold text-gray-700 truncate"></span>
+                                        <template x-if="isEdit">
+                                            <div>
+                                                <input type="hidden" name="isi_berkas[0][hak_akses]" :value="newHakAkses">
+                                                <input type="hidden" name="isi_berkas[0][masa_simpan]" :value="newMasaSimpan">
+                                                <input type="hidden" name="isi_berkas[0][tindakan_akhir]" :value="newTindakan">
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -406,13 +255,13 @@
                                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                                     <div class="md:col-span-12 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Deskripsi Berkas</label>
-                                        <input type="text" x-ref="uraian" x-model="newIsi" @keydown.enter.prevent="addIsi()" placeholder="Misal: Kwitansi Pembelian ATK..." 
+                                        <input type="text" x-ref="uraian" x-model="newIsi" :name="isEdit ? 'isi_berkas[0][isi]' : ''" @keydown.enter.prevent="addIsi()" placeholder="Misal: Kwitansi Pembelian ATK..." 
                                         class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition shadow-sm font-medium">
                                     </div>
                                     
                                     <div class="md:col-span-3 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Jenis</label>
-                                        <select x-model="newMedia" @keydown.enter.prevent="addIsi()" class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm">
+                                        <select x-model="newMedia" :name="isEdit ? 'isi_berkas[0][jenis_media]' : ''" @keydown.enter.prevent="addIsi()" class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm">
                                             <option value="" disabled selected>Pilih...</option>
                                             <option value="Kertas">Kertas</option>
                                             <option value="Foto">Foto</option>
@@ -421,29 +270,29 @@
                                     </div>
                                     <div class="md:col-span-2 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Box</label>
-                                        <input type="text" x-model="newNoBox" @keydown.enter.prevent="addIsi()" placeholder="Box 1" 
+                                        <input type="text" x-model="newNoBox" :name="isEdit ? 'isi_berkas[0][no_box]' : ''" @keydown.enter.prevent="addIsi()" placeholder="Box 1" 
                                             class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center font-bold">
                                     </div>
 
                                     <div class="md:col-span-2 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Tahun</label>
-                                        <input type="number" x-model="newTahun" @keydown.enter.prevent="addIsi()" placeholder="YYYY" 
+                                        <input type="number" x-model="newTahun" :name="isEdit ? 'isi_berkas[0][tahun]' : ''" @keydown.enter.prevent="addIsi()" placeholder="YYYY" 
                                             class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center">
                                     </div>
                                     <div class="md:col-span-3 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Tanggal</label>
-                                        <input type="date" x-model="newTanggal" @keydown.enter.prevent="addIsi()" 
+                                        <input type="date" x-model="newTanggal" :name="isEdit ? 'isi_berkas[0][tanggal]' : ''" @keydown.enter.prevent="addIsi()" 
                                             class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center text-gray-600">
                                     </div>
 
                                     <div class="md:col-span-2 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Jml</label>
-                                        <input type="number" x-model="newJumlah" placeholder="1" min="1"
+                                        <input type="number" x-model="newJumlah" :name="isEdit ? 'isi_berkas[0][jumlah]' : ''" placeholder="1" min="1"
                                             class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center font-bold">
                                     </div>
                                 </div>
 
-                                <div class="pt-2">
+                                <div class="pt-2" x-show="!isEdit">
                                     <button type="button" @click="addIsi()" 
                                         class="w-full bg-gradient-to-r from-red-600 to-red-800 text-white p-3 rounded-xl font-bold shadow-lg shadow-red-200 hover:shadow-red-300 hover:scale-[1.01] active:scale-95 transition flex justify-center items-center gap-2 group-btn">
                                         <svg class="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -453,7 +302,7 @@
                             </div>
 
                             {{-- SECTION 3: TABLE PREVIEW --}}
-                            <div class="w-full">
+                            <div class="w-full" x-show="!isEdit">
                                 <div class="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden flex flex-col">
                                     <div class="p-6 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
                                         <div>
@@ -504,22 +353,29 @@
                                                         <td class="px-3 py-4 text-center">
                                                             <span class="px-2 py-1 bg-gray-100 rounded text-[10px] font-bold text-gray-500" x-text="item.jenis_media"></span>
                                                         </td>
-                                                        <td class="px-3 py-4 text-right">
+                                                        <td class="px-3 py-4 text-right flex justify-end gap-2">
+                                                            <button type="button" @click="editItem(index)" class="p-2 text-gray-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all" title="Edit Item">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                            </button>
                                                             <button type="button" @click="removeIsi(index)" class="p-2 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-full transition-all">
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                             </button>
-                                                            {{-- Hidden Inputs --}}
-                                                            <input type="hidden" :name="`isi_berkas[${index}][isi]`" :value="item.isi">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][tahun]`" :value="item.tahun">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][tanggal]`" :value="item.tanggal">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][jumlah]`" :value="item.jumlah">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][no_box]`" :value="item.no_box">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][hak_akses]`" :value="item.hak_akses">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][jenis_media]`" :value="item.jenis_media">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][masa_simpan]`" :value="item.masa_simpan">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][tindakan_akhir]`" :value="item.tindakan_akhir">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][unit_pengolah]`" :value="item.unit_pengolah">
-                                                            <input type="hidden" :name="`isi_berkas[${index}][klasifikasi_id]`" :value="item.klasifikasi_id">
+                                                            {{-- Hidden Inputs (Only render if NOT in Edit Mode, to avoid conflict) --}}
+                                                            <template x-if="!isEdit">
+                                                                <div>
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][isi]`" :value="item.isi">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][tahun]`" :value="item.tahun">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][tanggal]`" :value="item.tanggal">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][jumlah]`" :value="item.jumlah">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][no_box]`" :value="item.no_box">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][hak_akses]`" :value="item.hak_akses">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][jenis_media]`" :value="item.jenis_media">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][masa_simpan]`" :value="item.masa_simpan">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][tindakan_akhir]`" :value="item.tindakan_akhir">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][unit_pengolah]`" :value="item.unit_pengolah">
+                                                                    <input type="hidden" :name="`isi_berkas[${index}][klasifikasi_id]`" :value="item.klasifikasi_id">
+                                                                </div>
+                                                            </template>
                                                         </td>
                                                     </tr>
                                                 </template>
@@ -536,20 +392,21 @@
                                         </table>
                                     </div>
 
-                                    {{-- Footer / Submit --}}
-                                    <div class="p-6 bg-white border-t border-gray-100 flex justify-between items-center gap-4">
-                                        <button type="button" @click="formStep = 1" class="text-gray-500 font-bold px-4 py-2 text-sm hover:text-red-800 transition">
-                                            Kembali
-                                        </button>
-                                        <button type="submit" 
-                                            :disabled="isiBerkas.length === 0"
-                                            :class="{'opacity-50 cursor-not-allowed': isiBerkas.length === 0}"
-                                            class="flex-1 bg-gradient-to-r from-red-700 to-red-900 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
-                                            <span>SIMPAN SEMUA</span>
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        </button>
-                                    </div>
-                                </div>
+                                </div> {{-- End Table Container --}}
+                            </div> {{-- End Table Section --}}
+
+                            {{-- Footer / Submit --}}
+                            <div class="p-6 bg-white border-t border-gray-100 flex justify-between items-center gap-4 rounded-3xl shadow-lg border border-gray-100 mt-6">
+                                <button type="button" @click="formStep = 1" class="text-gray-500 font-bold px-4 py-2 text-sm hover:text-red-800 transition">
+                                    Kembali
+                                </button>
+                                <button type="submit" 
+                                    :disabled="!isEdit && isiBerkas.length === 0"
+                                    :class="{'opacity-50 cursor-not-allowed': !isEdit && isiBerkas.length === 0}"
+                                    class="flex-1 bg-gradient-to-r from-red-700 to-red-900 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
+                                    <span>{{ isset($arsip) ? 'SIMPAN PERUBAHAN' : 'SIMPAN SEMUA' }}</span>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
                             </div>
 
                         </div>
@@ -559,4 +416,239 @@
             </div>
         </div>
     </div>
+</script>
+<script>
+</script>
+<script>
+    function arsipForm() {
+        return {
+            formStep: 1,
+            isiBerkas: @json(old('isi_berkas', $initialData ?? [])),
+            newIsi: '',
+            newTahun: '',
+            newTanggal: '',
+            newJumlah: 1,
+            newNoBox: '',
+            newHakAkses: '', 
+            newMedia: '',
+            newMasaSimpan: '',
+            newTindakan: 'Musnah',
+            namaBerkas: @json(old('nama_berkas', $arsip->nama_berkas ?? '')),
+            unitPengolah: '',
+            kodeKlasifikasi: '',
+            // Edit Mode Initialization
+            isEdit: {{ isset($arsip) ? 'true' : 'false' }},
+            initData: @json($initialData[0] ?? null),
+
+            init() {
+                if (this.isEdit && this.initData) {
+                    this.formStep = 2; // Go directly to details
+                    this.newIsi = this.initData.isi || '';
+                    this.newTahun = this.initData.tahun || '';
+                    this.newTanggal = this.initData.tanggal || '';
+                    this.newJumlah = this.initData.jumlah || 1;
+                    this.newNoBox = this.initData.no_box || '';
+                    this.newHakAkses = this.initData.hak_akses || '';
+                    this.newMedia = this.initData.jenis_media || '';
+                    this.newMasaSimpan = this.initData.masa_simpan || '';
+                    this.newTindakan = this.initData.tindakan_akhir || '';
+                    this.unitPengolah = this.initData.unit_pengolah || '';
+                    this.kodeKlasifikasi = this.initData.kode_klasifikasi || '';
+                    this.klasifikasiId = this.initData.klasifikasi_id || '';
+                    
+                    // Note: Classification dropdown now initializes itself via x-data param
+                    // but we keep this just in case other listeners need it
+                     this.$nextTick(() => {
+                        this.$dispatch('set-classification', {
+                            code: this.initData.kode_klasifikasi,
+                            id: this.initData.klasifikasi_id,
+                            label: this.initData.kode_klasifikasi,
+                            hak_akses: this.initData.hak_akses,
+                            masa_simpan: this.initData.masa_simpan,
+                            tindakan: this.initData.tindakan_akhir
+                        });
+                    });
+                }
+            },
+
+            addIsi() {
+                if (this.newIsi.trim() !== '') {
+                    this.isiBerkas.push({
+                        isi: this.newIsi.trim(),
+                        tahun: this.newTahun,
+                        tanggal: this.newTanggal,
+                        jumlah: this.newJumlah,
+                        no_box: this.newNoBox,
+                        hak_akses: this.newHakAkses,
+                        jenis_media: this.newMedia || 'Kertas', 
+                        masa_simpan: this.newMasaSimpan,
+                        tindakan_akhir: this.newTindakan,
+                        unit_pengolah: this.unitPengolah,
+                        kode_klasifikasi: this.kodeKlasifikasi,
+                        klasifikasi_id: this.klasifikasiId
+                    });
+                    
+                    /* Reset Item Fields */
+                    this.newIsi = '';
+                    this.newTahun = ''; 
+                    this.newTanggal = '';
+                    this.newJumlah = 1;
+                    this.newNoBox = '';
+                    this.newMedia = '';
+                    
+                    /* Focus back */
+                    this.$nextTick(() => {
+                        const uInput = document.querySelector('[name=unit_pengolah]');
+                        if(uInput) uInput.focus();
+                    });
+                }
+            },
+            editItem(index) {
+                const item = this.isiBerkas[index];
+                this.newIsi = item.isi;
+                this.newTahun = item.tahun;
+                this.newTanggal = item.tanggal;
+                this.newJumlah = item.jumlah;
+                this.newNoBox = item.no_box;
+                this.newHakAkses = item.hak_akses;
+                this.newMedia = item.jenis_media;
+                this.newMasaSimpan = item.masa_simpan;
+                this.newTindakan = item.tindakan_akhir;
+                this.unitPengolah = item.unit_pengolah;
+                this.kodeKlasifikasi = item.kode_klasifikasi;
+                this.klasifikasiId = item.klasifikasi_id;
+
+                this.$dispatch('set-classification', {
+                    code: item.kode_klasifikasi,
+                    id: item.klasifikasi_id,
+                    label: item.kode_klasifikasi,
+                    hak_akses: item.hak_akses,
+                    masa_simpan: item.masa_simpan,
+                    tindakan: item.tindakan_akhir
+                });
+                this.isiBerkas.splice(index, 1);
+            },
+            removeIsi(index) {
+                this.isiBerkas.splice(index, 1);
+            },
+            validateStep1() {
+                const nama = document.querySelector('[name=nama_berkas]').value;
+                if (!nama) {
+                    alert('Mohon lengkapi Nama Berkas terlebih dahulu.');
+                    return;
+                }
+                this.formStep = 2;
+            },
+            updateDefaults(data) {
+                this.newHakAkses = data.hak_akses || '';
+                this.newMasaSimpan = data.masa_simpan || '';
+                this.newTindakan = data.tindakan || '';
+                this.kodeKlasifikasi = data.code || '';
+                this.klasifikasiId = data.id || '';
+            }
+        }
+    }
+
+    function classificationDropdown(initData) {
+        return {
+            open: false,
+            step: 1, 
+            breadcrumbs: [],
+            options: [],
+            loading: false,
+            selectedItem: null,
+            displayText: 'Pilih Kode Klasifikasi',
+            
+            init() {
+                this.fetchOptions(1);
+                
+                if (initData && initData.kode_klasifikasi) {
+                    this.selectedItem = {
+                        code: initData.kode_klasifikasi,
+                        label: initData.kode_klasifikasi, // We usually don't have full label in initData, so use code
+                        id: initData.klasifikasi_id
+                    };
+                    this.displayText = initData.kode_klasifikasi;
+                }
+            },
+            
+            toggle() {
+                this.open = !this.open;
+                if(this.open) {
+                   // Ensure we start from scratch or current step? 
+                   // If they have selected something, maybe easier to just show root options to allow change
+                   if (this.options.length === 0) this.fetchOptions(1);
+                   
+                   // If we want to allow re-selection, reset step to 1 on open
+                   this.step = 1;
+                   this.breadcrumbs = [];
+                   this.fetchOptions(1);
+                }
+            },
+
+            fetchOptions(level, parent = null) {
+                this.loading = true;
+                let url = `/api/klasifikasi-options?level=${level}&parent=${parent}`;
+                
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.options = data;
+                        this.loading = false;
+                    });
+            },
+
+            selectOption(opt) {
+                if (this.step === 1) {
+                    this.breadcrumbs.push({ level: 1, label: opt.label, value: opt.code });
+                    this.step = 2;
+                    this.fetchOptions(2, opt.code);
+                } else if (this.step === 2) {
+                    this.breadcrumbs.push({ level: 2, label: opt.label, value: opt.code });
+                    this.step = 3;
+                    this.fetchOptions(3, opt.code);
+                } else if (this.step === 3) {
+                    this.selectedItem = opt;
+                    this.displayText = opt.label;
+
+                    this.$dispatch('classification-selected', { 
+                        hak_akses: opt.hak_akses, 
+                        masa_simpan: opt.masa_simpan, 
+                        tindakan: opt.tindakan_akhir,
+                        code: opt.code,
+                        id: opt.id
+                    });
+
+                    this.open = false;
+                }
+            },
+            
+            goBack() {
+                if (this.step > 1) {
+                    this.step--;
+                    this.breadcrumbs.pop();
+                    const parent = this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1].value : null;
+                    this.fetchOptions(this.step, parent);
+                }
+            },
+
+            reset() {
+                this.step = 1;
+                this.breadcrumbs = [];
+                this.selectedItem = null;
+                this.displayText = 'Pilih Kode Klasifikasi';
+                this.fetchOptions(1);
+                this.open = false; 
+            },
+
+            setFromParent(detail) {
+                this.selectedItem = { code: detail.code, label: detail.label, id: detail.id };
+                this.displayText = detail.code;
+                this.open = false;
+                this.step = 1;
+                this.breadcrumbs = [];
+            }
+        }
+    }
+</script>
 </x-layout>

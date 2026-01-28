@@ -90,5 +90,7 @@ Route::get('/arsip', [ArsipController::class, 'index']);
 Route::post('/arsip/export', [ArsipController::class, 'export']); // Handle Export
 Route::get('/input-arsip', [ArsipController::class, 'create']);
 Route::post('/input-arsip', [ArsipController::class, 'store'])->name('arsip.store');
+Route::get('/arsip/{id}/edit', [ArsipController::class, 'edit'])->name('arsip.edit');
+Route::put('/arsip/{id}', [ArsipController::class, 'update'])->name('arsip.update');
 Route::post('/arsip/import', [ArsipController::class, 'import'])->name('arsip.import');
 Route::get('/api/klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);
