@@ -48,22 +48,20 @@ Route::middleware(['auth'])->group(function () {
 
 
     // ==========================================
-// 3. FITUR ARSIP (MASTER DATA)
+// 3. FITUR ARSIP
 // ==========================================
-// Route Custom
-    Route::get('/get-klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);
-    Route::get('/arsip/export', [ArsipController::class, 'export']);
-
-    // Akses input arsip lewat: /arsip/create (sesuai standar Laravel)
-// Route lama '/input-arsip' kita arahkan ke controller create saja biar rapi
-    Route::get('/input-arsip', [ArsipController::class, 'create']);
-    Route::post('/input-arsip', [ArsipController::class, 'store']);
-
-    Route::resource('arsip', ArsipController::class);
+Route::get('/arsip', [ArsipController::class, 'index']);
+Route::post('/arsip/export', [ArsipController::class, 'export']); // Handle Export
+Route::get('/input-arsip', [ArsipController::class, 'create']);
+Route::post('/input-arsip', [ArsipController::class, 'store'])->name('arsip.store');
+Route::get('/arsip/{id}/edit', [ArsipController::class, 'edit'])->name('arsip.edit');
+Route::put('/arsip/{id}', [ArsipController::class, 'update'])->name('arsip.update');
+Route::post('/arsip/import', [ArsipController::class, 'import'])->name('arsip.import');
+Route::get('/api/klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);
 
 
     // ==========================================
-// 4. FITUR ARSIP MASUK (ARSIP DINAMIS/SURAT)
+// 4. FITUR ARSIP MASUK
 // ==========================================
     Route::get('/arsip-masuk', [ArsipMasukController::class, 'index'])->name('arsip-masuk.index');
     Route::get('/arsip-masuk/create', [ArsipMasukController::class, 'create'])->name('arsip-masuk.create');
@@ -83,43 +81,35 @@ Route::middleware(['auth'])->group(function () {
 // 5. FITUR MONITORING KARYAWAN
 // ==========================================
     Route::get('/monitoring', [MonitoringKaryawanController::class, 'index'])->name('monitoring.index');
-    Route::get('/monitoring/create', [MonitoringKaryawanController::class, 'create'])->name('monitoring.create');
-    Route::post('/monitoring', [MonitoringKaryawanController::class, 'store'])->name('monitoring.store');
-    Route::get('/monitoring/{id}/edit', [MonitoringKaryawanController::class, 'edit'])->name('monitoring.edit');
-    Route::put('/monitoring/{id}', [MonitoringKaryawanController::class, 'update'])->name('monitoring.update');
-    Route::delete('/monitoring/{id}', [MonitoringKaryawanController::class, 'destroy'])->name('monitoring.destroy');
-    Route::patch('/monitoring/{id}/advance-stage', [MonitoringKaryawanController::class, 'advanceStage'])->name('monitoring.advance-stage');
+Route::get('/monitoring/create', [MonitoringKaryawanController::class, 'create'])->name('monitoring.create');
+Route::post('/monitoring', [MonitoringKaryawanController::class, 'store'])->name('monitoring.store');
+Route::get('/monitoring/{id}/edit', [MonitoringKaryawanController::class, 'edit'])->name('monitoring.edit');
+Route::put('/monitoring/{id}', [MonitoringKaryawanController::class, 'update'])->name('monitoring.update');
+Route::delete('/monitoring/{id}', [MonitoringKaryawanController::class, 'destroy'])->name('monitoring.destroy');
+Route::patch('/monitoring/{id}/advance-stage', [MonitoringKaryawanController::class, 'advanceStage'])->name('monitoring.advance-stage');
 
 
     // ==========================================
-// 6. FITUR PENGUNJUNG
-// ==========================================
-    Route::resource('pengunjung', PengunjungController::class);
-
-
-    // ==========================================
-// 7. FITUR MANAGEMENT AKUN
+// 6. FITUR MANAGEMENT AKUN
 // ==========================================
 // ==========================================
     Route::resource('management-akun', ManagementAkunController::class);
 
     // ==========================================
-    // 8. FITUR MANAJEMEN MEDIA
+    // 7. FITUR MANAJEMEN MEDIA
     // ==========================================
     Route::resource('manajemen-media', \App\Http\Controllers\ManajemenMediaController::class);
 
 
-
-
     // ==========================================
-// 7. DEBUGGING (Opsional)
+// 8. DEBUGGING (Opsional)
 // ==========================================
     Route::get('/debug-php', function () {
         return phpinfo();
     });
 
     // ==========================================
-    // 8. PROFILE
+    // 9. PROFILE
     // ==========================================
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
