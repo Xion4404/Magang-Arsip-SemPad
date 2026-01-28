@@ -5,12 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\Arsip;
 use App\Models\MasterKlasifikasi;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ArsipImport;
 
 class ArsipController extends Controller
 {
+    public function import(Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+        
+        try {
+            Excel::import(new ArsipImport, $request->file('file'));
+            return back()->with('success', 'Data arsip berhasil diimport!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['file' => 'Gagal import: ' . $e->getMessage()]);
+        }
+    }
+
     public function index(Request $request)
     {
-        $query = Arsip::with('klasifikasi');
+        $query = Arsip::with(['klasifikasi']); // Removed isiArsip relation
 
         // Search logic
         if ($request->has('search') && $request->search) {
@@ -18,11 +34,26 @@ class ArsipController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('nama_berkas', 'like', "%{$search}%")
                   ->orWhere('no_berkas', 'like', "%{$search}%")
-                  ->orWhere('isi_berkas', 'like', "%{$search}%")
-                  ->orWhereHas('klasifikasi', function($q2) use ($search) {
-                      $q2->where('kode_klasifikasi', 'like', "%{$search}%");
+                  ->orWhere('isi', 'like', "%{$search}%") // Direct column search
+                  ->orWhereHas('klasifikasi', function($q3) use ($search) {
+                      $q3->where('kode_klasifikasi', 'like', "%{$search}%");
                   });
             });
+        }
+
+        // Filter by Tindakan Akhir (Permanen / Musnah)
+        if ($request->has('filter_tindakan') && $request->filter_tindakan != '') {
+            $query->where('tindakan_akhir', $request->filter_tindakan);
+        }
+
+        // Filter by Tahun (Specific Year)
+        if ($request->has('filter_tahun') && $request->filter_tahun != '') {
+            $query->where('tahun', $request->filter_tahun);
+        }
+
+        // Filter by Box
+        if ($request->has('filter_box') && $request->filter_box != '') {
+             $query->where('no_box', $request->filter_box);
         }
 
         // Sorting logic
@@ -36,54 +67,107 @@ class ArsipController extends Controller
             case 'year_asc':
                 $query->orderBy('tahun', 'asc');
                 break;
+            case 'box_desc':
+                $query->orderBy('no_box', 'desc');
+                break;
+            case 'box_asc':
+                $query->orderBy('no_box', 'asc');
+                break;
             case 'newest':
             default:
                 $query->orderBy('id', 'desc');
                 break;
         }
 
-        $arsips = $query->paginate(10); // Use paginate instead of take(10) for better lists
+        $arsips = $query->paginate(10);
         
-        if ($request->ajax()) {
-            return view('arsip.partials.table', compact('arsips'));
+        // Calculate grouping and numbering based on Entry Order (First ID)
+        $groupData = [];
+        $lastNoBerkasOnPage = null;
+        
+        // Fetch all unique no_berkas ordered by the time they were first created (min id)
+        // This ensures Number 1 is the first file ever inserted, regardless of Year.
+        $allGroups = Arsip::selectRaw('no_berkas, MIN(id) as first_id')
+                        ->groupBy('no_berkas')
+                        ->orderBy('first_id', 'asc')
+                        ->get();
+                        
+        // Create a fast lookup map: no_berkas => Rank (1 based)
+        $rankMap = [];
+        foreach ($allGroups as $index => $g) {
+            $rankMap[$g->no_berkas] = $index + 1;
+        }
+        
+        foreach ($arsips as $arsip) {
+            $currentNo = $arsip->no_berkas;
+            $number = $rankMap[$currentNo] ?? 0;
+            
+            // Determine visibility (Start of group on this page)
+            $isStart = ($currentNo !== $lastNoBerkasOnPage);
+            
+            $groupData[$arsip->id] = [
+                'number' => $number,
+                'is_start' => $isStart
+            ];
+            
+            $lastNoBerkasOnPage = $currentNo;
         }
 
-        return view('arsip.arsip', compact('arsips'));
+        // Get available years for filter
+        $availableYears = Arsip::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+        
+        // Get available boxes for filter
+        // Sort effectively might need raw query if box is numeric string, but simple orderBy is usually okay 
+        // unless mix of numbers and letters heavily implies numeric sort needed.
+        // Assuming simple string sort or numeric sort.
+        $availableBoxes = Arsip::select('no_box')
+                            ->whereNotNull('no_box')
+                            ->where('no_box', '!=', '-') 
+                            ->distinct()
+                            ->orderByRaw('CAST(no_box AS UNSIGNED) ASC') // Try numeric sort first
+                            ->pluck('no_box');
+
+        if ($request->ajax()) {
+            return view('arsip.partials.table', compact('arsips', 'groupData'));
+        }
+
+        return view('arsip.arsip', compact('arsips', 'availableYears', 'availableBoxes', 'groupData'));
     }
 
     public function create()
     {
         $klasifikasis = MasterKlasifikasi::all();
-        return view('arsip.input-arsip', compact('klasifikasis'));
+        // Calculate next number (Global Rank)
+        $nextNumber = Arsip::distinct('no_berkas')->count() + 1;
+        
+        return view('arsip.input-arsip', compact('klasifikasis', 'nextNumber'));
     }
 
     public function store(Request $request)
     {
-        // Validasi sederhana, sesuaikan dengan kebutuhan
         $validated = $request->validate([
-            'no_berkas' => 'required|string',
-            'klasifikasi_id' => 'required|exists:master_klasifikasi,id',
             'nama_berkas' => 'required|string',
-            'isi_berkas' => 'nullable|string',
-            'tahun' => 'required|integer',
-            'tanggal' => 'required|date',
-            'jumlah' => 'required|integer|min:0',
-            'no_box' => 'required|string',
-            'jenis_media' => 'required|string|in:Kertas,Foto,Kartografi',
+            // 'unit_pengolah' => 'required|string', // Moved to per-item
+            // 'klasifikasi_id' => 'required|exists:master_klasifikasi,id', // Moved to per-item
+            'isi_berkas' => 'required|array|min:1',
+            'isi_berkas.*.isi' => 'required|string',
+            'isi_berkas.*.unit_pengolah' => 'required|string',
+            'isi_berkas.*.klasifikasi_id' => 'required|exists:master_klasifikasi,id',
+            'isi_berkas.*.tahun' => 'nullable|integer',
+            'isi_berkas.*.tanggal' => 'nullable|date',
+            'isi_berkas.*.jumlah' => 'nullable|integer',
+            'isi_berkas.*.no_box' => 'nullable|string',
+            'isi_berkas.*.hak_akses' => 'nullable|string',
+            'isi_berkas.*.jenis_media' => 'nullable|string',
+            'isi_berkas.*.masa_simpan' => 'nullable|string',
+            'isi_berkas.*.tindakan_akhir' => 'nullable|string',
         ]);
 
-        // Mapping input 'tanggal' ke 'tanggal_masuk' sesuai DB
-        $data = [
-            'no_berkas' => $validated['no_berkas'],
-            'klasifikasi_id' => $validated['klasifikasi_id'],
-            'nama_berkas' => $validated['nama_berkas'],
-            'isi_berkas' => $validated['isi_berkas'],
-            'jenis_media' => $validated['jenis_media'],
-            'tahun' => $validated['tahun'],
-            'tanggal_masuk' => $validated['tanggal'],
-            'jumlah' => $validated['jumlah'],
-            'no_box' => $validated['no_box'],
-        ];
+        // Auto Generate No Berkas (Simple Sequential Number)
+        // Count distinct existing groups to determine next number
+        $currentCount = Arsip::distinct('no_berkas')->count();
+        $nextNo = $currentCount + 1;
+        $no_berkas = (string) $nextNo;
 
         // Ensure user exists
         $user = \App\Models\User::first();
@@ -94,11 +178,109 @@ class ArsipController extends Controller
                 'password' => bcrypt('password'),
             ]);
         }
-        $data['user_id'] = $user->id;
 
-        Arsip::create($data);
+        // Loop and Create Individual Records
+        // This effectively "flattens" the structure: 1 Item = 1 Row in Arsip Table
+        foreach ($validated['isi_berkas'] as $item) {
+            Arsip::create([
+                // Shared Identity
+                'no_berkas'     => $no_berkas,
+                'klasifikasi_id'=> $item['klasifikasi_id'],
+                'nama_berkas'   => $validated['nama_berkas'],
+                'unit_pengolah' => $item['unit_pengolah'],
+                'user_id'       => $user->id,
+                
+                // Item Specifics (Now directly in Arsip table)
+                'isi'           => $item['isi'],
+                'tahun'         => $item['tahun'] ?? null,
+                'tanggal_masuk' => $item['tanggal'],
+                'jumlah'        => $item['jumlah'] ?? 1,
+                'no_box'        => $item['no_box'] ?? '-',
+                'hak_akses'     => $item['hak_akses'] ?? '-',
+                'jenis_media'   => $item['jenis_media'] ?? 'Kertas',
+                'masa_simpan'   => $item['masa_simpan'] ?? '-',
+                'tindakan_akhir'=> $item['tindakan_akhir'] ?? '-',
+            ]);
+        }
 
-        return redirect('/arsip')->with('success', 'Data arsip berhasil ditambahkan!');
+        return redirect('/arsip')->with('success', "Data arsip berhasil ditambahkan! Nomor Berkas: $no_berkas");
+    }
+
+    public function edit($id)
+    {
+        $arsip = Arsip::with('klasifikasi')->findOrFail($id);
+        
+        // Use existing nextNumber logic (though we won't use it for creation, just to keep view happy or we pass actual)
+        // Actually, we should pass the existing no_berkas
+        $nextNumber = $arsip->no_berkas;
+
+        // Format data for the view's JS (similar to isi_berkas structure)
+        // We only have ONE item here because we are editing a single row ID from the index
+        $initialData = [
+            [
+                'isi' => $arsip->isi,
+                'tahun' => $arsip->tahun,
+                'tanggal' => $arsip->tanggal_masuk,
+                'jumlah' => $arsip->jumlah,
+                'no_box' => $arsip->no_box,
+                'hak_akses' => $arsip->hak_akses,
+                'jenis_media' => $arsip->jenis_media,
+                'masa_simpan' => $arsip->masa_simpan,
+                'tindakan_akhir' => $arsip->tindakan_akhir,
+                'unit_pengolah' => $arsip->unit_pengolah,
+                'kode_klasifikasi' => $arsip->klasifikasi->kode_klasifikasi ?? '',
+                'klasifikasi_id' => $arsip->klasifikasi_id,
+            ]
+        ];
+
+        return view('arsip.input-arsip', compact('arsip', 'nextNumber', 'initialData'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $arsip = Arsip::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_berkas' => 'required|string',
+            'isi_berkas' => 'required|array|min:1',
+            'isi_berkas.*.isi' => 'required|string',
+            'isi_berkas.*.unit_pengolah' => 'required|string',
+            'isi_berkas.*.klasifikasi_id' => 'required|exists:master_klasifikasi,id',
+            'isi_berkas.*.tahun' => 'nullable|integer',
+            'isi_berkas.*.tanggal' => 'nullable|date',
+            'isi_berkas.*.jumlah' => 'nullable|integer',
+            'isi_berkas.*.no_box' => 'nullable|string',
+            'isi_berkas.*.hak_akses' => 'nullable|string',
+            'isi_berkas.*.jenis_media' => 'nullable|string',
+            'isi_berkas.*.masa_simpan' => 'nullable|string',
+            'isi_berkas.*.tindakan_akhir' => 'nullable|string',
+        ]);
+
+        // Since we are editing a SPECIFIC Single Row ID, we only take the FIRST item from the list
+        // (The UI enforces 1 item in edit mode usually, or we just take the first one if they added multiple - but logically edit is for one item)
+        // However, if the user "Adds" more items in Edit Mode, it's ambiguous. 
+        // For SAFETY in this specific "Edit Row" context, we update the CURRENT ID with the FIRST item data.
+        // If they added *new* items in the list, we optionally could create them, but that complicates "Edit Single Item".
+        // Let's assume strict 1-to-1 update for simplicity as per "Edit Data" on a row context.
+        
+        $item = $validated['isi_berkas'][0];
+
+        $arsip->update([
+            'nama_berkas'   => $validated['nama_berkas'],
+            'klasifikasi_id'=> $item['klasifikasi_id'],
+            'unit_pengolah' => $item['unit_pengolah'],
+            'isi'           => $item['isi'],
+            'tahun'         => $item['tahun'] ?? null,
+            'tanggal_masuk' => $item['tanggal'],
+            'jumlah'        => $item['jumlah'] ?? 1,
+            'no_box'        => $item['no_box'] ?? '-',
+            'hak_akses'     => $item['hak_akses'] ?? '-',
+            'jenis_media'   => $item['jenis_media'] ?? 'Kertas',
+            'masa_simpan'   => $item['masa_simpan'] ?? '-',
+            'tindakan_akhir'=> $item['tindakan_akhir'] ?? '-',
+        ]);
+
+        return redirect('/arsip')->with('success', 'Data arsip berhasil diperbarui!');
     }
 
     public function export(Request $request) 
@@ -107,10 +289,12 @@ class ArsipController extends Controller
         $ids = json_decode($request->input('ids'), true);
         $search = $request->input('search');
         $sort = $request->input('sort');
+        $filter_tindakan = $request->input('filter_tindakan');
+        $filter_tahun = $request->input('filter_tahun');
 
         // Prepare query for PDF (Excel uses Export class)
         // Ideally, we reuse logic. Let's extract query logic or use the Export class query.
-        $export = new \App\Exports\ArsipExport($ids, $search, $sort);
+        $export = new \App\Exports\ArsipExport($ids, $search, $sort, $filter_tindakan, $filter_tahun);
         $filename = 'arsip-all-' . date('Y-m-d') . ($type === 'pdf' ? '.pdf' : '.xlsx');
 
         if ($type === 'excel') {
@@ -120,7 +304,7 @@ class ArsipController extends Controller
         if ($type === 'pdf') {
             // Fetch data manually for the view
             $query = $export->query(); 
-            $arsips = $query->get();
+            $arsips = $query->get(); // isiArsip relationship removed
             
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('arsip.pdf', compact('arsips'));
             $pdf->setPaper('a4', 'landscape');
@@ -145,11 +329,24 @@ class ArsipController extends Controller
 
         // Level 1: Pokok Masalah (filtered by JRA Type)
         if ($level == 1) {
+            // Note: We removed 'jenis_jra' column from master_klasifikasi in revision, 
+            // so filtering by 'jenis_jra' in DB might fail or needs adjustment if we rely on it.
+            // But wait, the user said "gabung aja", so maybe we don't filter in DB?
+            // "3. pilihan substantif dan fasilitatif digabung aja, jadi di database kolom jenis jra nya dihapus aja"
+            // So we should NOT filter by jraType anymore in logic?
+            // But the UI still starts with "Pilih Jenis JRA"? NO, user said "digabung aja".
+            // If DB column is gone, I cannot filter.
+            // I should assume the UI flow might change or simply show ALL at level 1?
+            // The user revisions said "digabung aja".
+            // So Level 0 (JRA Type selection) might be REDUNDANT now?
+            // "3. pilihan substantif dan fasilitatif digabung aja"
+            // Wait, if I keep the UI Step 0, it does nothing if I return same data?
+            // Actually, I should probably Remove Step 0 in Frontend logic too if they are merged.
+            // But for now, let's just make it return all codes regardless of type input.
+            
             $query = MasterKlasifikasi::select('kode_klasifikasi');
             
-            if ($jraType) {
-                $query->where('jenis_jra', $jraType);
-            }
+            // if ($jraType) { $query->where('jenis_jra', $jraType); } // Column removed
 
             $codes = $query->get();
             $unique = $codes->map(function($item) {
@@ -157,9 +354,7 @@ class ArsipController extends Controller
                 return isset($parts[0]) ? $parts[0] : null;
             })->unique()->filter()->values();
             
-            $formatted = $unique->map(function($code) use ($jraType) {
-                // If Substantif, we might need a dynamic label generator if the hardcoded list doesn't cover it
-                // attempting to use existing map first
+            $formatted = $unique->map(function($code) {
                 return [
                     'code' => $code,
                     'label' => $this->getKategoriLabel($code)
@@ -188,7 +383,7 @@ class ArsipController extends Controller
 
         if ($level == 3 && $parent) {
             $items = MasterKlasifikasi::where('kode_klasifikasi', 'like', $parent . '.%')
-                        ->select('id', 'kode_klasifikasi', 'jenis_arsip', 'masa_simpan', 'tindakan_akhir')
+                        ->select('id', 'kode_klasifikasi', 'jenis_arsip', 'masa_simpan', 'tindakan_akhir', 'hak_akses')
                         ->get();
             
             $formatted = $items->map(function($item) {
@@ -197,7 +392,8 @@ class ArsipController extends Controller
                     'code' => $item->kode_klasifikasi,
                     'label' => $item->kode_klasifikasi . ' - ' . $item->jenis_arsip,
                     'masa_simpan' => $item->masa_simpan,
-                    'tindakan_akhir' => $item->tindakan_akhir
+                    'tindakan_akhir' => $item->tindakan_akhir,
+                    'hak_akses' => $item->hak_akses // Include hak_akses
                 ];
             });
 

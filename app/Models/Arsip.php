@@ -15,6 +15,7 @@ class Arsip extends Model
 
     public function klasifikasi()
     {
-        return $this->belongsTo(MasterKlasifikasi::class, 'klasifikasi_id');
+        return $this->belongsTo(\App\Models\MasterKlasifikasi::class, 'klasifikasi_id');
     }
+
 }
