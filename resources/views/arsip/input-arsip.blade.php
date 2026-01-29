@@ -496,6 +496,15 @@
                     this.newNoBox = '';
                     this.newMedia = '';
                     
+                    /* Reset Header Fields (Unit & Klasifikasi) */
+                    this.unitPengolah = '';
+                    this.kodeKlasifikasi = '';
+                    this.klasifikasiId = '';
+                    this.newHakAkses = '';
+                    this.newMasaSimpan = '';
+                    this.newTindakan = 'Musnah';
+                    this.$dispatch('reset-selection');
+                    
                     /* Focus back */
                     this.$nextTick(() => {
                         const uInput = document.querySelector('[name=unit_pengolah]');
