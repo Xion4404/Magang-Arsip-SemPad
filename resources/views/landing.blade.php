@@ -101,10 +101,10 @@
                         Solusi Digital untuk Pengelolaan Arsip yang Efisien, Aman, dan Terintegrasi.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('login') }}" class="px-8 py-4 bg-[#b91c1c] hover:bg-[#991b1b] text-white font-bold rounded-lg transition transform hover:-translate-y-1 shadow-lg text-center">
+                        <a href="{{ route('login') }}" class="px-8 py-4 bg-[#e92027] hover:bg-[#c41820] text-white font-bold rounded-lg transition transform hover:-translate-y-1 shadow-lg text-center">
                             Login
                         </a>
-                        <a href="#tentang" class="px-8 py-4 bg-white hover:bg-gray-100 text-[#b91c1c] font-bold rounded-lg transition transform hover:-translate-y-1 shadow-lg text-center">
+                        <a href="#tentang" class="px-8 py-4 bg-white hover:bg-gray-100 text-[#e92027] font-bold rounded-lg transition transform hover:-translate-y-1 shadow-lg text-center">
                             Pelajari Selengkapnya
                         </a>
                     </div>
@@ -116,7 +116,7 @@
         <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex gap-3">
             <template x-for="(slide, index) in slides" :key="index">
                 <button @click="activeSlide = index" 
-                        :class="activeSlide === index ? 'w-12 bg-red-600' : 'w-3 bg-white/50'"
+                        :class="activeSlide === index ? 'w-12 bg-[#e92027]' : 'w-3 bg-white/50'"
                         class="h-3 rounded-full transition-all duration-300"></button>
             </template>
         </div>
@@ -136,7 +136,7 @@
                     
                     <!-- Text Content -->
                     <div class="w-full md:w-2/3">
-                        <h2 class="text-red-700 font-bold text-xl uppercase tracking-wider mb-2">Tentang Kami</h2>
+                        <h2 class="text-[#e92027] font-bold text-xl uppercase tracking-wider mb-2">Tentang Kami</h2>
                         <h3 class="text-4xl font-bold text-gray-800 mb-6">Kearsipan PT Semen Padang</h3>
                         <p class="text-gray-600 mb-6 leading-relaxed" style="font-size: 16px;">
                             Kearsipan di PT Semen Padang merupakan bagian penting dalam mendukung tertib administrasi dan kelancaran operasional perusahaan. Setiap arsip dikelola sebagai sumber informasi yang memiliki nilai guna bagi perusahaan, baik sebagai bukti kegiatan, bahan pengambilan keputusan, maupun sebagai bentuk pertanggungjawaban organisasi.
@@ -189,13 +189,13 @@
                         datasets: [{
                             label: 'Jumlah Arsip Masuk',
                             data: @json($arsipBulananData),
-                            borderColor: '#dc2626', // red-600
-                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            borderColor: '#e92027', // custom red
+                            backgroundColor: 'rgba(233, 32, 39, 0.1)',
                             borderWidth: 3,
                             fill: true,
                             tension: 0.4,
                             pointBackgroundColor: '#fff',
-                            pointBorderColor: '#dc2626',
+                            pointBorderColor: '#e92027',
                             pointRadius: 5,
                             pointHoverRadius: 7
                         }]
@@ -210,7 +210,7 @@
                                 intersect: false,
                                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                                 titleColor: '#1f2937',
-                                bodyColor: '#dc2626',
+                                bodyColor: '#e92027',
                                 borderColor: '#e5e7eb',
                                 borderWidth: 1
                             }
@@ -235,13 +235,16 @@
             }
         });
     </script>
+    
+    <!-- Media & Informasi Section -->
+    @include('partials.media-slider')
 
     <!-- Dokumentasi Section -->
     <section class="py-20 bg-gray-50">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-red-700 uppercase tracking-wider mb-4">Dokumentasi</h2>
-                <div class="w-24 h-1 bg-red-700 mx-auto rounded"></div>
+                <h2 class="text-3xl font-bold text-[#e92027] uppercase tracking-wider mb-4">Dokumentasi</h2>
+                <div class="w-24 h-1 bg-[#e92027] mx-auto rounded"></div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -275,7 +278,7 @@
         <!-- Red Background Top with CSS Spotlight (Fixed) -->
         <div class="absolute top-0 left-0 w-full h-[300px] bg-[#7f1d1d] overflow-hidden">
              <!-- CSS Spotlight Effect -->
-             <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 0%, #ef4444 0%, #991b1b 60%, #7f1d1d 100%);"></div>
+             <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 0%, #e92027 0%, #c41820 60%, #7f1d1d 100%);"></div>
         </div>
 
         <div class="container mx-auto px-6 relative z-10 pt-15 pb-20">
@@ -292,10 +295,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 <!-- Feature 1: Dashboard -->
                 <div class="bg-white p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#b91c1c] transition-colors duration-300">
-                        <svg class="w-8 h-8 text-[#b91c1c] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#e92027] transition-colors duration-300">
+                        <svg class="w-8 h-8 text-[#e92027] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#b91c1c] transition-colors">Dashboard</h3>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#e92027] transition-colors">Dashboard</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         Pantau keseluruhan statistik arsip dan ativitas terkini dalam satu tampilan ringkas.
                     </p>
@@ -303,10 +306,10 @@
 
                 <!-- Feature 2: Arsip Masuk -->
                 <div class="bg-white p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#b91c1c] transition-colors duration-300">
-                        <svg class="w-8 h-8 text-[#b91c1c] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#e92027] transition-colors duration-300">
+                        <svg class="w-8 h-8 text-[#e92027] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#b91c1c] transition-colors">Arsip Masuk</h3>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#e92027] transition-colors">Arsip Masuk</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         Kelola arsip masuk dengan pencatatan yang rapi dan terstruktur.
                     </p>
@@ -314,10 +317,10 @@
 
                 <!-- Feature 3: Arsip -->
                 <div class="bg-white p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#b91c1c] transition-colors duration-300">
-                         <svg class="w-8 h-8 text-[#b91c1c] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#e92027] transition-colors duration-300">
+                         <svg class="w-8 h-8 text-[#e92027] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#b91c1c] transition-colors">Arsip</h3>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#e92027] transition-colors">Arsip</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         Penyimpanan digital yang aman untuk arsip perusahaan.
                     </p>
@@ -325,10 +328,10 @@
 
                 <!-- Feature 4: Monitor Karyawan -->
                 <div class="bg-white p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#b91c1c] transition-colors duration-300">
-                         <svg class="w-8 h-8 text-[#b91c1c] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#e92027] transition-colors duration-300">
+                         <svg class="w-8 h-8 text-[#e92027] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     </div>
-                     <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#b91c1c] transition-colors">Monitor Karyawan</h3>
+                     <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#e92027] transition-colors">Monitor Karyawan</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         Sistem monitoring kinerja karyawan dalam pengelolaan arsip secara real-time.
                     </p>
@@ -336,10 +339,10 @@
 
                 <!-- Feature 5: Peminjaman -->
                 <div class="bg-white p-8 rounded-2xl shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#b91c1c] transition-colors duration-300">
-                         <svg class="w-8 h-8 text-[#b91c1c] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-[#e92027] transition-colors duration-300">
+                         <svg class="w-8 h-8 text-[#e92027] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#b91c1c] transition-colors">Peminjaman</h3>
+                    <h3 class="font-bold text-xl text-gray-800 mb-3 group-hover:text-[#e92027] transition-colors">Peminjaman</h3>
                     <p class="text-gray-500 text-sm leading-relaxed">
                         Layanan peminjaman arsip dengan pencatatan yang akurat.
                     </p>
@@ -388,12 +391,12 @@
                     <img src="{{ asset('images/sp-black.png') }}" class="h-20 p-2 rounded">
                     <div class="text-right w-full">
                         <p class="text-xs text-gray-500 font-bold tracking-widest uppercase">Hotline Coverage</p>
-                        <p class="text-2xl font-black text-red-700">0800 1088888</p>
+                        <p class="text-2xl font-black text-[#e92027]">0800 1088888</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-[#dc2626] -mx-6 -mb-10 py-4 text-center">
+            <div class="bg-[#e92027] -mx-6 -mb-10 py-4 text-center">
                  <p class="text-white text-sm">© {{ date('Y') }} PT Semen Padang. All Rights Reserved. e-Arsip System.</p>
             </div>
         </div>

@@ -1,19 +1,36 @@
 <x-layout>
     <!-- Background Header -->
-    <div class="bg-gradient-to-r from-red-900 to-red-800 text-white pb-32 pt-10 px-6 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
-         <!-- Ornamental Background Pattern -->
-         <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
-             <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
-         </div>
+    <!-- Background Header -->
+    <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
+        <!-- Polygon Pattern Overlay -->
+        <div class="absolute inset-0 z-0 opacity-40">
+             <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                    <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+                    </linearGradient>
+                </defs>
+                <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
+                <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
+                <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
+                <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
+            </svg>
+        </div>
+
+        <!-- Ornamental Icon -->
+        <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
+            <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+        </div>
          
          <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
             <div class="text-center md:text-left">
-                 <h2 class="text-4xl font-extrabold tracking-tight mb-2">Monitoring Kinerja</h2>
-                 <p class="text-red-100 text-base font-light opacity-90 max-w-lg">Pantau progres dan aktivitas pengarsipan karyawan secara real-time.</p>
+                 <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Monitoring Kinerja</h2>
+                 <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Pantau progres dan aktivitas pengarsipan karyawan secara real-time.</p>
             </div>
-            <a href="{{ route('monitoring.create') }}" class="group bg-white text-red-800 hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                <div class="bg-red-100 p-1.5 rounded-full group-hover:bg-red-200 transition-colors">
-                    <svg class="w-5 h-5 text-red-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            <a href="{{ route('monitoring.create') }}" class="group bg-white text-[#e92027] hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-red-900/40 border border-white/20">
+                <div class="bg-red-50 p-1.5 rounded-full group-hover:bg-red-100 transition-colors">
+                    <svg class="w-5 h-5 text-[#e92027]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                 </div>
                 <span>ISI FORMULIR</span>
             </a>
@@ -26,32 +43,32 @@
         <!-- Stats Row -->
         <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
             <!-- Card 1: Total -->
-            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-50 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
-                <h2 class="text-red-800 font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-red-600">Total Arsip</h2>
+            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-100 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
+                <h2 class="text-[#a0131a] font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-[#e92027]">Total Arsip</h2>
                 <p class="text-3xl font-black text-gray-800">{{ $total }}</p>
             </div>
             <!-- Card 2: Bulan Ini -->
-            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-50 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
-                <h2 class="text-red-800 font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-red-600">Bulan Ini</h2>
+            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-100 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
+                <h2 class="text-[#a0131a] font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-[#e92027]">Bulan Ini</h2>
                 <p class="text-3xl font-black text-gray-800">{{ $bulanIni }}</p>
             </div>
             <!-- Card 3: Pemilahan -->
-            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-50 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
+            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-100 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
                 <h3 class="text-orange-700 font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-orange-600">Pemilahan</h3>
                 <p class="text-3xl font-black text-gray-800">{{ $pemilahan }}</p>
             </div>
             <!-- Card 4: Pendataan -->
-            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-50 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
+            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-100 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
                 <h3 class="text-orange-700 font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-blue-600">Pendataan</h3>
                 <p class="text-3xl font-black text-gray-800">{{ $pendataan }}</p>
             </div>
             <!-- Card 5: Pelabelan -->
-            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-50 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
+            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-100 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
                 <h3 class="text-orange-700 font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-indigo-600">Pelabelan</h3>
                 <p class="text-3xl font-black text-gray-800">{{ $pelabelan }}</p>
             </div>
             <!-- Card 6: Input E-Arsip -->
-            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-50 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
+            <div class="bg-white p-4 rounded-2xl shadow-lg border border-red-100 flex flex-col items-center justify-center h-32 hover:-translate-y-1 transition-transform duration-300 group">
                 <h3 class="text-orange-700 font-bold text-xs mb-1 uppercase tracking-wider group-hover:text-emerald-600">E-Arsip</h3>
                 <p class="text-3xl font-black text-gray-800">{{ $inputEArsip }}</p>
             </div>
@@ -65,22 +82,22 @@
                 <div class="flex flex-col md:flex-row gap-4 w-full justify-between items-center">
                     <!-- Search -->
                     <div class="relative w-full md:w-96 group">
-                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-red-600 transition-colors">
+                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-[#e92027] transition-colors">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                          </span>
-                         <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari aktivitas..." class="w-full py-3 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white focus:border-transparent text-sm font-medium transition-all shadow-sm hover:shadow-md hover:border-red-300 filter-input">
+                         <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari aktivitas..." class="w-full py-3 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#e92027] focus:bg-white focus:border-transparent text-sm font-medium transition-all shadow-sm hover:shadow-md hover:border-red-300 filter-input">
                     </div>
 
                     <!-- Dropdowns -->
                     <div class="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar scroll-smooth">
-                        <select id="picFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-2 focus:ring-red-500 focus:border-transparent block px-5 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[150px] appearance-none">
+                        <select id="picFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-2 focus:ring-[#e92027] focus:border-transparent block px-5 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[150px] appearance-none">
                              <option value="">Semua PIC</option>
                              @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ request('pic') == $user->id ? 'selected' : '' }}>{{ $user->nama }}</option>
                              @endforeach
                         </select>
                         
-                        <select id="tahapanFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-2 focus:ring-red-500 focus:border-transparent block px-5 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[170px] appearance-none">
+                        <select id="tahapanFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-2 focus:ring-[#e92027] focus:border-transparent block px-5 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[170px] appearance-none">
                              <option value="">Semua Tahapan</option>
                              <option value="Pemilahan" {{ request('tahapan') == 'Pemilahan' ? 'selected' : '' }}>Pemilahan</option>
                              <option value="Pendataan" {{ request('tahapan') == 'Pendataan' ? 'selected' : '' }}>Pendataan</option>
@@ -90,7 +107,7 @@
                          
                          <!-- Reset -->
                          @if(request('search') || request('pic') || request('tahapan'))
-                            <a href="{{ route('monitoring.index') }}" class="flex items-center px-5 py-3 bg-red-50 text-red-600 rounded-full text-sm font-bold hover:bg-red-100 transition shadow-sm whitespace-nowrap hover:shadow-md">
+                            <a href="{{ route('monitoring.index') }}" class="flex items-center px-5 py-3 bg-red-50 text-[#e92027] rounded-full text-sm font-bold hover:bg-red-100 transition shadow-sm whitespace-nowrap hover:shadow-md">
                                 Reset
                             </a>
                         @endif
@@ -103,7 +120,7 @@
                 <div class="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
                     <table class="w-full text-sm text-center border-collapse">
                         <thead>
-                            <tr class="bg-[#8B1A1A] text-white">
+                            <tr class="bg-[#e92027] text-white">
                                 <th class="py-5 px-6 font-bold text-xs uppercase tracking-wider first:rounded-tl-xl text-center">PIC</th>
                                 <th class="py-5 px-6 font-bold text-xs uppercase tracking-wider text-center">Tahapan</th>
                                 <th class="py-5 px-6 font-bold text-xs uppercase tracking-wider text-center">Tanggal</th>
@@ -117,7 +134,7 @@
                         <tbody id="monitoringTableBody" class="divide-y divide-gray-100 bg-white">
                             @forelse($monitoring as $index => $item)
                             <tr class="hover:bg-red-50/50 transition duration-200 group">
-                                <td class="py-4 px-6 font-semibold text-gray-800 border-l-4 border-transparent group-hover:border-red-500 transition-all text-center">
+                                <td class="py-4 px-6 font-semibold text-gray-800 border-l-4 border-transparent group-hover:border-[#e92027] transition-all text-center">
                                     {{ $item->user->nama ?? '-' }}
                                 </td>
                                 <td class="py-4 px-6 text-center">
@@ -150,7 +167,7 @@
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-center">
-                                    <span class="bg-red-50 text-red-700 py-1 px-2.5 rounded-md text-xs font-bold shadow-sm border border-red-100">
+                                    <span class="bg-red-50 text-[#c41820] py-1 px-2.5 rounded-md text-xs font-bold shadow-sm border border-red-100">
                                         {{ $item->jumlah_box_selesai }}
                                     </span>
                                 </td>
@@ -165,7 +182,7 @@
                                         <form action="{{ route('monitoring.destroy', $item->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="delete-btn p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                                            <button type="button" class="delete-btn p-2 text-[#e92027] hover:text-[#a0131a] hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
@@ -212,7 +229,7 @@
                             text: "Data yang dihapus tidak dapat dikembalikan!",
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonColor: '#8B1A1A',
+                            confirmButtonColor: '#e92027',
                             cancelButtonColor: '#E5E7EB',
                             confirmButtonText: 'Ya, Hapus',
                             cancelButtonText: 'Batal',
@@ -253,7 +270,7 @@
                             text: `Ubah status dari ${currentStage} ke ${nextStage}?`,
                             icon: 'question',
                             showCancelButton: true,
-                            confirmButtonColor: '#8B1A1A',
+                            confirmButtonColor: '#e92027',
                             cancelButtonColor: '#E5E7EB',
                             confirmButtonText: 'Ya, Lanjutkan',
                             cancelButtonText: 'Batal',

@@ -1,19 +1,36 @@
 <x-layout>
     <!-- Background Header -->
-    <div class="bg-gradient-to-r from-red-900 to-red-800 text-white pb-32 pt-10 px-6 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
-         <!-- Ornamental Background Pattern -->
-         <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+    <!-- Background Header -->
+    <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
+        <!-- Polygon Pattern Overlay -->
+        <div class="absolute inset-0 z-0 opacity-40">
+             <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                    <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+                    </linearGradient>
+                </defs>
+                <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
+                <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
+                <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
+                <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
+            </svg>
+        </div>
+
+         <!-- Ornamental Icon -->
+         <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
              <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
          </div>
          
          <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
             <div class="text-center md:text-left">
-                 <h2 class="text-4xl font-extrabold tracking-tight mb-2">Daftar Arsip Masuk</h2>
-                 <p class="text-red-100 text-base font-light opacity-90 max-w-lg">Kelola dan monitor seluruh arsip masuk dengan mudah dan efisien.</p>
+                 <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Daftar Arsip Masuk</h2>
+                 <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Kelola dan monitor seluruh arsip masuk dengan mudah dan efisien.</p>
             </div>
-            <a href="{{ route('arsip-masuk.create') }}" class="group bg-white text-red-800 hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                <div class="bg-red-100 p-1.5 rounded-full group-hover:bg-red-200 transition-colors">
-                    <svg class="w-5 h-5 text-red-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <a href="{{ route('arsip-masuk.create') }}" class="group bg-white text-[#e92027] hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-red-900/40 border border-white/20">
+                <div class="bg-red-50 p-1.5 rounded-full group-hover:bg-red-100 transition-colors">
+                    <svg class="w-5 h-5 text-[#e92027]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 </div>
                 <span>TAMBAH ARSIP</span>
             </a>
@@ -30,22 +47,22 @@
                 <div class="flex flex-col md:flex-row gap-4 w-full lg:w-auto items-center">
                     <!-- Search -->
                     <div class="relative w-full md:w-80 group">
-                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-red-600 transition-colors">
+                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-[#e92027] transition-colors">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                          </span>
-                         <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari dokumen..." class="w-full py-3 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white focus:border-transparent text-sm font-medium transition-all shadow-sm filter-input">
+                         <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari dokumen..." class="w-full py-3 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#e92027] focus:bg-white focus:border-transparent text-sm font-medium transition-all shadow-sm filter-input">
                     </div>
 
                     <!-- Dropdowns -->
                     <div class="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar scroll-smooth">
-                        <select id="unitAsalFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent block px-4 py-2.5 filter-input cursor-pointer hover:bg-gray-50 transition-all shadow-sm min-w-[140px]">
+                        <select id="unitAsalFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-transparent block px-4 py-2.5 filter-input cursor-pointer hover:bg-gray-50 transition-all shadow-sm min-w-[140px]">
                             <option value="">Semua Unit</option>
                             @foreach($unitAsalOptions as $unit)
                                 <option value="{{ $unit }}" {{ request('unit_asal') == $unit ? 'selected' : '' }}>{{ $unit }}</option>
                             @endforeach
                         </select>
                         
-                        <select id="yearFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent block px-4 py-2.5 filter-input cursor-pointer hover:bg-gray-50 transition-all shadow-sm min-w-[120px]">
+                        <select id="yearFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-transparent block px-4 py-2.5 filter-input cursor-pointer hover:bg-gray-50 transition-all shadow-sm min-w-[120px]">
                             <option value="">Semua Tahun</option>
                              @foreach($yearOptions as $year)
                                  <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -54,7 +71,7 @@
                          
                          <!-- Reset -->
                          @if(request('search') || request('unit_asal') || request('penerima') || request('year'))
-                            <a href="{{ route('arsip-masuk.index') }}" class="flex items-center px-4 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-bold hover:bg-red-100 transition shadow-sm whitespace-nowrap">
+                            <a href="{{ route('arsip-masuk.index') }}" class="flex items-center px-4 py-2.5 bg-red-50 text-[#e92027] rounded-xl text-sm font-bold hover:bg-red-100 transition shadow-sm whitespace-nowrap">
                                 Reset Filter
                             </a>
                         @endif
@@ -67,7 +84,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span class="hidden sm:inline">Excel</span>
                     </button>
-                    <button class="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 hover:shadow-md transition-all active:scale-95">
+                    <button class="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-[#c41820] border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 hover:shadow-md transition-all active:scale-95">
                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                          <span class="hidden sm:inline">PDF</span>
                     </button>
@@ -83,7 +100,7 @@
                 <div class="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
                     <table class="w-full text-sm text-center border-collapse">
                         <thead>
-                            <tr class="bg-[#8B1A1A] text-white">
+                            <tr class="bg-[#e92027] text-white">
                                 <th class="py-5 px-6 font-bold text-xs uppercase tracking-wider first:rounded-tl-xl text-center">No Berita Acara</th>
                                 <th class="py-5 px-6 font-bold text-xs uppercase tracking-wider text-center">Unit Asal</th>
                                 <th class="py-5 px-6 font-bold text-xs uppercase tracking-wider text-center">Tanggal Terima</th>
@@ -95,7 +112,7 @@
                         <tbody id="arsipTableBody" class="divide-y divide-gray-100 bg-white">
                             @forelse($arsipMasuk as $item)
                             <tr class="hover:bg-red-50/50 transition duration-200 group">
-                                <td class="py-4 px-6 font-semibold text-gray-800 border-l-4 border-transparent group-hover:border-red-500 transition-all">
+                                <td class="py-4 px-6 font-semibold text-gray-800 border-l-4 border-transparent group-hover:border-[#e92027] transition-all">
                                     {{ $item->nomor_berita_acara }}
                                 </td>
                                 <td class="py-4 px-6 text-gray-600">
@@ -107,7 +124,7 @@
                                     {{ \Carbon\Carbon::parse($item->tanggal_terima)->format('d M Y') }}
                                 </td>
                                 <td class="py-4 px-6 text-center">
-                                    <span class="bg-red-100 text-red-800 py-1 px-3 rounded-lg text-xs font-bold shadow-sm">
+                                    <span class="bg-red-100 text-[#a0131a] py-1 px-3 rounded-lg text-xs font-bold shadow-sm">
                                         {{ $item->jumlah_box_masuk }}
                                     </span>
                                 </td>
@@ -127,7 +144,7 @@
                                         <form action="{{ route('arsip-masuk.destroy', $item->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="delete-btn p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                                            <button type="button" class="delete-btn p-2 text-[#e92027] hover:text-[#a0131a] hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
@@ -170,7 +187,7 @@
                             text: "Data yang dihapus tidak dapat dikembalikan!",
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonColor: '#8B1A1A',
+                            confirmButtonColor: '#e92027',
                             cancelButtonColor: '#E5E7EB',
                             confirmButtonText: 'Ya, Hapus',
                             cancelButtonText: 'Batal',

@@ -9,27 +9,27 @@
 </head>
 <body class="bg-gray-50 font-sans">
 
-    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden">
+    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden relative">
 
         <x-sidebar />
 
-        <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300">
-            
-            <header class="bg-gradient-to-r from-red-800 to-red-600 px-6 py-4 flex justify-between items-center shadow-md z-10">
-                <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = !sidebarOpen" class="text-white hover:bg-red-900 p-2 rounded-lg focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    </button>
-                    <h1 class="text-xl font-bold text-white hidden md:block">Sistem Arsip</h1>
-                </div>
 
-                <div class="flex items-center gap-3">
-                    <span class="text-white text-sm font-medium">Annisa Revalina</span>
-                    <div class="bg-red-900 p-1 rounded-full text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    </div>
-                </div>
-            </header>
+
+        <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
+            
+            <!-- Open Sidebar Button (Visible only when sidebar is closed) -->
+            <button x-show="!sidebarOpen" 
+                    @click="sidebarOpen = true" 
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-x-4"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    class="absolute top-7 left-8 z-20 p-2 text-white hover:text-gray-200 transition focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </button>
+            
+
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
                 {{ $slot }}

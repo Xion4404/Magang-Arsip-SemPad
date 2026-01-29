@@ -1,10 +1,10 @@
 <x-layout>
     {{-- Print Header (Visible only in Print) --}}
-    <div id="print-header" class="hidden mb-8 border-b-2 border-red-800 pb-4">
+    <div id="print-header" class="hidden mb-8 border-b-2 border-[#e92027] pb-4">
         <div class="flex items-center justify-between px-8">
             <img src="{{ asset('images/logo-sp.png') }}" alt="Logo" class="h-20 w-auto">
             <div class="text-center">
-                <h1 class="text-2xl font-bold text-red-800 uppercase">PT Semen Padang</h1>
+                <h1 class="text-2xl font-bold text-[#c41820] uppercase">PT Semen Padang</h1>
                 <h2 class="text-xl font-bold text-gray-800">Daftar Arsip Dokumen</h2>
                 <p class="text-sm text-gray-600">Indarung, Padang 25237, Sumatera Barat</p>
             </div>
@@ -16,19 +16,37 @@
     <div class="min-h-screen bg-gray-50 pb-20 print:bg-white print:pb-0">
         
         {{-- Header Section --}}
-        <div class="bg-red-800 rounded-b-[3rem] shadow-2xl pt-8 pb-32 px-4 md:px-6 print:hidden relative overflow-hidden">
-             {{-- Decor --}}
-            <div class="absolute top-0 right-0 w-64 h-64 bg-red-700 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -mr-20 -mt-20"></div>
-            <div class="absolute bottom-0 left-0 w-64 h-64 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -ml-20 -mb-20"></div>
+        {{-- Header Section --}}
+        <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden print:hidden">
+            <!-- Polygon Pattern Overlay -->
+            <div class="absolute inset-0 z-0 opacity-40">
+                 <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                    <defs>
+                        <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
+                    <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
+                    <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
+                    <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
+                </svg>
+            </div>
 
-            <div class="w-full max-w-[98%] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+            <!-- Ornamental Icon -->
+            <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
+                <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+            </div>
+
+            <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
                 <div class="text-center md:text-left">
-                    <h1 class="text-4xl font-black text-white tracking-tight mb-2">Daftar Arsip</h1>
-                    <p class="text-red-100 font-medium">Kelola dan monitor seluruh dokumen arsip perusahaan.</p>
+                    <h1 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Daftar Arsip</h1>
+                    <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Kelola dan monitor seluruh dokumen arsip perusahaan.</p>
                 </div>
-                <a href="/input-arsip" class="group bg-white text-red-800 px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-3">
-                    <div class="bg-red-100 p-1 rounded-lg group-hover:bg-red-200 transition">
-                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <a href="/input-arsip" class="group bg-white text-[#e92027] hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-red-900/40 border border-white/20">
+                    <div class="bg-red-50 p-1.5 rounded-full group-hover:bg-red-100 transition-colors">
+                         <svg class="w-5 h-5 text-[#e92027]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     </div>
                     <span>TAMBAH ARSIP</span>
                 </a>
@@ -43,24 +61,24 @@
                 <form action="/arsip" method="GET" class="flex flex-col xl:flex-row items-center gap-4 mb-6 print:hidden">
                     {{-- Search Input --}}
                     <div class="relative w-full xl:w-96 group">
-                        <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-red-500 transition">
+                        <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-[#e92027] transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </span>
                         <input type="text" name="search" placeholder="Cari dokumen..." value="{{ request('search') }}" 
-                            class="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition shadow-sm font-medium text-gray-700">
+                            class="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#e92027] focus:ring-4 focus:ring-red-100 transition shadow-sm font-medium text-gray-700">
                     </div>
                     
                     {{-- Sorting & Filters --}}
                     <div class="flex flex-wrap gap-3 w-full xl:w-auto">
                         {{-- Filter Tindakan (Permanen / Musnah) --}}
-                         <select name="filter_tindakan" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                         <select name="filter_tindakan" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
                             <option value="">Semua Status</option>
                             <option value="Permanen" {{ request('filter_tindakan') == 'Permanen' ? 'selected' : '' }}>Permanen</option>
                             <option value="Musnah" {{ request('filter_tindakan') == 'Musnah' ? 'selected' : '' }}>Musnah</option>
                         </select>
 
                         {{-- Filter Tahun --}}
-                        <select name="filter_tahun" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                        <select name="filter_tahun" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
                             <option value="">Semua Tahun</option>
                             @foreach($availableYears as $year)
                                 <option value="{{ $year }}" {{ request('filter_tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -68,14 +86,14 @@
                         </select>
 
                         {{-- Filter Box --}}
-                        <select name="filter_box" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                        <select name="filter_box" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
                             <option value="">Semua Box</option>
                             @foreach($availableBoxes as $box)
                                 <option value="{{ $box }}" {{ request('filter_box') == $box ? 'selected' : '' }}>Box {{ $box }}</option>
                             @endforeach
                         </select>
 
-                        <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                        <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
                             <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
                             <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun ↓</option>
@@ -145,7 +163,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Excel
                         </button>
-                        <button type="button" onclick="submitExport('pdf')" class="bg-red-50 text-red-700 px-5 py-3 rounded-xl font-bold hover:bg-red-100 hover:-translate-y-1 transition flex items-center gap-2 border border-red-100">
+                        <button type="button" onclick="submitExport('pdf')" class="bg-red-50 text-[#c41820] px-5 py-3 rounded-xl font-bold hover:bg-red-100 hover:-translate-y-1 transition flex items-center gap-2 border border-red-100">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                             PDF
                         </button>

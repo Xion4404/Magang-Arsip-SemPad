@@ -7,53 +7,40 @@ use App\Http\Controllers\PengunjungController;
 use App\Http\Controllers\MonitoringKaryawanController;
 use App\Http\Controllers\ArsipMasukController;
 use App\Http\Controllers\ArsipController;
+use App\Http\Controllers\ManagementAkunController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LandingController;
 
 // ==========================================
-// 1. HALAMAN UTAMA & LOGIN
+// 1. AUTHENTICATION
 // ==========================================
-
-// Halaman utama langsung buka daftar peminjaman
-Route::get('/', [\App\Http\Controllers\LandingController::class, 'index']);
-
-// Halaman Login (Cadangan)
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login', [LoginController::class, 'authenticate'])->name('login.authenticate');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ==========================================
-// 2. FITUR PEMINJAMAN (CRUD)
+// 1b. LANDING PAGE (PUBLIC)
 // ==========================================
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-// Tampilkan Daftar Peminjaman
-Route::get('/peminjaman', [PeminjamanController::class, 'index']);
+// ==========================================
+// 2. PROTECTED ROUTES (Requires Login)
+// ==========================================
+Route::middleware(['auth'])->group(function () {
 
-// Tampilkan Form Tambah
-Route::get('/peminjaman/create', [PeminjamanController::class, 'create']);
+    Route::get('/beranda', [DashboardController::class, 'index'])->name('beranda');
 
-// Proses Simpan Data Baru (POST)
-Route::post('/peminjaman', [PeminjamanController::class, 'store']);
+    // ==========================================
+    // FITUR PEMINJAMAN (MODUL KAMU)
+    // ==========================================
+// Route Custom (Wajib di atas resource)
+    Route::get('/peminjaman/export', [PeminjamanController::class, 'export']);
+    Route::patch('/peminjaman/{id}/complete', [PeminjamanController::class, 'complete']);
+    Route::post('/peminjaman/bulk-delete', [PeminjamanController::class, 'bulkDelete']);
 
-// Proses Ubah Status / Ceklis (PATCH)
-Route::patch('/peminjaman/{id}/complete', [PeminjamanController::class, 'complete']);
-
-// Tampilkan Form Edit (GET)
-Route::get('/peminjaman/{id}/edit', [PeminjamanController::class, 'edit']);
-
-// Proses Update Data (PUT)
-Route::put('/peminjaman/{id}', [PeminjamanController::class, 'update']);
-
-// Proses Hapus Data (DELETE)
-Route::delete('/peminjaman/{id}', [PeminjamanController::class, 'destroy']);
-
-// Route untuk Halaman Beranda
-Route::get('/beranda', [DashboardController::class, 'index'])->name('dashboard');
-
-Route::get('/peminjaman/export', [PeminjamanController::class, 'export']); 
-
-// Baru route resource di bawahnya
-Route::resource('peminjaman', PeminjamanController::class);
-
-Route::resource('pengunjung', PengunjungController::class);
+    // Route Resource (CRUD Otomatis)
+    Route::resource('peminjaman', PeminjamanController::class);
 
 // ==========================================
 // 3. FITUR MONITORING KARYAWAN
@@ -95,3 +82,33 @@ Route::get('/arsip/{id}/edit', [ArsipController::class, 'edit'])->name('arsip.ed
 Route::put('/arsip/{id}', [ArsipController::class, 'update'])->name('arsip.update');
 Route::post('/arsip/import', [ArsipController::class, 'import'])->name('arsip.import');
 Route::get('/api/klasifikasi-options', [ArsipController::class, 'getKlasifikasiOptions']);
+
+
+    // ==========================================
+// 7. FITUR MANAGEMENT AKUN
+// ==========================================
+// ==========================================
+    Route::resource('management-akun', ManagementAkunController::class);
+
+    // ==========================================
+    // 8. FITUR MANAJEMEN MEDIA
+    // ==========================================
+    Route::resource('manajemen-media', \App\Http\Controllers\ManajemenMediaController::class);
+
+
+
+
+    // ==========================================
+// 7. DEBUGGING (Opsional)
+// ==========================================
+    Route::get('/debug-php', function () {
+        return phpinfo();
+    });
+
+    // ==========================================
+    // 8. PROFILE
+    // ==========================================
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+});
