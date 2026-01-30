@@ -12,16 +12,37 @@ class ArsipController extends Controller
 {
     public function import(Request $request) 
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv'
+        // DEBUGGING START
+        \Illuminate\Support\Facades\Log::info("DEBUG: Import Controller Reached");
+        \Illuminate\Support\Facades\Log::info("Request All: ", $request->all());
+        \Illuminate\Support\Facades\Log::info("Has File: " . ($request->hasFile('file') ? 'YES' : 'NO'));
+        
+        // Uncomment this line to force a visible debug screen
+        // dd('DEBUG SCREEN: Controller Reached!', $request->all(), $request->file('file'));
+        
+        // DEBUGGING END
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'file' => 'required' // Relaxed validation temporarily
         ]);
+
+        if ($validator->fails()) {
+            \Illuminate\Support\Facades\Log::error("Validation Error: ", $validator->errors()->toArray());
+            return back()->withErrors($validator)->withInput(); // Return with input to see what happens
+        }
         
         try {
             Excel::import(new ArsipImport, $request->file('file'));
             return back()->with('success', 'Data arsip berhasil diimport!');
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Import Exception: " . $e->getMessage());
             return back()->withErrors(['file' => 'Gagal import: ' . $e->getMessage()]);
         }
+    }
+
+    public function showImportForm()
+    {
+        return view('arsip.import');
     }
 
     public function index(Request $request)

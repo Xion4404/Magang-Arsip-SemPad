@@ -40,48 +40,51 @@
             <div class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-6 md:p-8 print:shadow-none print:border-0 print:p-0">
                 
                 {{-- Toolbar (Search & Filters) --}}
-                <form action="/arsip" method="GET" class="flex flex-col xl:flex-row items-center gap-4 mb-6 print:hidden">
-                    {{-- Search Input --}}
-                    <div class="relative w-full xl:w-96 group">
-                        <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-red-500 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input type="text" name="search" placeholder="Cari dokumen..." value="{{ request('search') }}" 
-                            class="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition shadow-sm font-medium text-gray-700">
-                    </div>
-                    
-                    {{-- Sorting & Filters --}}
-                    <div class="flex flex-wrap gap-3 w-full xl:w-auto">
-                        {{-- Filter Tindakan (Permanen / Musnah) --}}
-                         <select name="filter_tindakan" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
-                            <option value="">Semua Status</option>
-                            <option value="Permanen" {{ request('filter_tindakan') == 'Permanen' ? 'selected' : '' }}>Permanen</option>
-                            <option value="Musnah" {{ request('filter_tindakan') == 'Musnah' ? 'selected' : '' }}>Musnah</option>
-                        </select>
+                <div class="flex flex-col xl:flex-row items-center gap-4 mb-6 print:hidden">
+                    <form id="filterForm" action="/arsip" method="GET" class="contents">
+                        {{-- Search Input --}}
+                        <div class="relative w-full xl:w-96 group">
+                            <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-red-500 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </span>
+                            <input type="text" name="search" placeholder="Cari dokumen..." value="{{ request('search') }}" 
+                                class="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition shadow-sm font-medium text-gray-700">
+                        </div>
+                        
+                        {{-- Sorting & Filters --}}
+                        <div class="flex flex-wrap gap-3 w-full xl:w-auto">
+                            {{-- Filter Tindakan (Permanen / Musnah) --}}
+                             <select name="filter_tindakan" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="">Semua Status</option>
+                                <option value="Permanen" {{ request('filter_tindakan') == 'Permanen' ? 'selected' : '' }}>Permanen</option>
+                                <option value="Musnah" {{ request('filter_tindakan') == 'Musnah' ? 'selected' : '' }}>Musnah</option>
+                            </select>
+    
+                            {{-- Filter Tahun --}}
+                            <select name="filter_tahun" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="">Semua Tahun</option>
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ request('filter_tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                @endforeach
+                            </select>
+    
+                            {{-- Filter Box --}}
+                            <select name="filter_box" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="">Semua Box</option>
+                                @foreach($availableBoxes as $box)
+                                    <option value="{{ $box }}" {{ request('filter_box') == $box ? 'selected' : '' }}>Box {{ $box }}</option>
+                                @endforeach
+                            </select>
+    
+                            <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
+                                <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun ↓</option>
+                                <option value="year_asc" {{ request('sort') == 'year_asc' ? 'selected' : '' }}>Tahun ↑</option>
+                            </select>
+                        </div>
+                    </form>
 
-                        {{-- Filter Tahun --}}
-                        <select name="filter_tahun" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
-                            <option value="">Semua Tahun</option>
-                            @foreach($availableYears as $year)
-                                <option value="{{ $year }}" {{ request('filter_tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
-                            @endforeach
-                        </select>
-
-                        {{-- Filter Box --}}
-                        <select name="filter_box" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
-                            <option value="">Semua Box</option>
-                            @foreach($availableBoxes as $box)
-                                <option value="{{ $box }}" {{ request('filter_box') == $box ? 'selected' : '' }}>Box {{ $box }}</option>
-                            @endforeach
-                        </select>
-
-                        <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
-                            <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun ↓</option>
-                            <option value="year_asc" {{ request('sort') == 'year_asc' ? 'selected' : '' }}>Tahun ↑</option>
-                        </select>
-                    </div>
 
                     {{-- Action Buttons (Right Aligned) --}}
                     <div class="ml-auto flex items-center gap-3 w-full xl:w-auto justify-end">
@@ -101,7 +104,7 @@
                                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                                     <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                                        <form action="{{ route('arsip.import') }}" method="POST" enctype="multipart/form-data">
+                                        <form action="{{ route('arsip.import.process') }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                                 <div class="sm:flex sm:items-start">
@@ -154,7 +157,7 @@
                             Print
                         </button>
                     </div>
-                </form>
+                </div>
 
                 <form id="export-form" action="/arsip/export" method="POST" target="_blank" class="hidden">
                     @csrf

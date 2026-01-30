@@ -4,143 +4,112 @@ namespace App\Imports;
 
 use App\Models\Arsip;
 use App\Models\MasterKlasifikasi;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithStartRow;
-use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Illuminate\Support\Facades\Auth;
 
-class ArsipImport implements ToCollection, WithStartRow, WithCalculatedFormulas
+class ArsipImport implements ToModel, \Maatwebsite\Excel\Concerns\WithStartRow
 {
-    public function startRow(): int
+    /**
+    * @param array $row
+    *
+    * @return \Illuminate\Database\Eloquent\Model|null
+    */
+    public function model(array $row) 
     {
-        return 2; // Read from Row 2 to ensure we don't miss anything. Filters will handle headers.
-    }
+        // 1. Skip Empty Rows or "Uraian" Subheaders
+        // Check if important columns are empty (e.g., no_berkas or nama_berkas)
+        // Adjust logic: sometimes NoBerkas is blank but it's a valid row? 
+        // User said: "Data dimulai dari Baris 6 (karena baris 5 berisi sub-keterangan 'Uraian' dari merged cells)."
+        // DEBUG: Log Raw Row
+        // \Illuminate\Support\Facades\Log::info("Raw Row Index Map: " . json_encode($row));
 
-    public function collection(Collection $rows)
-    {
-        $lastNoBerkas = null;
-        $lastNamaBerkas = null; 
-        $lastKodeKlasifikasi = null;
-        
-        $lastTahun = null;
-        $lastUnitKerja = null; 
-        
-        $klasifikasiMap = MasterKlasifikasi::select('id', 'kode_klasifikasi', 'hak_akses')
-                            ->get()
-                            ->keyBy('kode_klasifikasi')
-                            ->toArray();
-                            
-        $fallbackKlasifikasiId = MasterKlasifikasi::first()->id ?? 1;
+        // MAPPING BY INDEX (Based on Screenshot/User Info)
+        // 0: No Berkas
+        // 1: Kode Klasifikasi
+        // 2: Nama Berkas
+        // 3: Tahun
+        // 4: Isi Berkas
+        // 5: Tanggal
+        // 6: Jumlah
+        // 7: Asli/Copy
+        // 8: Jenis Arsip
+        // 9: Masa Simpan
+        // 10: Permanen/Musnah (Tindakan)
+        // 11: Hak Akses 
+        // 12: No Boks
+        // 13: Lokasi
+        // 14: Unit Kerja
+        // 15: Rak
+        // 16: Tingkat
 
-        Log::info('Starting Import. Total Rows: ' . $rows->count());
+        // 1. Basic Validation
+        $kodeKlasifikasi = trim($row[1] ?? '');
+        $namaBerkas = trim($row[2] ?? '');
 
-        foreach ($rows as $index => $row) {
-            $rowIndex = $index + 2; // Offset based on startRow
-
-            // DEBUG: Log first 5 rows raw data to verify column mapping
-            if ($index < 5) {
-                Log::info("Row $rowIndex RAW: " . json_encode($row));
-            }
-
-            // 1. READ RAW VALUES
-            $rawNoBerkas = isset($row[0]) ? trim((string)$row[0]) : '';
-            $rawKode     = isset($row[1]) ? trim((string)$row[1]) : '';
-            $rawNama     = isset($row[2]) ? trim((string)$row[2]) : '';
-            $rawTahun    = isset($row[3]) ? trim((string)$row[3]) : '';
-            $rawIsi      = isset($row[4]) ? trim((string)$row[4]) : '-';
-            $rawTanggal  = isset($row[5]) ? $row[5] : null;
-            $rawJumlah   = isset($row[6]) ? (int)$row[6] : 1;
-            // 7: Asli/Copy
-            $rawJenis    = isset($row[8]) ? trim((string)$row[8]) : 'Kertas';
-            $rawMasa     = isset($row[9]) ? trim((string)$row[9]) : '-';
-            $rawTindakan = isset($row[10]) ? trim((string)$row[10]) : 'Musnah';
-            $rawBox      = isset($row[12]) ? trim((string)$row[12]) : '-';
-            $rawUnit     = isset($row[14]) ? trim((string)$row[14]) : '';
-
-            // 2. FILL DOWN LOGIC
-            if ($rawNoBerkas !== '') $lastNoBerkas = $rawNoBerkas;
-            if ($rawNama !== '')     $lastNamaBerkas = $rawNama;
-            if ($rawKode !== '')     $lastKodeKlasifikasi = $rawKode;
-            if ($rawTahun !== '')    $lastTahun = $rawTahun;
-            if ($rawUnit !== '')     $lastUnitKerja = $rawUnit;
-
-            // 3. SKIP HEADER / INVALID ROWS
-            // Robust check: If 'No Berkas' or 'Uraian' appears in identity columns, it's a header
-            if (
-                stripos($rawNoBerkas, 'no') === 0 || // Starts with 'No'
-                stripos($rawNama, 'nama berkas') !== false ||
-                stripos($rawNama, 'uraian') !== false ||
-                stripos($rawIsi, 'uraian') !== false ||
-                stripos($rawIsi, 'isi berkas') !== false
-            ) {
-                 // Log::info("Skipping Header Row $rowIndex");
-                 continue;
-            }
-
-            // Must have a grouping (No Berkas + Nama) to proceed
-            if (!$lastNoBerkas || !$lastNamaBerkas) {
-                continue;
-            }
-
-            // 4. RESOLVE DATA
-            $klasifikasiData = $klasifikasiMap[$lastKodeKlasifikasi] ?? null;
-            $klasifikasiId = $klasifikasiData['id'] ?? $fallbackKlasifikasiId;
-            $hakAkses = $klasifikasiData['hak_akses'] ?? 'Biasa'; 
-
-            // Date Handling
-            $finalTanggal = null;
-            $finalTahun = $lastTahun ?? date('Y');
-
-            if (!empty($rawTanggal)) {
-                if (is_numeric($rawTanggal)) {
-                    if ($rawTanggal > 1900 && $rawTanggal < 2100) {
-                        $finalTahun = $rawTanggal; 
-                        $finalTanggal = null; 
-                    } else {
-                        try {
-                            $finalTanggal = Date::excelToDateTimeObject($rawTanggal)->format('Y-m-d');
-                        } catch (\Exception $e) { $finalTanggal = null; }
-                    }
-                } else {
-                    if (preg_match('/^\d{4}$/', trim((string)$rawTanggal))) {
-                         $finalTahun = trim((string)$rawTanggal);
-                         $finalTanggal = null;
-                    } else {
-                        try {
-                            $ts = strtotime($rawTanggal);
-                            if ($ts) $finalTanggal = date('Y-m-d', $ts);
-                        } catch (\Exception $e) {}
-                    }
-                }
-            }
-
-            // 5. INSERT
-            $dataToInsert = [
-                'user_id' => auth()->id(), 
-                'no_berkas' => $lastNoBerkas,
-                'nama_berkas' => $lastNamaBerkas,
-                'klasifikasi_id' => $klasifikasiId,
-                'unit_pengolah' => $lastUnitKerja ?? '-',
-                'isi' => $rawIsi,
-                'tahun' => $finalTahun,
-                'tanggal_masuk' => $finalTanggal,
-                'jumlah' => $rawJumlah,
-                'no_box' => $rawBox,
-                'hak_akses' => $hakAkses,
-                'jenis_media' => $rawJenis,
-                'masa_simpan' => $rawMasa,
-                'tindakan_akhir' => $rawTindakan,
-            ];
-
-            try {
-                Arsip::create($dataToInsert);
-            } catch (\Exception $e) {
-                Log::error("Import Error Row $rowIndex: " . $e->getMessage());
-            }
+        // Skip completely empty rows
+        if ($kodeKlasifikasi === '' && $namaBerkas === '') {
+            return null;
         }
         
-        Log::info('Import Completed.');
+        // Double check we are not reading a header line (just in case startRow is wrong or file shifted)
+        if (strtolower($namaBerkas) == 'nama berkas' || strtolower($namaBerkas) == 'uraian') {
+            return null;
+        }
+
+        // 2. Resolve Klasifikasi
+        $klasifikasiId = null;
+        if ($kodeKlasifikasi) {
+            $klasifikasi = MasterKlasifikasi::where('kode_klasifikasi', $kodeKlasifikasi)->first();
+            if ($klasifikasi) {
+                $klasifikasiId = $klasifikasi->id;
+            } else {
+                 \Illuminate\Support\Facades\Log::warning("Klasifikasi not found: " . $kodeKlasifikasi);
+                 return null; // Skip row if classification is invalid to prevent SQL error
+            }
+        }
+
+        // 3. Defaults
+        $user = \App\Models\User::first();
+        $userId = $user ? $user->id : 1;
+
+        // 4. Create Model
+        return new Arsip([
+            'no_berkas'     => $row[0] ?? null,
+            'klasifikasi_id'=> $klasifikasiId,
+            'nama_berkas'   => $namaBerkas,
+            'tahun'         => $row[3] ?? date('Y'),
+            'isi'           => $row[4] ?? null,
+            'tanggal_masuk' => $this->parseDate($row[5] ?? null),
+            'jumlah'        => is_numeric($row[6] ?? null) ? $row[6] : 1, // Default 1 if invalid
+            'asli_copy'     => $row[7] ?? null,
+            'jenis_media'   => $row[8] ?? null,
+            'masa_simpan'   => $row[9] ?? null,
+            'tindakan_akhir'=> $row[10] ?? null, 
+            'hak_akses'     => $row[11] ?? 'Biasa',
+            'no_box'        => $row[12] ?? null,
+            'lokasi'        => $row[13] ?? null,
+            'unit_pengolah' => $row[14] ?? null,
+            'rak'           => $row[15] ?? null,
+            'tingkat'       => $row[16] ?? null,
+            'user_id'       => $userId
+        ]);
+    }
+
+    public function startRow(): int
+    {
+        return 6; // Data starts at Row 6 in the Excel file
+    }
+
+    private function parseDate($value) {
+        if (!$value) return null;
+        try {
+            if (is_numeric($value)) {
+                return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+            }
+            return Carbon::parse($value);
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }
