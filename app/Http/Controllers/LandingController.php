@@ -37,4 +37,19 @@ class LandingController extends Controller
 
         return view('landing', compact('totalArsip', 'bulanIniArsip', 'arsipBulananData', 'mediaInfo'));
     }
+
+    public function visiMisi()
+    {
+        return view('visi-misi');
+    }
+
+    public function sejarah()
+    {
+        return view('sejarah');
+    }
+
+    public function penghargaan()
+    {
+        return view('penghargaan');
+    }
 }

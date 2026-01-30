@@ -23,6 +23,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // 1b. LANDING PAGE (PUBLIC)
 // ==========================================
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/visi-misi', [LandingController::class, 'visiMisi'])->name('visi-misi');
+Route::get('/sejarah', [LandingController::class, 'sejarah'])->name('sejarah');
+Route::get('/penghargaan', [LandingController::class, 'penghargaan'])->name('penghargaan');
 
 // ==========================================
 // 2. PROTECTED ROUTES (Requires Login)

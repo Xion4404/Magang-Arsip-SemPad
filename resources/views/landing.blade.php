@@ -32,7 +32,7 @@
                 <!-- Dropdown Tentang -->
                 <div x-data="{ open: false }" class="relative" @mouseenter="open = true" @mouseleave="open = false">
                     <button class="hover:text-red-600 transition flex items-center gap-1 focus:outline-none">
-                        Tentang
+                        Tentang Kami
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="open" 
@@ -44,10 +44,10 @@
                          x-transition:leave-end="opacity-0 translate-y-2"
                          class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100"
                          style="display: none;">
-                        <a href="#visi-misi" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Visi Misi</a>
-                        <a href="#sejarah" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Sejarah</a>
+                        <a href="{{ route('visi-misi') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Visi Misi</a>
+                        <a href="{{ route('sejarah') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Sejarah</a>
                         <a href="#struktur" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
-                        <a href="#penghargaan" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">Penghargaan</a>
+                        <a href="{{ route('penghargaan') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">Penghargaan</a>
                     </div>
                 </div>
                 <a href="#fitur" class="hover:text-red-600 transition">Fitur</a>
@@ -352,52 +352,74 @@
     </section>
 
     <!-- Footer -->
-    <footer id="kontak" class="pt-20 pb-10 border-t border-gray-200 bg-gray-100 bg-cover bg-center" style="background-image: url('{{ asset('images/SuperGrafis.png') }}');">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                <!-- Kantor Utama -->
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-4">Kantor Utama</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Jl. Raya Indarung, Kec. Lubuk Kilangan Kota Padang 25237, Sumatera Barat
-                    </p>
-                </div>
-                <!-- Kantor Perwakilan -->
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-4">Kantor Perwakilan Jakarta</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Graha Irama, Lt. 11, Jl. H. R. Rasuna Said No. 1 & 2, RT.6/RW.4, Kuningan Timur, Kecamatan Setiabudi, Kota Jakarta Selatan 12950, DKI Jakarta
-                    </p>
-                </div>
-                <!-- Media Sosial -->
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-4">Media Sosial</h4>
-                    <div class="flex gap-4 mb-6">
-                        <a href="https://twitter.com/semenpadang1910" target="_blank" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
-                        <a href="https://www.instagram.com/semenpadang/" target="_blank" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-red-600 hover:text-white transition"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-                        <a href="https://www.youtube.com/channel/UCIi9Yy9jRMlB8k9_8djAJcA/feed" target="_blank" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-red-600 hover:text-white transition"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
-                        <a href="https://www.tiktok.com/@semenpadang1910?_t=8hadknUhwFF&_r=1" target="_blank" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-red-600 hover:text-white transition"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.65-1.62-1.1-.04 1.86.04 3.66.17 5.51.18 2.58-.62 5.13-2.4 7.29-1.42 1.75-3.64 2.7-5.99 2.7-3.36.03-6.54-1.74-8.19-4.57-1.74-3.08-1.55-7.06.63-9.92.51-.7 1.12-1.32 1.83-1.83 1.96-1.43 4.54-1.85 6.93-1.25.1.58.21 1.17.32 1.76-1.09-.37-2.29-.44-3.41-.09-1.13.34-2.11 1.05-2.73 2.05-.66 1.06-.82 2.37-.58 3.6.43 2.21 2.4 4.02 4.63 4.1 1.23.07 2.45-.31 3.42-1.1 1.08-.85 1.66-2.26 1.58-3.62-.06-2.58-.02-5.16-.01-7.74-.01-.98-.02-1.95-.03-2.93-.01-.65-.01-1.31-.02-1.96H12.525z"/></svg></a>
-                        <a href="https://web.facebook.com/PTsemenpadang1910/" target="_blank" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 hover:bg-red-600 hover:text-white transition"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+    <footer id="kontak" class="relative bg-cover bg-center border-t border-gray-200" style="background-image: url('{{ asset('images/SuperGrafis.png') }}');">
+        <!-- Main Footer Content with Pattern -->
+        <div class="pt-12 pb-8">
+            <div class="container mx-auto px-6">
+                <!-- Top Section: 3 Columns -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <!-- Column 1: Kantor Utama -->
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Kantor Utama</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed max-w-xs">
+                            Jl. Raya Indarung, Kec. Lubuk Kilangan<br>
+                            Kota Padang 25237, Sumatera Barat
+                        </p>
+                    </div>
+                    
+                    <!-- Column 2: Kantor Perwakilan -->
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Kantor Perwakilan Jakarta</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed max-w-sm">
+                            Graha Irama, Lt. 11, Jl. H. R. Rasuna Said No. 1 & 2, RT.6/RW.4, Kuningan Timur, Kecamatan Setiabudi, Kota Jakarta Selatan 12950, DKI Jakarta
+                        </p>
+                    </div>
+
+                    <!-- Column 3: Media Sosial & SIG Group -->
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Media Sosial</h4>
+                        <div class="flex gap-4 mb-6">
+                            <a href="https://twitter.com/semenpadang1910" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-black transition" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+                            <a href="https://www.instagram.com/semenpadang/" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                            <a href="https://www.youtube.com/channel/UCIi9Yy9jRMlB8k9_8djAJcA/feed" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                            <a href="https://www.tiktok.com/@semenpadang1910?_t=8hadknUhwFF&_r=1" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.65-1.62-1.1-.04 1.86.04 3.66.17 5.51.18 2.58-.62 5.13-2.4 7.29-1.42 1.75-3.64 2.7-5.99 2.7-3.36.03-6.54-1.74-8.19-4.57-1.74-3.08-1.55-7.06.63-9.92.51-.7 1.12-1.32 1.83-1.83 1.96-1.43 4.54-1.85 6.93-1.25.1.58.21 1.17.32 1.76-1.09-.37-2.29-.44-3.41-.09-1.13.34-2.11 1.05-2.73 2.05-.66 1.06-.82 2.37-.58 3.6.43 2.21 2.4 4.02 4.63 4.1 1.23.07 2.45-.31 3.42-1.1 1.08-.85 1.66-2.26 1.58-3.62-.06-2.58-.02-5.16-.01-7.74-.01-.98-.02-1.95-.03-2.93-.01-.65-.01-1.31-.02-1.96H12.525z"/></svg></a>
+                            <a href="https://web.facebook.com/PTsemenpadang1910/" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-900 text-lg mb-2">SIG Group</h4>
+                        <a href="https://sig.id/" target="_blank" class="text-gray-600 hover:text-[#e92027] transition font-medium">www.sig.id</a>
                     </div>
                 </div>
-                <div>
-                    <h4 class="font-bold text-gray-800 mb-4">SIG Group</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        <a href="https://sig.id/" target="_blank" class="hover:text-red-700 transition">www.sig.id</a>
-                    </p>
-                </div>
-                <!-- Logo Footer -->
-                <div class="flex flex-col items-start gap-4">
-                    <img src="{{ asset('images/sp-black.png') }}" class="h-20 p-2 rounded">
-                    <div class="text-right w-full">
-                        <p class="text-xs text-gray-500 font-bold tracking-widest uppercase">Hotline Coverage</p>
-                        <p class="text-2xl font-black text-[#e92027]">0800 1088888</p>
+
+                <!-- Bottom Section: Logo and Hotline -->
+                <div class="flex flex-col md:flex-row justify-between items-center border-t border-gray-200/50 pt-6">
+                    <!-- Logo -->
+                    <div class="mb-4 md:mb-0">
+                        <img src="{{ asset('images/sp-black.png') }}" class="h-16 object-contain">
+                    </div>
+
+                    <!-- Hotline -->
+                    <div class="text-center md:text-right">
+                        <h4 class="font-bold text-gray-900 text-xl tracking-widest uppercase mb-0">HOTLINE</h4>
+                        <p class="text-2xl font-bold text-gray-900">0800 1088888</p>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Red Bar -->
+        <div class="bg-[#e92027] h-14 w-full relative">
+            <div class="container mx-auto px-6 h-full flex justify-end items-center">
+                 <button @click="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-6 h-6 flex items-center justify-center bg-red-800/50 hover:bg-red-900 text-white rounded transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                 </button>
+            </div>
+        </div>
             
-            <div class="bg-[#e92027] -mx-6 -mb-10 py-4 text-center">
-                 <p class="text-white text-sm">© {{ date('Y') }} PT Semen Padang. All Rights Reserved. e-Arsip System.</p>
+        <!-- Copyright -->
+        <div class="py-4">
+            <div class="container mx-auto px-6 text-center">
+                  <p class="text-gray-800 text-sm font-medium">PT Sinergi Informatika Semen Indonesia &copy; Copyright {{ date('Y') }}. All rights reserved.</p>
             </div>
         </div>
     </footer>
