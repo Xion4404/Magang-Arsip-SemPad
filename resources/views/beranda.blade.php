@@ -3,22 +3,41 @@
 
     <div x-data="{ activeTab: '{{ request()->query('active_tab', 'peminjaman') }}', mounted: false }" 
          x-init="setTimeout(() => mounted = true, 100)" 
+         x-init="setTimeout(() => mounted = true, 100)" 
          class="pb-20 bg-gray-50 min-h-screen">
 
-        <div x-show="mounted"
-             x-transition:enter="transition ease-out duration-700"
-             x-transition:enter-start="opacity-0 transform scale-[0.98] translate-y-4"
-             x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-             class="relative w-full overflow-hidden shadow-md z-0 bg-white"
-             style="display: none;" 
-        >
-            <img src="{{ asset('images/banner-beranda.png') }}" 
-                 alt="Banner Selamat Datang PT Semen Padang" 
-                 class="w-full h-auto max-h-[400px] object-cover object-bottom"
-                 onerror="this.onerror=null; this.src='https://via.placeholder.com/1200x400/7f1d1d/FFFFFF?text=Gambar+Banner+Tidak+Ditemukan';">
+        <!-- Background Header -->
+        <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
+            <!-- Polygon Pattern Overlay -->
+            <div class="absolute inset-0 z-0 opacity-40">
+                 <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                    <defs>
+                        <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
+                    <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
+                    <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
+                    <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
+                </svg>
+            </div>
+    
+            <!-- Ornamental Icon -->
+            <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
+                <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+            </div>
+             
+             <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
+                <div class="text-center md:text-left">
+                     <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Beranda e-Arsip</h2>
+                     <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Ringkasan statistik dan aktivitas kearsipan PT Semen Padang.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="container mx-auto px-4 mt-6 relative z-10">
+        <div class="container mx-auto px-4 -mt-10 relative z-20">
             <div x-show="mounted"
                  x-transition:enter="transition ease-out duration-700 delay-300"
                  x-transition:enter-start="opacity-0 translate-y-4"

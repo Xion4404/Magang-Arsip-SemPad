@@ -78,17 +78,17 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons: Print/Export -->
+                 <!-- Action Buttons: Print/Export -->
                <div class="flex gap-3 w-full lg:w-auto justify-end">
-                    <button class="flex items-center gap-2 px-4 py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 hover:shadow-md transition-all active:scale-95">
+                    <button onclick="submitExport('excel')" class="flex items-center gap-2 px-4 py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold hover:bg-green-100 hover:shadow-md transition-all active:scale-95">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span class="hidden sm:inline">Excel</span>
                     </button>
-                    <button class="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-[#c41820] border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 hover:shadow-md transition-all active:scale-95">
+                    <button onclick="submitExport('pdf')" class="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-[#c41820] border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 hover:shadow-md transition-all active:scale-95">
                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                          <span class="hidden sm:inline">PDF</span>
                     </button>
-                    <button class="flex items-center gap-2 px-4 py-2.5 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-100 hover:shadow-md transition-all active:scale-95">
+                    <button onclick="submitExport('print')" class="flex items-center gap-2 px-4 py-2.5 bg-gray-50 text-gray-700 border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-100 hover:shadow-md transition-all active:scale-95">
                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                          <span class="hidden sm:inline">Print</span>
                     </button>
@@ -130,9 +130,6 @@
                                 </td>
                                 <td class="py-4 px-6 text-gray-600">
                                     <div class="flex items-center justify-center gap-2">
-                                        <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600">
-                                            {{ substr($item->penerima->nama ?? '?', 0, 1) }}
-                                        </div>
                                         {{ $item->penerima->nama ?? '-' }}
                                     </div>
                                 </td>
@@ -169,6 +166,18 @@
             
         </div>
     </div>
+
+    <!-- Export Form -->
+    <form id="export-form" action="{{ route('arsip-masuk.export') }}" method="POST" target="_blank" class="hidden">
+        @csrf
+        <input type="hidden" name="type" id="export-type">
+        <input type="hidden" name="ids" id="export-ids">
+        {{-- Carry over search & filter params --}}
+        <input type="hidden" name="search" value="{{ request('search') }}">
+        <input type="hidden" name="unit_asal" value="{{ request('unit_asal') }}">
+        <input type="hidden" name="penerima" value="{{ request('penerima') }}">
+        <input type="hidden" name="year" value="{{ request('year') }}">
+    </form>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -213,13 +222,13 @@
             function fetchData() {
                 const search = document.getElementById('searchInput').value;
                 const unit = document.getElementById('unitAsalFilter').value;
-                const penerima = document.getElementById('penerimaFilter') ? document.getElementById('penerimaFilter').value : '';
+                // const penerima = document.getElementById('penerimaFilter') ? document.getElementById('penerimaFilter').value : ''; 
                 const year = document.getElementById('yearFilter').value;
 
                 const params = new URLSearchParams();
                 if(search) params.append('search', search);
                 if(unit) params.append('unit_asal', unit);
-                if(penerima) params.append('penerima', penerima);
+                // if(penerima) params.append('penerima', penerima);
                 if(year) params.append('year', year);
 
                 const url = `{{ route('arsip-masuk.index') }}?${params.toString()}`;
@@ -260,5 +269,14 @@
                 }
             });
         });
+
+        // Export Function
+        function submitExport(type) {
+            // Note: Currently no checkboxes for selection, so we default to exporting all (filtered) data
+            // If checkboxes are added later, logic can be updated here similar to Arsip page.
+            document.getElementById('export-type').value = type;
+            document.getElementById('export-ids').value = JSON.stringify([]); // Empty array means export all/filtered
+            document.getElementById('export-form').submit();
+        }
     </script>
 </x-layout>

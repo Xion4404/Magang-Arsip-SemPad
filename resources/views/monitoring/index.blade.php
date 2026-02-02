@@ -85,29 +85,39 @@
                          <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-[#e92027] transition-colors">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                          </span>
-                         <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari aktivitas..." class="w-full py-3 pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#e92027] focus:bg-white focus:border-transparent text-sm font-medium transition-all shadow-sm hover:shadow-md hover:border-red-300 filter-input">
+                         <input type="text" id="searchInput" value="{{ request('search') }}" placeholder="Cari aktivitas..." class="w-full py-3 pl-12 pr-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e92027] focus:bg-white focus:border-transparent text-sm font-medium transition-all shadow-sm hover:shadow-md hover:border-red-300 filter-input">
                     </div>
 
                     <!-- Dropdowns -->
                     <div class="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar scroll-smooth">
-                        <select id="picFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-2 focus:ring-[#e92027] focus:border-transparent block px-5 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[150px] appearance-none">
-                             <option value="">Semua PIC</option>
-                             @foreach($users as $user)
+                        <div class="relative">
+                            <select id="picFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-transparent block pl-5 pr-10 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[150px] appearance-none">
+                                <option value="">Semua PIC</option>
+                                @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ request('pic') == $user->id ? 'selected' : '' }}>{{ $user->nama }}</option>
-                             @endforeach
-                        </select>
+                                @endforeach
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
                         
-                        <select id="tahapanFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-full focus:ring-2 focus:ring-[#e92027] focus:border-transparent block px-5 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[170px] appearance-none">
-                             <option value="">Semua Tahapan</option>
-                             <option value="Pemilahan" {{ request('tahapan') == 'Pemilahan' ? 'selected' : '' }}>Pemilahan</option>
-                             <option value="Pendataan" {{ request('tahapan') == 'Pendataan' ? 'selected' : '' }}>Pendataan</option>
-                             <option value="Pelabelan" {{ request('tahapan') == 'Pelabelan' ? 'selected' : '' }}>Pelabelan</option>
-                             <option value="Input E-Arsip" {{ request('tahapan') == 'Input E-Arsip' ? 'selected' : '' }}>Input E-Arsip</option>
-                        </select>
+                        <div class="relative">
+                            <select id="tahapanFilter" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-transparent block pl-5 pr-10 py-3 filter-input cursor-pointer hover:bg-gray-50 hover:border-red-300 hover:shadow-md transition-all shadow-sm min-w-[170px] appearance-none">
+                                <option value="">Semua Tahapan</option>
+                                <option value="Pemilahan" {{ request('tahapan') == 'Pemilahan' ? 'selected' : '' }}>Pemilahan</option>
+                                <option value="Pendataan" {{ request('tahapan') == 'Pendataan' ? 'selected' : '' }}>Pendataan</option>
+                                <option value="Pelabelan" {{ request('tahapan') == 'Pelabelan' ? 'selected' : '' }}>Pelabelan</option>
+                                <option value="Input E-Arsip" {{ request('tahapan') == 'Input E-Arsip' ? 'selected' : '' }}>Input E-Arsip</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
                          
                          <!-- Reset -->
                          @if(request('search') || request('pic') || request('tahapan'))
-                            <a href="{{ route('monitoring.index') }}" class="flex items-center px-5 py-3 bg-red-50 text-[#e92027] rounded-full text-sm font-bold hover:bg-red-100 transition shadow-sm whitespace-nowrap hover:shadow-md">
+                            <a href="{{ route('monitoring.index') }}" class="flex items-center px-5 py-3 bg-red-50 text-[#e92027] rounded-xl text-sm font-bold hover:bg-red-100 transition shadow-sm whitespace-nowrap hover:shadow-md">
                                 Reset
                             </a>
                         @endif

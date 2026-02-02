@@ -61,6 +61,7 @@ Route::patch('/monitoring/{id}/advance-stage', [MonitoringKaryawanController::cl
 // 4. FITUR ARSIP MASUK
 // ==========================================
 Route::get('/arsip-masuk', [ArsipMasukController::class, 'index'])->name('arsip-masuk.index');
+Route::post('/arsip-masuk/export', [ArsipMasukController::class, 'export'])->name('arsip-masuk.export');
 Route::get('/arsip-masuk/create', [ArsipMasukController::class, 'create'])->name('arsip-masuk.create');
 Route::get('/arsip-masuk/{id}/edit', [ArsipMasukController::class, 'edit'])->name('arsip-masuk.edit');
 Route::put('/arsip-masuk/{id}', [ArsipMasukController::class, 'update'])->name('arsip-masuk.update');

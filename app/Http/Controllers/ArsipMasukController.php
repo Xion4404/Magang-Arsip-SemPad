@@ -50,6 +50,43 @@ class ArsipMasukController extends Controller
         return view('arsip-masuk.index', compact('arsipMasuk', 'unitAsalOptions', 'yearOptions', 'users'));
     }
 
+    public function export(Request $request)
+    {
+        $type = $request->input('type');
+        $ids = json_decode($request->input('ids'), true);
+        $search = $request->input('search');
+        $unit_asal = $request->input('unit_asal');
+        $year = $request->input('year');
+        $penerima = $request->input('penerima');
+
+        $export = new \App\Exports\ArsipMasukExport($ids, $search, $unit_asal, $year, $penerima);
+        $filename = 'arsip-masuk-' . date('Y-m-d') . ($type === 'pdf' ? '.pdf' : '.xlsx');
+
+        if ($type === 'excel') {
+            return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
+        }
+
+        if ($type === 'pdf') {
+            $query = $export->query();
+            $data = $query->get();
+            $isPdf = true;
+            
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('arsip-masuk.pdf', compact('data', 'isPdf'));
+            $pdf->setPaper('a4', 'landscape');
+            return $pdf->download($filename);
+        }
+
+        if ($type === 'print') {
+            $query = $export->query();
+            $data = $query->get();
+            $isPdf = false;
+            
+            return view('arsip-masuk.pdf', compact('data', 'isPdf'));
+        }
+
+        return redirect()->back();
+    }
+
     public function show($id)
     {
         $arsipMasuk = ArsipMasuk::with(['berkas.klasifikasi', 'penerima'])->findOrFail($id);

@@ -25,16 +25,15 @@
     <div class="h-screen w-screen flex flex-col md:flex-row relative overflow-hidden">
 
         <div class="absolute top-6 left-6 flex items-center space-x-3 z-20">
-            <img src="{{ asset('images/logo-sp.png') }}" alt="Logo" class="h-10 md:h-12 w-auto">
-            <span class="text-[#e92027] font-bold text-lg md:text-xl tracking-tight">PT SEMEN PADANG</span>
+            <img src="{{ asset('images/sp-black.png') }}" alt="Logo" class="h-14 md:h-12 w-auto">
         </div>
 
         <div class="w-full md:w-1/2 flex flex-col justify-center px-12 lg:px-28 py-10 bg-white h-full">
 
-            <div class="text-center mb-6">
-                <h1 class="text-2xl md:text-3xl font-bold text-[#e92027] leading-tight mb-1">
-                    Manajemen Arsip <br>
-                    Terintegrasi & Monitoring
+            <div class="text-center mb-8">
+                <h1 class="text-2xl md:text-3xl font-bold text-black leading-tight mb-5">
+                    e-Arsip <br>
+                    PT Semen Padang
                 </h1>
                 <h2 class="text-xl md:text-2xl font-bold text-[#e92027]">Login</h2>
             </div>
@@ -82,13 +81,13 @@
                 </button>
             </form>
 
-            <p class="mt-10 text-center text-[10px] text-gray-300 tracking-widest uppercase">
-                © 2026 PT Semen Padang - Information Technology Division
+            <p class="mt-6 text-center text-[10px] text-gray-300 tracking-widest uppercase">
+                © 2026 PT Semen Padang - Kearsipan Unit Sistem Manajemen
             </p>
         </div>
 
-        <div class="hidden md:flex md:w-1/2 bg-[#FDF2F2] justify-center items-center h-full">
-            <img src="{{ asset('images/arsip.png') }}" alt="Arsip Semen Padang"
+        <div class="hidden md:flex md:w-1/2 bg-[#e92027] justify-center items-center h-full">
+            <img src="{{ asset('images/pabrik-sp.png') }}" alt="Arsip Semen Padang"
                 class="max-h-[85%] max-w-[85%] object-contain">
         </div>
     </div>
