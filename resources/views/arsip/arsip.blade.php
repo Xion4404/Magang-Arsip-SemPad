@@ -58,6 +58,7 @@
                                 <option value="">Semua Status</option>
                                 <option value="Permanen" {{ request('filter_tindakan') == 'Permanen' ? 'selected' : '' }}>Permanen</option>
                                 <option value="Musnah" {{ request('filter_tindakan') == 'Musnah' ? 'selected' : '' }}>Musnah</option>
+                                <option value="Dinilai Kembali" {{ request('filter_tindakan') == 'Dinilai Kembali' ? 'selected' : '' }}>Dinilai Kembali</option>
                             </select>
     
                             {{-- Filter Tahun --}}
@@ -77,10 +78,10 @@
                             </select>
     
                             <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
-                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
-                                <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun ↓</option>
-                                <option value="year_asc" {{ request('sort') == 'year_asc' ? 'selected' : '' }}>Tahun ↑</option>
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Input Terbaru</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Input Terlama</option>
+                                <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun (Terbaru - Lama)</option>
+                                <option value="year_asc" {{ request('sort') == 'year_asc' ? 'selected' : '' }}>Tahun (Lama - Terbaru)</option>
                             </select>
                         </div>
                     </form>
@@ -147,10 +148,6 @@
                         <button type="button" onclick="submitExport('excel')" class="bg-green-50 text-green-700 px-5 py-3 rounded-xl font-bold hover:bg-green-100 hover:-translate-y-1 transition flex items-center gap-2 border border-green-100">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Excel
-                        </button>
-                        <button type="button" onclick="submitExport('pdf')" class="bg-red-50 text-red-700 px-5 py-3 rounded-xl font-bold hover:bg-red-100 hover:-translate-y-1 transition flex items-center gap-2 border border-red-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                            PDF
                         </button>
                         <button type="button" onclick="printTable()" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl font-bold hover:bg-gray-200 hover:-translate-y-1 transition flex items-center gap-2 border border-gray-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -276,7 +273,7 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 background-color: white !important;
-                font-size: 10pt; /* Increased from 8px to 10pt for better fullness */
+                font-size: 7pt; 
             }
 
             /* RESET: Break out of the app shell layout */
@@ -382,11 +379,11 @@
                 word-wrap: break-word;
                 overflow-wrap: break-word;
                 white-space: normal !important;
-                padding: 6px 4px !important;
+                padding: 3px 2px !important;
                 border: 1px solid #000 !important;
                 color: black !important;
                 background: white !important;
-                vertical-align: top;
+                vertical-align: middle;
             }
             
             th {
@@ -394,11 +391,40 @@
                 font-weight: bold;
                 text-align: center;
                 vertical-align: middle;
-                font-size: 10pt !important;
+                font-size: 7pt !important;
             }
             
             td {
-                 font-size: 9pt !important;
+                 font-size: 7pt !important;
+            }
+            th, td {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                white-space: normal !important;
+                padding: 3px 2px !important;
+                border: 1px solid #000 !important;
+                color: black !important;
+                background: white !important;
+                vertical-align: middle;
+            }
+
+            th {
+                background-color: #7f1d1d !important; /* Dark Red */
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                font-weight: bold;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 7pt !important;
+            }
+
+            /* Un-truncate text for print */
+            .truncate {
+                overflow: visible !important;
+                text-overflow: clip !important;
+                white-space: normal !important;
+                max-width: none !important;
             }
 
             /* Column Widths (Approximation for A4 Landscape) - Total 100% visible */
@@ -406,17 +432,17 @@
             /* 1. Checkbox: HIDE */
             th:nth-child(1), td:nth-child(1) { display: none !important; width: 0 !important; }
 
-            /* 2. No Berkas: 5% */
+            /* 2. No Berkas: 4% */
             th:nth-child(2), td:nth-child(2) { width: 4%; text-align: center !important; }
             
-            /* 3. Kode Klasifikasi: 8% */
-            th:nth-child(3), td:nth-child(3) { width: 7%; }
+            /* 3. Kode Klasifikasi: 10% (+2%) - Auto Wrap */
+            th:nth-child(3), td:nth-child(3) { width: 10%; white-space: normal !important; }
             
-            /* 4. Nama Berkas: 15% */
-            th:nth-child(4), td:nth-child(4) { width: 14%; }
+            /* 4. Nama Berkas: 20% (-1%) */
+            th:nth-child(4), td:nth-child(4) { width: 20%; }
             
-            /* 5. Isi Berkas: 20% */
-            th:nth-child(5), td:nth-child(5) { width: 19%; }
+            /* 5. Isi Berkas: 21% (-2%) */
+            th:nth-child(5), td:nth-child(5) { width: 21%; }
             
             /* 6. Tahun: 4% */
             th:nth-child(6), td:nth-child(6) { width: 4%; text-align: center !important; }
@@ -433,17 +459,17 @@
             /* 10. Masa Simpan: 6% */
             th:nth-child(10), td:nth-child(10) { width: 6%; text-align: center !important; }
             
-            /* 11. Tindakan: 6% */
-            th:nth-child(11), td:nth-child(11) { width: 6%; text-align: center !important; }
+            /* 11. Tindakan: 7% (+1%) - No Wrap */
+            th:nth-child(11), td:nth-child(11) { width: 7%; text-align: center !important; white-space: nowrap !important; }
             
-            /* 12. Box: 3% */
+            /* 12. Box: 4% */
             th:nth-child(12), td:nth-child(12) { width: 4%; text-align: center !important; }
             
-            /* 13. Unit Pengolah: 7% */
-            th:nth-child(13), td:nth-child(13) { width: 15%; }
+            /* 13. Unit Pengolah: 9% */
+            th:nth-child(13), td:nth-child(13) { width: 9%; }
             
-            /* 14. Jenis: 5% */
-            th:nth-child(14), td:nth-child(14) { width: 6%; text-align: center !important; }
+            /* 14. Jenis/Media: HIDE */
+            th:nth-child(14), td:nth-child(14) { display: none !important; width: 0 !important; }
             
             /* 15. Aksi: HIDE */
             th:nth-child(15), td:nth-child(15) { display: none !important; width: 0 !important; }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ArsipImport implements ToModel, \Maatwebsite\Excel\Concerns\WithStartRow
 {
+    private $lastNoBerkas = null;
     /**
     * @param array $row
     *
@@ -17,6 +18,15 @@ class ArsipImport implements ToModel, \Maatwebsite\Excel\Concerns\WithStartRow
     */
     public function model(array $row) 
     {
+        // FILL DOWN LOGIC FOR NO BERKAS
+        $currentNoBerkas = $row[0] ?? null;
+        if (!empty($currentNoBerkas)) {
+            $this->lastNoBerkas = $currentNoBerkas;
+        } else {
+            // If empty, use the last seen number (Fill Down)
+            $currentNoBerkas = $this->lastNoBerkas;
+        }
+
         // 1. Skip Empty Rows or "Uraian" Subheaders
         // Check if important columns are empty (e.g., no_berkas or nama_berkas)
         // Adjust logic: sometimes NoBerkas is blank but it's a valid row? 
@@ -75,7 +85,7 @@ class ArsipImport implements ToModel, \Maatwebsite\Excel\Concerns\WithStartRow
 
         // 4. Create Model
         return new Arsip([
-            'no_berkas'     => $row[0] ?? null,
+            'no_berkas'     => $currentNoBerkas,
             'klasifikasi_id'=> $klasifikasiId,
             'nama_berkas'   => $namaBerkas,
             'tahun'         => $row[3] ?? date('Y'),

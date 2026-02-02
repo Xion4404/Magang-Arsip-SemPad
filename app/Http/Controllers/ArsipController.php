@@ -100,7 +100,7 @@ class ArsipController extends Controller
                 break;
         }
 
-        $arsips = $query->paginate(10);
+        $arsips = $query->paginate(100);
         
         // Calculate grouping and numbering based on Entry Order (First ID)
         $groupData = [];
@@ -322,15 +322,7 @@ class ArsipController extends Controller
             return \Maatwebsite\Excel\Facades\Excel::download($export, $filename);
         }
 
-        if ($type === 'pdf') {
-            // Fetch data manually for the view
-            $query = $export->query(); 
-            $arsips = $query->get(); // isiArsip relationship removed
-            
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('arsip.pdf', compact('arsips'));
-            $pdf->setPaper('a4', 'landscape');
-            return $pdf->download($filename);
-        }
+
 
         return redirect()->back();
     }

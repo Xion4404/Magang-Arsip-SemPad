@@ -7,25 +7,25 @@
                 </th>
                 
                 {{-- Main Info --}}
-                <th class="py-5 px-4 font-bold whitespace-nowrap">No Berkas</th>
-                <th class="py-5 px-4 font-bold whitespace-nowrap">Kode Klasifikasi</th>
+                <th class="py-5 px-4 font-bold whitespace-nowrap">No</th>
+                <th class="py-5 px-4 font-bold whitespace-nowrap">Kode</th>
                 <th class="py-5 px-4 font-bold whitespace-nowrap">Nama Berkas</th>
                 
                 {{-- Details --}}
-                <th class="py-5 px-4 font-bold min-w-[250px]">Isi Berkas</th>
-                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Tahun</th>
-                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Tanggal</th>
+                <th class="py-5 px-4 font-bold min-w-[250px]">Uraian Arsip</th>
+                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Thn</th>
+                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Tgl</th>
                 <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Jml</th>
 
                 {{-- Statuses --}}
-                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Hak Akses</th>
-                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Masa Simpan</th>
-                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Tindakan</th>
+                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Akses</th>
+                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Retensi</th>
+                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Ket</th>
                 <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Box</th>
 
                 {{-- Context --}}
-                <th class="py-5 px-4 font-bold whitespace-nowrap">Unit Pengolah</th>
-                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Jenis</th>
+                <th class="py-5 px-4 font-bold whitespace-nowrap">Unit</th>
+                <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Media</th>
                 <th class="py-5 px-4 font-bold text-center whitespace-nowrap rounded-tr-3xl w-10"></th> {{-- Aksi --}}
             </tr>
         </thead>
@@ -106,8 +106,12 @@
                              <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-600 border border-blue-100">
                                 Permanen
                             </span>
+                        @elseif(strtolower($arsip->tindakan_akhir) == 'dinilai kembali')
+                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-yellow-50 text-yellow-600 border border-yellow-100">
+                                Dinilai Kembali
+                            </span>
                         @else
-                            <span class="text-gray-300 text-xs">-</span>
+                            <span class="text-gray-600 text-xs font-bold">{{ $arsip->tindakan_akhir ?: '-' }}</span>
                         @endif
                     </td>
                     <td class="py-5 px-4 text-center font-mono text-xs font-bold text-gray-600 border-r border-gray-100">
