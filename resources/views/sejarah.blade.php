@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sejarah - Sistem Informasi e-Arsip PT Semen Padang</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif !important; }
+    </style>
+</head>
+<body class="bg-white">
+
+    <!-- Navigation -->
+    <nav x-data="{ isScrolled: false }" 
+         @scroll.window="isScrolled = (window.pageYOffset > 50)"
+         :class="isScrolled ? 'bg-white shadow-md py-6' : 'bg-transparent py-4'"
+         class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                 <img :src="isScrolled ? '{{ asset('images/sp-black.png') }}' : '{{ asset('images/sp-white.png') }}'" alt="Logo Semen Padang" class="h-20 drop-shadow-lg filter brightness-100 rounded px-2 py-1 transition-all duration-300">
+            </div>
+            <div class="hidden md:flex items-center gap-6 font-medium drop-shadow-md transition-colors duration-300"
+                 :class="isScrolled ? 'text-gray-800' : 'text-white'">
+                 <a href="{{ route('landing') }}" class="hover:text-red-600 transition">Beranda</a>
+                
+                <!-- Dropdown Tentang Kami -->
+                <div x-data="{ open: false }" class="relative" @mouseenter="open = true" @mouseleave="open = false">
+                    <button class="hover:text-red-600 transition flex items-center gap-1 focus:outline-none text-red-600">
+                        Tentang Kami
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 translate-y-2"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-2"
+                         class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100"
+                         style="display: none;">
+                        <a href="{{ route('visi-misi') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Visi Misi</a>
+                        <a href="{{ route('sejarah') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0 font-bold bg-red-50 text-red-700">Sejarah</a>
+                        <a href="{{ route('landing') }}#struktur" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
+                        <a href="{{ route('penghargaan') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">Penghargaan</a>
+                    </div>
+                </div>
+                <a href="{{ route('landing') }}#fitur" class="hover:text-red-600 transition">Fitur</a>
+                <a href="{{ route('landing') }}#kontak" class="hover:text-red-600 transition">Kontak</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <style>
+        @keyframes zoomIn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        .animate-zoom {
+            animation: zoomIn 10s infinite alternate;
+        }
+    </style>
+    <div class="relative h-[40vh] w-full overflow-hidden">
+        <div class="absolute inset-0">
+             <img src="{{ asset('images/hp 1.jpg') }}" class="w-full h-full object-cover animate-zoom">
+             <!-- Overlay Gradient -->
+             <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="absolute inset-0 flex items-center">
+            <div class="container mx-auto px-6 pt-20">
+                <div class="max-w-2xl text-white">
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-2 drop-shadow-lg">
+                        Tentang Kami
+                    </h1>
+                     <p class="text-xl font-light">Sejarah</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Title Section -->
+    <div class="container mx-auto px-6 py-12 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 uppercase tracking-wide">Sejarah Kearsipan PT Semen Padang</h2>
+        <div class="w-24 h-1 bg-[#e92027] mx-auto mt-4 rounded-full"></div>
+    </div>
+
+    <!-- Timeline Content -->
+    <div class="container mx-auto px-6 pb-20 max-w-5xl">
+        <div class="relative wrap overflow-hidden p-10 h-full">
+            <!-- Vertical Line -->
+            <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%"></div>
+
+            <!-- 1986 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">1986</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Penataan Sistem Kearsipan Pola Baru.</p>
+                </div>
+            </div>
+
+            <!-- 1989 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">1989</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Buku Sistem Kearsipan/Persuratan yang Pertama "Sistem Manajemen Persuratan PT Semen Padang".</p>
+                </div>
+            </div>
+
+            <!-- 1989 - 2000 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">1989 - 2000</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Pembenahan Arsip PT Semen Padang.</p>
+                </div>
+            </div>
+
+            <!-- 2002 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-2">2002</h3>
+                    <ul class="text-gray-700 text-sm leading-snug space-y-1 list-none">
+                        <li>Revisi Sistem Manajemen Persuratan.</li>
+                        <li>Pembuatan Jadwal Retensi Arsip.</li>
+                        <li>Pemusnahan Arsip yang PERTAMA, Bekerja Sama dengan Arsip Provinsi.</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- 2005 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2005</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Kerja Sama dengan Konsultan Arsip.</p>
+                </div>
+            </div>
+
+            <!-- 2011 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2011</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Revisi manajemen Persuratan menjadi "Pedoman Teknis Manajemen Kearsipan".</p>
+                </div>
+            </div>
+
+            <!-- 2012 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2012</h3>
+                    <p class="text-gray-700 text-sm leading-snug">MoA dengan ANRI(SIKD).</p>
+                </div>
+            </div>
+
+             <!-- 2014 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-2">2014</h3>
+                    <ul class="text-gray-700 text-sm leading-snug space-y-1 list-none">
+                        <li>Revisi "Pedoman Teknis Manajemen Kearsipan".</li>
+                        <li>Proses Akreditasi dan sertifikasi Pengelola Arsip oleh ANRI.</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- 2016 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-2">2016</h3>
+                    <ul class="text-gray-700 text-sm leading-snug space-y-1 list-none">
+                        <li>Penghargaan di Bidang Kelembagaan Unit Kearsipan Terbaik 1 Tingkat Nasional Khususnya BUMN.</li>
+                        <li>Juara 2 Arsiparis Teladan Kategori BUMN.</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- 2017 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2017</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Penghargaan sebagai BUMN Terakreditasi A (SANGAT BAIK).</p>
+                </div>
+            </div>
+
+             <!-- 2018 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2018</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Revisi pedoman teknis manajemen kearsipan.</p>
+                </div>
+            </div>
+
+             <!-- 2021 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-2">2021</h3>
+                     <ul class="text-gray-700 text-sm leading-snug space-y-1 list-none">
+                        <li>Akreditasi A Periode ke Dua.</li>
+                        <li>Revisi pedoman teknis manajemen kearsipan.</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- 2022 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2022</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Predikat Memuaskan Hasil Pengawasan Arsip BUMN yang Terakreditasi oleh ANRI.</p>
+                </div>
+            </div>
+
+             <!-- 2023 -->
+            <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto text-white font-semibold text-lg"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-r-4 border-[#e92027] text-right">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2023</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Arsip PT Semen Padang Ditetapkan sebagai Memori Kolektif Bangsa (MKB).</p>
+                </div>
+            </div>
+
+             <!-- 2024 -->
+            <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                <div class="order-1 w-5/12"></div>
+                <div class="z-20 flex items-center order-1 bg-[#e92027] shadow-xl w-8 h-8 rounded-full">
+                    <h1 class="mx-auto font-semibold text-lg text-white"></h1>
+                </div>
+                <div class="order-1 bg-gray-50 rounded-lg shadow-xl w-5/12 px-6 py-4 border-l-4 border-[#e92027]">
+                    <h3 class="font-bold text-[#e92027] text-xl mb-1">2024</h3>
+                    <p class="text-gray-700 text-sm leading-snug">Arsip PT Semen Padang Diakui sebagai Memory of The World Committee for Asia and The Pacific (MOWCAP).</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Sejarah Singkat Section (Expandable) -->
+    <div class="container mx-auto px-6 pb-20 max-w-4xl" x-data="{ expanded: false }">
+        <div class="text-center">
+            <button @click="expanded = !expanded" class="inline-flex items-center gap-2 bg-[#e92027] hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                <span x-text="expanded ? 'Tutup Sejarah Singkat' : 'Baca Sejarah Singkat Selengkapnya'"></span>
+                <svg x-show="!expanded" class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <svg x-show="expanded" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            </button>
+        </div>
+
+        <div x-show="expanded" 
+             x-collapse 
+             class="mt-12 bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 relative overflow-hidden"
+             style="display: none;">
+            
+            <!-- Deco -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -mr-16 -mt-16 z-0"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-red-50 rounded-tr-full -ml-12 -mb-12 z-0"></div>
+
+            <div class="relative z-10 prose prose-lg max-w-none text-gray-700 text-justify leading-relaxed">
+                <h3 class="text-3xl font-bold text-gray-900 mb-6 text-center">Sejarah Singkat tentang Kearsipan PT Semen Padang</h3>
+                
+                <p class="mb-6">
+                    Pada tahun 1986 keadaan arsip di PT Semen Padang belum tampak perkembangannya. Pada tanggal 7 s/d 26 Juli 1986 diadakan Bimbingan Teknis, yang dilanjutkan dengan pembenahan arsip PT Semen Padang. Bahannya merupakan konsep Petunjuk Pelaksanaan Tata Kearsipan dan Pola Klasifikasi Kearsipan. Bimbingan teknis tersebut merupakan kerjasama antara PT Semen Padang dengan Arsip Nasional Repubulik Indonesia (ANRI) yang diadakan di Indarung. Survey tersebut sebagai bahan penyelenggaraan penataran Sistim Kearsipan Pola Baru angkatan I.
+                </p>
+                <p class="mb-6">
+                    Program ini merupakan salah satu hasil usaha perusahaan dalam pengembangan sistim yang berlaku pada saat itu. Pada mulanya penerapan sistim kearsipan pola baru ini merupakan kebijaksanaan perusahaan. Motivasinya adalah disebabkan oleh laju pertumbuhan dan perkembangan perusahaan yang begitu pesat, maka dirasa perlu suatu sistim administrasi yang mantap, efektif dan efesiensi yang tinggi. Untuk itu perlu diterapkan suatu sistim kearsipan yang baru sesuai dengan perkembangan masa dan perubahan struktur organisasi perusahaan.
+                </p>
+                <p class="mb-6">
+                    Untuk memperoleh gambaran yang lebih jelas mengenai pembuatan sistim kearsipan tersebut, PT Semen Padang mengundang Arsip Nasional Republik Indonesia (ANRI) dari tanggal 29 November s/d 2 Desember 1989 untuk memberikan saran/petunjuk mengenai langkah–langkah kerja yang harus dilakukan oleh tim arsip yang telah dibentuk dalam Surat keputusan Direksi No. 1007/KS.01.02/Dir/11.89 yang diketuai oleh Churijjah Azizah dan dilakukan lah pelaksanaan study banding ke beberapa instansi, yang di laksanakan dari tanggal 22 s/d 30 Januari 1990 dengan mengikut–sertakan seluruh Tim Arsip. Instansi yang dikunjungi saat itu adalah Bank Indonesia (BI) Jakarta tanggal 22 Januari 1990, Astek Jakarta tanggal 23 Januari 1990, ARNAS RI Jakarta tanggal 24 Januari 1990 dan PT Semen Gresik tanggal 25 s/d 30 Januari 1990.
+                </p>
+                <p class="mb-6">
+                    Dan sejalan dengan penetapan sistim yang baru, usaha menyelamatkan arsip lama, mulai dari arsip pemerintahan Belanda di PT Semen Padang sebagai pendahulu yang belum berhasil dilaksanakan penyimpanannya, mulai dilakukan pembenahan arsip tahun 1989 sampai tahun 2000. Dalam usaha penyelamatan itu terdapat foto mantan Direksi PT Semen Padang dari tahun 1958 sampai dengan tahun 1983 dan juga benda–benda lain yang ada kaitannya dengan sejarah PT Semen Padang seperti perkembangan Logo dari Tahun 1910 sampai dengan 1990. Kesemuanya ini amat penting artinya bagi penyusunan serta penulisan sejarah PT Semen Padang yang tidak terlepas dari berdirinya PT Semen Padang semenjak Kekuasaan Belanda sampai ke Pemerintahan Republik Indonesia.
+                </p>
+                <p class="mb-6">
+                    Buku sistim kearsipan / persuratan yang pertama di rampungkan pada tanggal 21 Nopember 1989 dengan judul Sistem Manajemen Persuratan PT Semen Padang dan buku tersebut dilakukan revisinya pada tahun 2002 sekaligus pembuatan buku Jadwal Retensi Arsip (JRA) yang dipergunakan sebagai patokan dalam penyimpanan Arsip yang ada diunit kerja. Pada tahun 2002 untuk pertama kalinya dilakukan pemusnahan arsip di PT Semen Padang bekerjasama dengan Arsip Propinsi arsip yang dimusnahkan adalah arsip yang sudah berumur puluhan tahun yang tidak bernilai guna yang dihadiri oleh Direktur Utama PT Semen Padang Bapak Ir. Ihdan Nizar dan Kepala arsip Provinsi Sumbar.
+                </p>
+                <p class="mb-6">
+                    Kemudian untuk menata arsip yang lebih baik dan sesuai dengan perundang-undangan maka pada Januari tahun 2005 dilakukan kerjasama untuk Pendataan, Penataan & Pemusnahan arsip PT Semen Padang, arsip yang dikelola ini yakni arsip Keuangan dan arsip proyek. Proposal kerjasama ini ditandatangani oleh Biro Humas PT Semen Padang Ir. Benny Wendry, MM dan Konsultan Arsip Khairuzar, SH dan disetujui oleh Sekretaris Perusahaan Ir. Munadi Arifin. SE, Akt. MM.
+                </p>
+                <p class="mb-6">
+                    Seiring berkembangnya sistim kearsipan maka perusahaan melakukan revisi untuk ke-2 kalinya terhadap Sistim Manajemen Persuratan PT Semen Padang pada tahun 2011 menjadi Pedoman Manajemen Kearsipan PT Semen Padang yang ditandatangani oleh Bapak Widodo Santoso Pada tanggal 28 Pebruari 2011.
+                </p>
+                <p class="mb-6">
+                    Kemudian untuk menjadikan sistim kearsipan yang tepat kelola dan tepat saji maka dilakukan kerjasama dengan Arsip Nasional Republik Indonesia (ANRI) pada Desember 2012 untuk penerapan Aplikasi Sistem Informasi Kearsipan Dinamis (SIKD) yang mana MOU nya ditandatangi oleh kepala ANRI Bp. Asichin dan Direktur Keuangan PT Semen Padang Bp. Eprilyono Budi di Wisma Indarung, Padang.
+                </p>
+                <p class="mb-6">
+                    Pada tahun 2014 dilakukan revisi untuk ke-3 kalinya pada Pedoman Manajemen Kearsipan PT Semen Padang yang ditandatangani oleh Direktur Utama PT Semen Padang Bapak Ir. Benny Wendry. MM pada tanggal 31 Desember 2014 yang dipergunakan sampai saat ini.
+                </p>
+
+                <h4 class="text-xl font-bold text-gray-900 mt-8 mb-4">Akreditasi Kearsipan 2016 dan Perpanjangan 2021</h4>
+                
+                <p class="mb-6">
+                    Pada bulan November 2014 PT Semen Padang mendapat kesempatan melakukan uji kompetensi terhadap lembaga kearsipan dan TU-UKP yaitu Akreditasi dan Sertifikasi untuk pertama kalinya oleh lembaga yang berkompeten yaitu ANRI Jakarta. Memperoleh nilai 81,68% (delapan puluh satu koma enam puluh delapan persen) dengan kualifikasi akreditasi A (kategori sangat baik) yang dianugerahkan pada tanggal 27 Agustus 2015 di Wisma Indarung yang diserahkan langsung oleh Kepala ANRI Jakarta (Bapak Mustari Irawan) kepada Direktur Keuangan PT Semen Padang (Bapak Tri Hartono Rianto) yang disaksikan oleh Asisten III Gubernur Sumbar dan Departemen Legal & GRC/MR.
+                </p>
+                <p class="mb-6">
+                    Pada tahun 2016 PT Semen Padang juga mendapatkan penghargaan dibidang kelembagaan unit kearsipan terbaik 1 tingkat Nasional khususnya BUMN dan Juara 2 Arsiparis teladan kategori BUMN dan ikut serta dalam event yang diadakan dilingkungan PT Semen Padang dalam kategori Manajemen dan 5P dengan mendapatkan predikat silver 2015 dan predikat gold 2016.
+                </p>
+                <p class="mb-6">
+                    PT Semen Padang juga mendapatkan Penghargaan Sebagai Badan Usaha Milik Negara Terakreditasi A (sangat baik) dalam Penyelenggaraan Kearsipan Tahun 2017.
+                </p>
+                <p>
+                    Dengan telah mendapatkan penganugerahan Predikat A (sangat baik) dari ANRI, maka PT Semen Padang mempunyai kewajiban melakukan pengembangan dalam pengelolaan kearsipan dengan mengacu pada Undang-Undang Nomor 43 tahun 2009 tentang kearsipan dan Peraturan Pemerintah Nomor 28 Tahun 2012 tentang penggunaan Undang Undang 43 tahun 2009.
+                </p>
+
+                <div class="mt-8 text-center">
+                     <button @click="expanded = false" class="text-[#e92027] hover:text-red-700 font-semibold text-sm flex items-center justify-center gap-1 mx-auto transition">
+                        Tutup Sejarah Singkat
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="py-16 relative overflow-hidden">
+        <!-- Background with subtle pattern -->
+        <div class="absolute inset-0 bg-gray-50"></div>
+        <div class="absolute inset-0 opacity-5" style="background-image: url('{{ asset('images/BG_supergrafis.png') }}'); background-size: cover; background-position: center;"></div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex items-center justify-between mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Jelajahi Tentang Kami</h2>
+                    <div class="h-1 w-20 bg-[#e92027] rounded-full"></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- 1. Visi Misi -->
+                <a href="{{ route('visi-misi') }}" class="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-l-4 border-transparent hover:border-[#e92027] flex flex-col justify-between h-48">
+                    <div>
+                         <span class="text-sm font-semibold text-gray-400 group-hover:text-[#e92027] transition mb-2 block">01</span>
+                         <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#e92027] transition">Visi Misi</h3>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs text-gray-500 font-medium group-hover:text-red-500 transition">Lihat Detail</span>
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#e92027] group-hover:text-white transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 2. Sejarah -->
+                <a href="{{ route('sejarah') }}" class="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-l-4 border-transparent hover:border-[#e92027] flex flex-col justify-between h-48">
+                    <div>
+                         <span class="text-sm font-semibold text-gray-400 group-hover:text-[#e92027] transition mb-2 block">02</span>
+                         <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#e92027] transition">Sejarah</h3>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs text-gray-500 font-medium group-hover:text-red-500 transition">Lihat Detail</span>
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#e92027] group-hover:text-white transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 3. Struktur Organisasi -->
+                <a href="{{ route('landing') }}#struktur" class="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-l-4 border-transparent hover:border-[#e92027] flex flex-col justify-between h-48">
+                    <div>
+                         <span class="text-sm font-semibold text-gray-400 group-hover:text-[#e92027] transition mb-2 block">03</span>
+                         <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#e92027] transition">Struktur Organisasi</h3>
+                    </div>
+                     <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs text-gray-500 font-medium group-hover:text-red-500 transition">Lihat Detail</span>
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#e92027] group-hover:text-white transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 4. Penghargaan -->
+                <a href="{{ route('penghargaan') }}" class="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-l-4 border-transparent hover:border-[#e92027] flex flex-col justify-between h-48">
+                    <div>
+                         <span class="text-sm font-semibold text-gray-400 group-hover:text-[#e92027] transition mb-2 block">04</span>
+                         <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#e92027] transition">Penghargaan</h3>
+                    </div>
+                     <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs text-gray-500 font-medium group-hover:text-red-500 transition">Lihat Detail</span>
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#e92027] group-hover:text-white transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="kontak" class="relative bg-cover bg-center border-t border-gray-200" style="background-image: url('{{ asset('images/SuperGrafis.png') }}');">
+        <!-- Main Footer Content with Pattern -->
+        <div class="pt-12 pb-8">
+            <div class="container mx-auto px-6">
+                <!-- Top Section: 3 Columns -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <!-- Column 1: Kantor Utama -->
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Kantor Utama</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed max-w-xs">
+                            Jl. Raya Indarung, Kec. Lubuk Kilangan<br>
+                            Kota Padang 25237, Sumatera Barat
+                        </p>
+                    </div>
+                    
+                    <!-- Column 2: Kantor Perwakilan -->
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Kantor Perwakilan Jakarta</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed max-w-sm">
+                            Graha Irama, Lt. 11, Jl. H. R. Rasuna Said No. 1 & 2, RT.6/RW.4, Kuningan Timur, Kecamatan Setiabudi, Kota Jakarta Selatan 12950, DKI Jakarta
+                        </p>
+                    </div>
+
+                    <!-- Column 3: Media Sosial & SIG Group -->
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Media Sosial</h4>
+                        <div class="flex gap-4 mb-6">
+                            <a href="https://twitter.com/semenpadang1910" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-black transition" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+                            <a href="https://www.instagram.com/semenpadang/" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                            <a href="https://www.youtube.com/channel/UCIi9Yy9jRMlB8k9_8djAJcA/feed" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                            <a href="https://www.tiktok.com/@semenpadang1910?_t=8hadknUhwFF&_r=1" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.65-1.62-1.1-.04 1.86.04 3.66.17 5.51.18 2.58-.62 5.13-2.4 7.29-1.42 1.75-3.64 2.7-5.99 2.7-3.36.03-6.54-1.74-8.19-4.57-1.74-3.08-1.55-7.06.63-9.92.51-.7 1.12-1.32 1.83-1.83 1.96-1.43 4.54-1.85 6.93-1.25.1.58.21 1.17.32 1.76-1.09-.37-2.29-.44-3.41-.09-1.13.34-2.11 1.05-2.73 2.05-.66 1.06-.82 2.37-.58 3.6.43 2.21 2.4 4.02 4.63 4.1 1.23.07 2.45-.31 3.42-1.1 1.08-.85 1.66-2.26 1.58-3.62-.06-2.58-.02-5.16-.01-7.74-.01-.98-.02-1.95-.03-2.93-.01-.65-.01-1.31-.02-1.96H12.525z"/></svg></a>
+                            <a href="https://web.facebook.com/PTsemenpadang1910/" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-900 text-lg mb-2">SIG Group</h4>
+                        <a href="https://sig.id/" target="_blank" class="text-gray-600 hover:text-[#e92027] transition font-medium">www.sig.id</a>
+                    </div>
+                </div>
+
+                <!-- Bottom Section: Logo and Hotline -->
+                <div class="flex flex-col md:flex-row justify-between items-center border-t border-gray-200/50 pt-6">
+                    <!-- Logo -->
+                    <div class="mb-4 md:mb-0">
+                        <img src="{{ asset('images/sp-black.png') }}" class="h-16 object-contain">
+                    </div>
+
+                    <!-- Hotline -->
+                    <div class="text-center md:text-right">
+                        <h4 class="font-bold text-gray-900 text-xl tracking-widest uppercase mb-0">HOTLINE</h4>
+                        <p class="text-2xl font-bold text-gray-900">0800 1088888</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Red Bar -->
+        <div class="bg-[#e92027] h-14 w-full relative">
+            <div class="container mx-auto px-6 h-full flex justify-end items-center">
+                 <button @click="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-6 h-6 flex items-center justify-center bg-red-800/50 hover:bg-red-900 text-white rounded transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                 </button>
+            </div>
+        </div>
+            
+        <!-- Copyright -->
+        <div class="py-4">
+            <div class="container mx-auto px-6 text-center">
+                  <p class="text-gray-800 text-sm font-medium">PT Sinergi Informatika Semen Indonesia &copy; Copyright {{ date('Y') }}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

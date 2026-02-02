@@ -129,7 +129,7 @@ class PeminjamanController extends Controller
 
         // 2. Ambil Arsip Available
         $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
-            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'klasifikasi_keamanan', 'unit_pengolah')
+            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'hak_akses', 'unit_pengolah')
             ->orderBy('nama_berkas', 'asc')
             ->get();
 

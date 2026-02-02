@@ -1,14 +1,14 @@
 <x-layout>
     <div class="max-w-4xl mx-auto my-10">
-        <div class="bg-[#8B1A1A] rounded-t-2xl shadow-lg relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-red-900 to-[#8B1A1A]"></div>
+        <div class="bg-[#e92027] rounded-t-2xl shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-900 to-[#e92027]"></div>
             <div class="p-8 relative z-10">
                 <h2 class="text-3xl font-bold text-white">Edit Arsip Masuk</h2>
-                <p class="text-red-100 mt-2">Perbarui data arsip masuk</p>
+                <p class="text-[#e92027] mt-2">Perbarui data arsip masuk</p>
             </div>
         </div>
         
-        <div class="bg-white p-8 rounded-b-2xl shadow-xl border border-red-50">
+        <div class="bg-white p-8 rounded-b-2xl shadow-xl border border-red-100">
             <form action="{{ route('arsip-masuk.update', $arsipMasuk->id) }}" method="POST">
                  @csrf
                  @method('PUT')
@@ -16,7 +16,7 @@
                      <!-- Unit Asal -->
                      <div>
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Unit Asal</label>
-                         <select name="unit_asal" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                         <select name="unit_asal" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]">
                             <option value="" disabled>Pilih Unit Asal</option>
                             @php
                                 $units = [
@@ -41,13 +41,13 @@
                      <!-- Nomor Berita Acara -->
                      <div>
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Nomor Berita Acara</label>
-                         <input type="text" name="nomor_berita_acara" value="{{ old('nomor_berita_acara', $arsipMasuk->nomor_berita_acara) }}" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="Masukkan Nomor Berita Acara">
+                         <input type="text" name="nomor_berita_acara" value="{{ old('nomor_berita_acara', $arsipMasuk->nomor_berita_acara) }}" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]" placeholder="Masukkan Nomor Berita Acara">
                      </div>
 
                      <!-- User Penerima -->
                      <div>
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Penerima</label>
-                         <select name="user_penerima" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                         <select name="user_penerima" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]">
                              @foreach($users as $user)
                                  <option value="{{ $user->id }}" {{ $arsipMasuk->user_penerima == $user->id ? 'selected' : '' }}>{{ $user->nama }}</option>
                              @endforeach
@@ -57,13 +57,13 @@
                      <!-- Tanggal Terima -->
                      <div>
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Tanggal Terima</label>
-                         <input type="date" name="tanggal_terima" value="{{ old('tanggal_terima', $arsipMasuk->tanggal_terima) }}" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]">
+                         <input type="date" name="tanggal_terima" value="{{ old('tanggal_terima', $arsipMasuk->tanggal_terima) }}" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]">
                      </div>
 
                      <!-- Jumlah Box Masuk -->
                      <div>
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Jumlah Box Masuk</label>
-                         <input type="number" name="jumlah_box_masuk" value="{{ old('jumlah_box_masuk', $arsipMasuk->jumlah_box_masuk) }}" required class="w-full bg-[#FFF5F5] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]" placeholder="Contoh: 5">
+                         <input type="number" name="jumlah_box_masuk" value="{{ old('jumlah_box_masuk', $arsipMasuk->jumlah_box_masuk) }}" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]" placeholder="Contoh: 5">
                      </div>
                  </div>
     
@@ -71,7 +71,7 @@
                      <a href="{{ route('arsip-masuk.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center justify-center">
                          Batal
                      </a>
-                     <button type="submit" class="bg-[#8B1A1A] hover:bg-[#6e1515] text-white font-bold py-3 px-10 rounded-lg shadow-lg transform transition hover:scale-105">
+                     <button type="submit" class="bg-[#e92027] hover:bg-[#6e1515] text-white font-bold py-3 px-10 rounded-lg shadow-lg transform transition hover:scale-105">
                          Perbarui
                      </button>
                  </div>

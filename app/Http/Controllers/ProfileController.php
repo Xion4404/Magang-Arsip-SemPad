@@ -60,4 +60,8 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9

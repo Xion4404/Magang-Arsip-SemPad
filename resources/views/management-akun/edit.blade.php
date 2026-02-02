@@ -1,7 +1,11 @@
 <x-layout>
     {{-- Header Page --}}
     <div
+<<<<<<< HEAD
         class="bg-[#9d1b1b] px-8 pt-6 pb-20 rounded-b-[2.5rem] shadow-xl mb-8 flex items-center justify-between relative overflow-hidden">
+=======
+        class="bg-[#e92027] px-8 pt-6 pb-20 rounded-b-[2.5rem] shadow-xl mb-8 flex items-center justify-between relative overflow-hidden">
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
         <div class="relative z-10">
             <h1 class="text-3xl font-bold text-white tracking-wide">Edit Pengguna</h1>
             <p class="text-red-100 text-sm mt-2 opacity-90 font-light">Perbarui informasi akun pengguna.</p>
@@ -38,8 +42,13 @@
             <div class="p-8 space-y-8">
                 <div>
                     <h2
+<<<<<<< HEAD
                         class="text-lg font-bold text-[#9d1b1b] border-b border-gray-100 pb-3 mb-6 flex items-center gap-3">
                         <i class="fas fa-user-edit text-[#9d1b1b]"></i> Data Akun
+=======
+                        class="text-lg font-bold text-[#e92027] border-b border-gray-100 pb-3 mb-6 flex items-center gap-3">
+                        <i class="fas fa-user-edit text-[#e92027]"></i> Data Akun
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     </h2>
                     <div class="space-y-5">
                         {{-- Nama --}}
@@ -47,7 +56,11 @@
                             <label class="block text-sm font-bold text-gray-800 mb-2">Nama Lengkap <span
                                     class="text-red-600">*</span></label>
                             <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" required
+<<<<<<< HEAD
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+=======
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                         </div>
 
                         {{-- Email --}}
@@ -55,7 +68,11 @@
                             <label class="block text-sm font-bold text-gray-800 mb-2">Email Perusahaan <span
                                     class="text-red-600">*</span></label>
                             <input type="email" name="email" value="{{ old('email', $user->email) }}" required
+<<<<<<< HEAD
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+=======
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                         </div>
 
                         {{-- Role --}}
@@ -64,7 +81,11 @@
                                     class="text-red-600">*</span></label>
                             <div class="relative">
                                 <select name="role" required
+<<<<<<< HEAD
                                     class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 outline-none appearance-none cursor-pointer focus:bg-white focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+=======
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 outline-none appearance-none cursor-pointer focus:bg-white focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                                     <option value="karyawan" {{ old('role', $user->role) == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
                                     <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
                                         Admin</option>
@@ -79,7 +100,11 @@
                         <div class="pt-4 border-t border-gray-50 mt-4">
                             <label class="block text-sm font-bold text-gray-800 mb-2">Password Baru (Opsional)</label>
                             <input type="password" name="password"
+<<<<<<< HEAD
                                 class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200"
+=======
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200"
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                                 placeholder="Kosongkan jika tidak ingin mengubah password">
                             <p class="text-xs text-gray-400 mt-1">Isi hanya jika ingin mengganti password.</p>
                         </div>
@@ -91,9 +116,17 @@
                 <a href="{{ route('management-akun.index') }}"
                     class="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition">Batal</a>
                 <button type="submit"
+<<<<<<< HEAD
                     class="px-8 py-3 bg-[#9d1b1b] text-white rounded-xl font-bold shadow-lg hover:bg-[#7a1515] hover:shadow-xl transition transform hover:-translate-y-0.5">Simpan
+=======
+                    class="px-8 py-3 bg-[#e92027] text-white rounded-xl font-bold shadow-lg hover:bg-[#7a1515] hover:shadow-xl transition transform hover:-translate-y-0.5">Simpan
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     Perubahan</button>
             </div>
         </form>
     </div>
+<<<<<<< HEAD
 </x-layout>
+=======
+</x-layout>
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9

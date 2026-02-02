@@ -3,7 +3,7 @@
 
         {{-- Error Alert --}}
         @if ($errors->any())
-        <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 animate-bounce">
+        <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-100 border border-[#e92027] text-[#c41820] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 animate-bounce">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <div>
                 <strong class="font-bold">Terjadi Kesalahan!</strong>
@@ -13,7 +13,7 @@
                     @endforeach
                 </ul>
             </div>
-            <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-800">
+            <button onclick="this.parentElement.remove()" class="text-[#e92027] hover:text-[#c41820]">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
@@ -39,19 +39,19 @@
                             </div>
                             <div>
                                 <h1 class="text-2xl font-black text-white tracking-tight">{{ isset($arsip) ? 'Edit Arsip' : 'Input Daftar Arsip' }}</h1>
-                                <p class="text-red-100 text-sm font-medium">Kelola dokumen anda dengan mudah dan rapi.</p>
+                                <p class="text-red-50 text-sm font-medium">Kelola dokumen anda dengan mudah dan rapi.</p>
                             </div>
                         </div>
 
                         {{-- Step Indicator --}}
                         <div class="hidden md:flex items-center gap-3 bg-black/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
                             <div class="flex items-center gap-2" :class="{'opacity-100': formStep === 1, 'opacity-50': formStep !== 1}">
-                                <span class="w-6 h-6 rounded-full bg-white text-red-700 flex items-center justify-center text-xs font-bold">1</span>
+                                <span class="w-6 h-6 rounded-full bg-white text-[#c41820] flex items-center justify-center text-xs font-bold">1</span>
                                 <span class="text-white text-xs font-bold uppercase tracking-wider">Identitas</span>
                             </div>
                             <div class="w-8 h-px bg-white/30"></div>
                             <div class="flex items-center gap-2" :class="{'opacity-100': formStep === 2, 'opacity-50': formStep !== 2}">
-                                <span class="w-6 h-6 rounded-full bg-white text-red-700 flex items-center justify-center text-xs font-bold">2</span>
+                                <span class="w-6 h-6 rounded-full bg-white text-[#c41820] flex items-center justify-center text-xs font-bold">2</span>
                                 <span class="text-white text-xs font-bold uppercase tracking-wider">Rincian</span>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                             
                             <div class="max-w-xl mx-auto py-12 space-y-12">
                                 <div class="text-center space-y-4">
-                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-red-50 rounded-3xl text-red-600 mb-2 shadow-sm transform transition hover:scale-110 hover:rotate-3 duration-300">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-red-50 rounded-3xl text-[#e92027] mb-2 shadow-sm transform transition hover:scale-110 hover:rotate-3 duration-300">
                                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     </div>
                                     <h3 class="text-4xl font-extrabold text-gray-800 tracking-tight">Identitas Berkas</h3>
@@ -78,7 +78,7 @@
                                         <label class="block font-bold text-gray-700 mb-3 pl-2 text-sm uppercase tracking-wide">No Berkas</label>
                                         <div class="relative transition-all duration-300 transform group-hover:-translate-y-1">
                                             <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                <span class="text-red-400 font-black text-xl">#</span>
+                                                <span class="text-[#e92027] font-black text-xl">#</span>
                                             </div>
                                             <input type="text" value="{{ $nextNumber ?? 'AUTO' }}" disabled
                                                 class="w-full pl-12 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-gray-50/50 text-gray-800 font-bold text-lg shadow-sm cursor-not-allowed">
@@ -90,13 +90,13 @@
 
                                     {{-- Nama Berkas --}}
                                     <div class="group relative">
-                                        <label class="block font-bold text-gray-700 mb-3 pl-2 text-sm uppercase tracking-wide group-focus-within:text-red-600 transition-colors">Nama Berkas</label>
+                                        <label class="block font-bold text-gray-700 mb-3 pl-2 text-sm uppercase tracking-wide group-focus-within:text-[#e92027] transition-colors">Nama Berkas</label>
                                         <div class="relative transition-all duration-300 transform group-focus-within:-translate-y-1 group-hover:-translate-y-1">
                                              <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                                                <svg class="w-6 h-6 text-gray-300 group-focus-within:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                <svg class="w-6 h-6 text-gray-300 group-focus-within:text-[#e92027] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </div>
                                             <input type="text" name="nama_berkas" x-model="namaBerkas" placeholder="Contoh: Laporan Keuangan 2024" 
-                                                class="w-full pl-14 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-white text-gray-800 font-bold text-lg shadow-sm focus:border-red-500 focus:ring-[6px] focus:ring-red-100 outline-none transition-all placeholder:font-normal placeholder:text-gray-300">
+                                                class="w-full pl-14 pr-6 py-5 border-2 border-gray-100 rounded-2xl bg-white text-gray-800 font-bold text-lg shadow-sm focus:border-[#e92027] focus:ring-[6px] focus:ring-red-100 outline-none transition-all placeholder:font-normal placeholder:text-gray-300">
                                         </div>
                                     </div>
                                 </div>
@@ -123,8 +123,8 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                     {{-- Unit Pengolah --}}
                                     <div class="group">
-                                        <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-red-700 text-sm uppercase tracking-wide">Unit Pengolah</label>
-                                        <select :name="isEdit ? 'isi_berkas[0][unit_pengolah]' : 'unit_pengolah'" x-model="unitPengolah" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition shadow-sm font-bold text-gray-800 appearance-none cursor-pointer">
+                                        <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-[#c41820] text-sm uppercase tracking-wide">Unit Pengolah</label>
+                                        <select :name="isEdit ? 'isi_berkas[0][unit_pengolah]' : 'unit_pengolah'" x-model="unitPengolah" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-[#e92027] focus:ring-4 focus:ring-red-50 outline-none transition shadow-sm font-bold text-gray-800 appearance-none cursor-pointer">
                                             <option value="" disabled selected>Pilih Unit Asal</option>
                                             <option value="Sistem Manajemen">Sistem Manajemen</option>
                                             <option value="Internal Audit">Internal Audit</option>
@@ -182,7 +182,7 @@
                                         {{-- Trigger --}}
                                         <div @click="toggle()" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:ring-4 ring-offset-0 focus:ring-red-100 ring-red-500 cursor-pointer flex justify-between items-center shadow-sm hover:bg-gray-50 transition-colors">
                                             <span x-text="displayText" :class="{'text-gray-400': !selectedItem, 'text-gray-800 font-bold': selectedItem}"></span>
-                                            <svg class="w-5 h-5 text-gray-400 transition" :class="{'rotate-180 text-red-500': open}" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            <svg class="w-5 h-5 text-gray-400 transition" :class="{'rotate-180 text-[#e92027]': open}" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </div>
 
                                         {{-- Dropdown --}}
@@ -193,11 +193,11 @@
                                             {{-- Header --}}
                                             <div class="px-5 py-3 bg-red-50/50 border-b border-red-100 flex items-center gap-3 sticky top-0 backdrop-blur-sm z-10">
                                                 <template x-if="step > 1">
-                                                    <button type="button" @click.stop="goBack()" class="p-1 hover:bg-red-100 rounded-full text-red-600 transition">
+                                                    <button type="button" @click.stop="goBack()" class="p-1 hover:bg-red-100 rounded-full text-[#e92027] transition">
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                                     </button>
                                                 </template>
-                                                <span class="text-xs font-bold text-red-800 tracking-wider uppercase" 
+                                                <span class="text-xs font-bold text-[#c41820] tracking-wider uppercase" 
                                                     x-text="step === 1 ? 'Pilih Pokok Masalah' : (step === 2 ? 'Pilih Sub Masalah' : 'Pilih Jenis Arsip')">
                                                 </span>
                                             </div>
@@ -206,7 +206,7 @@
                                                 <template x-for="option in options" :key="option.code">
                                                     <li @click="selectOption(option)" 
                                                         class="px-5 py-3 hover:bg-red-50 cursor-pointer text-sm text-gray-700 flex justify-between items-center group transition">
-                                                        <span x-text="option.label" class="group-hover:text-red-700 font-medium"></span>
+                                                        <span x-text="option.label" class="group-hover:text-[#c41820] font-medium"></span>
                                                         <svg class="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                     </li>
                                                 </template>
@@ -223,7 +223,7 @@
                                     <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                                         <span class="text-xs font-bold text-gray-400 uppercase">Akses</span>
                                         <div class="text-right">
-                                            <span x-text="newHakAkses || '-'" class="block text-sm font-bold text-red-600 truncate"></span>
+                                            <span x-text="newHakAkses || '-'" class="block text-sm font-bold text-[#e92027] truncate"></span>
                                             {{-- <input type="hidden" name="hak_akses" required> --}} 
                                         </div>
                                     </div>
@@ -247,8 +247,8 @@
                             
                             {{-- SECTION 2: INPUT FORM --}}
                             <div class="bg-gradient-to-br from-red-50 to-white p-6 rounded-3xl border border-red-100 shadow-sm space-y-4">
-                                <h3 class="text-sm font-black text-red-900 uppercase tracking-wide flex items-center gap-2">
-                                    <span class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs">02</span>
+                                <h3 class="text-sm font-black text-[#e92027] uppercase tracking-wide flex items-center gap-2">
+                                    <span class="w-8 h-8 rounded-full bg-red-100 text-[#e92027] flex items-center justify-center text-xs">02</span>
                                     Input Isi Berkas
                                 </h3>
                                 
@@ -256,12 +256,12 @@
                                     <div class="md:col-span-12 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Deskripsi Berkas</label>
                                         <input type="text" x-ref="uraian" x-model="newIsi" :name="isEdit ? 'isi_berkas[0][isi]' : ''" @keydown.enter.prevent="addIsi()" placeholder="Misal: Kwitansi Pembelian ATK..." 
-                                        class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 focus:ring-4 focus:ring-red-100 outline-none transition shadow-sm font-medium">
+                                        class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-[#e92027] focus:ring-4 focus:ring-red-100 outline-none transition shadow-sm font-medium">
                                     </div>
                                     
                                     <div class="md:col-span-3 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Jenis</label>
-                                        <select x-model="newMedia" :name="isEdit ? 'isi_berkas[0][jenis_media]' : ''" @keydown.enter.prevent="addIsi()" class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm">
+                                        <select x-model="newMedia" :name="isEdit ? 'isi_berkas[0][jenis_media]' : ''" @keydown.enter.prevent="addIsi()" class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-[#e92027] outline-none transition shadow-sm text-sm">
                                             <option value="" disabled selected>Pilih...</option>
                                             <option value="Kertas">Kertas</option>
                                             <option value="Foto">Foto</option>
@@ -271,24 +271,24 @@
                                     <div class="md:col-span-2 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Box</label>
                                         <input type="text" x-model="newNoBox" :name="isEdit ? 'isi_berkas[0][no_box]' : ''" @keydown.enter.prevent="addIsi()" placeholder="Box 1" 
-                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center font-bold">
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-[#e92027] outline-none transition shadow-sm text-sm text-center font-bold">
                                     </div>
 
                                     <div class="md:col-span-2 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Tahun</label>
                                         <input type="number" x-model="newTahun" :name="isEdit ? 'isi_berkas[0][tahun]' : ''" @keydown.enter.prevent="addIsi()" placeholder="YYYY" 
-                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center">
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-[#e92027] outline-none transition shadow-sm text-sm text-center">
                                     </div>
                                     <div class="md:col-span-3 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Tanggal</label>
                                         <input type="date" x-model="newTanggal" :name="isEdit ? 'isi_berkas[0][tanggal]' : ''" @keydown.enter.prevent="addIsi()" 
-                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center text-gray-600">
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-[#e92027] outline-none transition shadow-sm text-sm text-center text-gray-600">
                                     </div>
 
                                     <div class="md:col-span-2 space-y-1">
                                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Jml</label>
                                         <input type="number" x-model="newJumlah" :name="isEdit ? 'isi_berkas[0][jumlah]' : ''" placeholder="1" min="1"
-                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-red-500 outline-none transition shadow-sm text-sm text-center font-bold">
+                                            class="w-full p-3 border-2 border-transparent bg-white rounded-xl focus:border-[#e92027] outline-none transition shadow-sm text-sm text-center font-bold">
                                     </div>
                                 </div>
 
@@ -337,14 +337,14 @@
                                             <tbody class="divide-y divide-gray-50">
                                                 <template x-for="(item, index) in isiBerkas" :key="index">
                                                     <tr x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="group hover:bg-red-50/20 transition-colors">
-                                                        <td class="px-3 py-4 text-center font-bold text-red-600" x-text="item.kode_klasifikasi"></td>
+                                                        <td class="px-3 py-4 text-center font-bold text-[#e92027]" x-text="item.kode_klasifikasi"></td>
                                                         <td class="px-3 py-4 font-bold text-gray-700" x-text="namaBerkas"></td>
                                                         <td class="px-3 py-4 text-gray-600 font-medium" x-text="item.isi"></td>
                                                         <td class="px-3 py-4 text-center font-bold text-gray-700" x-text="item.tahun"></td>
                                                         <td class="px-3 py-4 text-center text-xs text-gray-500" x-text="item.tanggal"></td>
                                                         <td class="px-3 py-4 text-center font-bold text-gray-700" x-text="item.jumlah"></td>
                                                         <td class="px-3 py-4 text-center text-xs">
-                                                            <span class="px-2 py-1 rounded-full bg-red-50 text-red-600 font-bold" x-text="item.hak_akses || '-'"></span>
+                                                            <span class="px-2 py-1 rounded-full bg-red-50 text-[#e92027] font-bold" x-text="item.hak_akses || '-'"></span>
                                                         </td>
                                                         <td class="px-3 py-4 text-center text-xs font-bold text-gray-600" x-text="item.masa_simpan"></td>
                                                         <td class="px-3 py-4 text-center text-xs font-bold text-gray-600" x-text="item.tindakan_akhir"></td>
@@ -357,7 +357,7 @@
                                                             <button type="button" @click="editItem(index)" class="p-2 text-gray-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all" title="Edit Item">
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                             </button>
-                                                            <button type="button" @click="removeIsi(index)" class="p-2 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-full transition-all">
+                                                            <button type="button" @click="removeIsi(index)" class="p-2 text-gray-300 hover:text-[#e92027] hover:bg-red-50 rounded-full transition-all">
                                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                             </button>
                                                             {{-- Hidden Inputs (Only render if NOT in Edit Mode, to avoid conflict) --}}
@@ -397,7 +397,7 @@
 
                             {{-- Footer / Submit --}}
                             <div class="p-6 bg-white border-t border-gray-100 flex justify-between items-center gap-4 rounded-3xl shadow-lg border border-gray-100 mt-6">
-                                <button type="button" @click="formStep = 1" class="text-gray-500 font-bold px-4 py-2 text-sm hover:text-red-800 transition">
+                                <button type="button" @click="formStep = 1" class="text-gray-500 font-bold px-4 py-2 text-sm hover:text-[#c41820] transition">
                                     Kembali
                                 </button>
                                 <button type="submit" 

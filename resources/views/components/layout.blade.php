@@ -29,11 +29,12 @@
 
 <body class="bg-gray-50 font-sans text-gray-800">
 
-    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden">
+    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden relative">
 
         {{-- Sidebar Component --}}
         <x-sidebar />
 
+<<<<<<< HEAD
         {{-- Main Content Wrapper --}}
         <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
 
@@ -58,6 +59,25 @@
                     {{-- User Info --}}
                 </div>
             </header>
+=======
+
+
+        <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
+            
+            <!-- Open Sidebar Button (Visible only when sidebar is closed) -->
+            <button x-show="!sidebarOpen" 
+                    @click="sidebarOpen = true" 
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 -translate-x-4"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    class="absolute top-7 left-8 z-20 p-2 text-white hover:text-gray-200 transition focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </button>
+            
+
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
 
             {{-- Main Content Area --}}
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 scroll-smooth">
@@ -74,5 +94,9 @@
     <div class="hidden bg-pink-700 border-pink-700 text-white ring-pink-200"></div>
 
 </body>
+<<<<<<< HEAD
 
 </html>
+=======
+</html>
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9

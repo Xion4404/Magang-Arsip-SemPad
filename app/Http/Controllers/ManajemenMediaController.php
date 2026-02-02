@@ -85,4 +85,8 @@ class ManajemenMediaController extends Controller
 
         return redirect()->route('manajemen-media.index')->with('success', 'Berita berhasil dihapus');
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
