@@ -1,20 +1,23 @@
 <!-- Media & Informasi Section -->
-<section class="py-24 bg-white overflow-hidden">
-    <div class="container mx-auto px-6">
-        <div class="flex justify-between items-end mb-12">
+<section class="py-8 relative overflow-hidden bg-cover bg-center bg-fixed" style="background-image: url('{{ asset('images/hp 5.jpeg') }}');">
+    <!-- Red Overlay with Blur -->
+    <div class="absolute inset-0 bg-black/35 backdrop-blur-sm z-0"></div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="flex justify-between items-end mb-8">
             <div>
-                <h2 class="text-4xl font-bold text-gray-800 mb-2">Media & Informasi</h2>
-                <div class="w-20 h-1.5 bg-[#e92027] rounded-full"></div>
+                <h2 class="text-4xl font-bold text-white mb-2">Media & Informasi</h2>
+                <div class="w-20 h-1.5 bg-white rounded-full"></div>
             </div>
             <div class="hidden md:flex gap-2">
                 <button id="slidePrev"
-                    class="p-3 bg-gray-100 hover:bg-[#e92027] hover:text-white rounded-full transition shadow-sm">
+                    class="p-3 bg-white/20 hover:bg-[#e92027] text-white rounded-full transition shadow-sm backdrop-blur-sm">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
                 <button id="slideNext"
-                    class="p-3 bg-gray-100 hover:bg-[#e92027] hover:text-white rounded-full transition shadow-sm">
+                    class="p-3 bg-white/20 hover:bg-[#e92027] text-white rounded-full transition shadow-sm backdrop-blur-sm">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -25,7 +28,7 @@
         <div class="relative group">
             <!-- Slider Container -->
             <div id="mediaSlider"
-                class="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide scroll-smooth"
+                class="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide scroll-smooth"
                 style="scrollbar-width: none; -ms-overflow-style: none;">
                 @forelse($mediaInfo as $item)
                     <!-- Card Item -->
@@ -80,20 +83,20 @@
                     </div>
                 @empty
                     <!-- Empty State -->
-                    <div class="w-full text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                    <div class="w-full text-center py-20 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-dashed border-white/20">
+                        <svg class="w-16 h-16 text-white/50 mx-auto mb-4" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                         </svg>
-                        <p class="text-gray-500 font-medium">Belum ada berita atau media yang diposting.</p>
+                        <p class="text-white/80 font-medium">Belum ada berita atau media yang diposting.</p>
                     </div>
                 @endforelse
             </div>
 
             <!-- Fade Edges for Scroll Cue -->
             <div
-                class="absolute top-0 right-0 h-full w-24 bg-gradient-to-l from-white to-transparent pointer-events-none md:hidden">
+                class="absolute top-0 right-0 h-full w-24 bg-gradient-to-l from-black/20 to-transparent pointer-events-none md:hidden">
             </div>
         </div>
     </div>

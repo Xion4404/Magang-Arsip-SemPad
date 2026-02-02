@@ -150,91 +150,9 @@
         </div>
     </section>
 
-    <!-- Statistik Arsip Section -->
-    <section class="py-20 relative overflow-hidden bg-cover bg-center bg-fixed" style="background-image: url('{{ asset('images/hp 5.jpeg') }}');">
-        <!-- Red Overlay with Blur -->
-         <div class="absolute inset-0 bg-red-900/35 backdrop-blur-sm z-0"></div>
-        
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="text-center mb-12">
-                <h2 class="text-white text-4xl font-bold mb-4">Statistik Arsip</h2>
-                <div class="w-24 h-1 bg-white mx-auto"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                <!-- Card 1: Total Arsip Masuk -->
-                <div class="bg-white/10 backdrop-blur-sm border border-white/20 p-8 rounded-2xl text-center text-white hover:transform hover:-translate-y-2 transition duration-300">
-                    <div class="text-5xl font-bold mb-2">{{ $totalArsip }}</div>
-                    <div class="text-red-100 font-medium">Total Arsip Masuk</div>
-                </div>
-                <!-- Card 2: Arsip Masuk Bulan Ini -->
-                <div class="bg-white/10 backdrop-blur-sm border border-white/20 p-8 rounded-2xl text-center text-white hover:transform hover:-translate-y-2 transition duration-300">
-                     <div class="text-5xl font-bold mb-2">{{ $bulanIniArsip }}</div>
-                    <div class="text-red-100 font-medium">Arsip Masuk Bulan Ini</div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Chart Script -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctxLanding = document.getElementById('landingArsipChart').getContext('2d');
-            if (ctxLanding) {
-                new Chart(ctxLanding, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-                        datasets: [{
-                            label: 'Jumlah Arsip Masuk',
-                            data: @json($arsipBulananData),
-                            borderColor: '#e92027', // custom red
-                            backgroundColor: 'rgba(233, 32, 39, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#e92027',
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false,
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                titleColor: '#1f2937',
-                                bodyColor: '#e92027',
-                                borderColor: '#e5e7eb',
-                                borderWidth: 1
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { borderDash: [4, 4], color: '#f3f4f6' },
-                                ticks: { stepSize: 1, color: '#6b7280' }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: '#6b7280' }
-                            }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                    }
-                });
-            }
-        });
-    </script>
+
+
     
     <!-- Media & Informasi Section -->
     @include('partials.media-slider')
