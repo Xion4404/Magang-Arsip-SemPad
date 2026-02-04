@@ -1,7 +1,7 @@
 <div class="overflow-x-auto rounded-t-3xl text-sm">
     <table class="w-full text-left border-collapse min-w-[1000px]">
         <thead>
-            <tr class="bg-red-900 text-white uppercase tracking-wider text-xs shadow-md">
+            <tr class="bg-[#e92027] text-white uppercase tracking-wider text-xs shadow-md">
                 <th class="py-5 px-4 font-bold w-12 text-center rounded-tl-3xl">
                     <input type="checkbox" onclick="toggleAll(this)" class="rounded border-none focus:ring-0 text-red-600 bg-white cursor-pointer w-4 h-4">
                 </th>
@@ -154,14 +154,16 @@
                                 Edit Data
                             </a>
                             
-                            <form action="/arsip/{{ $arsip->id }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus arsip ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    Hapus
-                                </button>
-                            </form>
+                            @if($arsip->tindakan_akhir == 'Musnah')
+                                <form action="{{ route('arsip.destroy', $arsip->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memusnahkan arsip ini? Data akan dipindahkan ke Data Musnah.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        Hapus & Musnahkan
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>

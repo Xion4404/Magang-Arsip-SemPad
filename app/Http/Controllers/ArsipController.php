@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Arsip;
+use App\Models\ArsipMusnah; // New Model
 use App\Models\MasterKlasifikasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // Transaction
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ArsipImport;
 
@@ -142,10 +144,11 @@ class ArsipController extends Controller
     public function create()
     {
         $klasifikasis = MasterKlasifikasi::all();
+        $units = \App\Models\Unit::all(); // Fetch all units
         // Calculate next number (Global Rank)
         $nextNumber = Arsip::distinct('no_berkas')->count() + 1;
         
-        return view('arsip.input-arsip', compact('klasifikasis', 'nextNumber'));
+        return view('arsip.input-arsip', compact('klasifikasis', 'nextNumber', 'units'));
     }
 
     public function store(Request $request)
@@ -238,7 +241,52 @@ class ArsipController extends Controller
             ]
         ];
 
-        return view('arsip.input-arsip', compact('arsip', 'nextNumber', 'initialData'));
+        $units = \App\Models\Unit::all(); // Fetch all units
+
+        return view('arsip.input-arsip', compact('arsip', 'nextNumber', 'initialData', 'units'));
+    }
+
+    public function destroy($id)
+    {
+        $arsip = Arsip::find($id);
+        if (!$arsip) return redirect()->back()->with('error', 'Data tidak ditemukan');
+
+        if ($arsip->tindakan_akhir == 'Musnah') {
+            try {
+                DB::transaction(function () use ($arsip) {
+                    $data = $arsip->toArray();
+                    
+                    // Remove ID to allow new auto-increment in trash table
+                    unset($data['id']);
+                    
+                    // Add timestamp
+                    $data['deleted_at'] = now();
+                    
+                    ArsipMusnah::create($data);
+                    
+                    $arsip->delete();
+                });
+
+                return redirect()->back()->with('success', 'Arsip berhasil dimusnahkan dan dipindahkan ke Data Musnah.');
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Gagal memusnahkan arsip: ' . $e->getMessage());
+            }
+        } else {
+             return redirect()->back()->with('error', 'Arsip tidak dapat dihapus karena status bukan Musnah.');
+        }
+    }
+
+    public function musnah(Request $request)
+    {
+        $query = ArsipMusnah::orderBy('deleted_at', 'desc');
+
+        if ($request->has('search') && $request->search) {
+             $query->where('nama_berkas', 'like', "%{$request->search}%")
+                   ->orWhere('no_berkas', 'like', "%{$request->search}%");
+        }
+
+        $arsips = $query->paginate(25);
+        return view('arsip.musnah', compact('arsips'));
     }
 
     public function update(Request $request, $id)

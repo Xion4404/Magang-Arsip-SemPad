@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     // ==========================================
     // FITUR ARSIP (User's Changes - HEAD)
     // ==========================================
+    Route::get('/arsip/musnah', [ArsipController::class, 'musnah'])->name('arsip.musnah');
     Route::get('/arsip', [ArsipController::class, 'index']);
     Route::post('/arsip/export', [ArsipController::class, 'export']); 
     Route::get('/input-arsip', [ArsipController::class, 'create']);
@@ -92,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
     // ==========================================
     Route::resource('management-akun', ManagementAkunController::class);
     Route::resource('manajemen-media', ManajemenMediaController::class);
+    Route::resource('manajemen-unit', \App\Http\Controllers\ManajemenUnitController::class);
 
     // ==========================================
     // PROFILE

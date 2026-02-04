@@ -6,12 +6,31 @@ use Illuminate\Http\Request;
 use App\Models\Peminjaman; 
 use App\Models\DetailPeminjaman; 
 use App\Models\LogAktivitas;
+use App\Models\Arsip;
+use App\Models\ArsipMasuk;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // ==========================================
+        // 0. FILTER HELPER
+        // ==========================================
+        $applyFilters = function ($query) use ($request) {
+            if ($request->has('bulan') && $request->bulan != '') {
+                $query->whereMonth('tanggal_kerja', $request->bulan);
+            }
+            if ($request->has('minggu') && $request->minggu != '') {
+                 $query->whereRaw('FLOOR((Day(tanggal_kerja) - 1) / 7) + 1 = ?', [$request->minggu]);
+            }
+             if ($request->has('unit_kerja') && $request->unit_kerja != '') {
+                $query->where('unit_kerja', $request->unit_kerja);
+            }
+            return $query;
+        };
+
         // ==========================================
         // 1. DATA RINGKAS (Card Atas & Chart Donut)
         // ==========================================
@@ -62,6 +81,7 @@ class DashboardController extends Controller
         $pemilahan = $applyFilters(LogAktivitas::where('tahapan', 'Pemilahan'))->count();
         $pendataan = $applyFilters(LogAktivitas::where('tahapan', 'Pendataan'))->count();
         $pelabelan = $applyFilters(LogAktivitas::where('tahapan', 'Pelabelan'))->count();
+        $inputEArsip = $applyFilters(LogAktivitas::where('tahapan', 'Input E-Arsip'))->count();
         
         // Recent Activities for Table (Add this too as it was missing from the view's data)
         $monitoringLogs = $applyFilters(LogAktivitas::with('user'))->orderBy('id', 'desc')->take(10)->get();
@@ -161,6 +181,58 @@ class DashboardController extends Controller
             'data' => $arsipUnitDataRaw->pluck('total')
         ];
 
+        // --- NEW CHARTS FOR "MODUL ARSIP" (DAFTAR ARSIP) ---
+        
+        // 1. CHART Klasifikasi (Grouped by 2 First Letters - Parent)
+        // We need to fetch all and process in PHP or use complex SQL depending on DB support for substr
+        // Using PHP for simplicity with small to medium datasets
+        $allArsip = Arsip::with('klasifikasi')->get();
+        
+        $klasifikasiStats = $allArsip->groupBy(function($item) {
+            if ($item->klasifikasi) {
+                return substr($item->klasifikasi->kode_klasifikasi, 0, 2);
+            }
+            return 'Lainnya';
+        })->map->count()->sortDesc()->take(7); // Top 7 Categories
+
+        $arsipKlasifikasiChart = [
+            'labels' => $klasifikasiStats->keys()->toArray(),
+            'data' => $klasifikasiStats->values()->toArray()
+        ];
+
+        // 2. CHART Arsip Per Tahun (Bar)
+        $arsipTahunStats = Arsip::select('tahun', DB::raw('count(*) as total'))
+            ->whereNotNull('tahun')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'asc')
+            ->get();
+            
+        $arsipTahunChart = [
+            'labels' => $arsipTahunStats->pluck('tahun')->toArray(),
+            'data' => $arsipTahunStats->pluck('total')->toArray()
+        ];
+
+        // 3. CHART Media Arsip (Pie)
+        $arsipMediaStats = Arsip::select('jenis_media', DB::raw('count(*) as total'))
+            ->groupBy('jenis_media')
+            ->get();
+            
+        $arsipMediaChart = [
+            'labels' => $arsipMediaStats->pluck('jenis_media')->toArray(),
+            'data' => $arsipMediaStats->pluck('total')->toArray()
+        ];
+
+        // 4. CHART Status/Tindakan (Donut)
+        $arsipStatusStats = Arsip::select('tindakan_akhir', DB::raw('count(*) as total'))
+            ->whereNotNull('tindakan_akhir')
+            ->groupBy('tindakan_akhir')
+            ->get();
+
+        $arsipStatusChart = [
+            'labels' => $arsipStatusStats->pluck('tindakan_akhir')->toArray(),
+            'data' => $arsipStatusStats->pluck('total')->toArray()
+        ];
+
         // B. Detailed Matrix (Bottom Table)
         $stages = ['Pemilahan', 'Pendataan', 'Pelabelan', 'Input E-Arsip'];
         $matrixData = [];
@@ -231,6 +303,17 @@ class DashboardController extends Controller
         $mediaHardfile = DetailPeminjaman::where('jenis_arsip', 'Hardfile')->count();
         $mediaSoftfile = DetailPeminjaman::where('jenis_arsip', 'Softfile')->count();
 
+        // ==========================================
+        // 5. DATA TAMBAHAN (Untuk View)
+        // ==========================================
+        $totalArsip = Arsip::count();
+        $totalBox = LogAktivitas::sum('jumlah_box_selesai');
+        $bulanIniArsip = ArsipMasuk::whereMonth('tanggal_terima', date('m'))
+                            ->whereYear('tanggal_terima', date('Y'))
+                            ->count();
+        $allPics = User::all(); 
+        $allUnits = LogAktivitas::select('unit_kerja')->distinct()->pluck('unit_kerja');
+
         // Kirim semua variabel ke View
         return view('beranda', compact(
             'dipinjam', 'kembali', 'dataDipinjam', 'dataKembali',
@@ -239,7 +322,8 @@ class DashboardController extends Controller
             'pemilahan', 'pendataan', 'pelabelan', 'monitoringLogs', 'userStats',
             'allPics', 'allUnits',
             'tahapanChartData', 'arsipBulananData', 'arsipUnitChart',
-            'mediaHardfile', 'mediaSoftfile'
+            'mediaHardfile', 'mediaSoftfile',
+            'arsipKlasifikasiChart', 'arsipTahunChart', 'arsipMediaChart', 'arsipStatusChart'
         ));
     }
 }

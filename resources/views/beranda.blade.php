@@ -65,9 +65,13 @@
             </div>
         </div>
 
-        <div x-show="mounted" x-transition:enter="transition ease-out duration-700 delay-300"
-            x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-            class="mt-8 container mx-auto px-4 md:px-6" style="display: none;">
+        <div x-show="mounted"
+             x-transition:enter="transition ease-out duration-700 delay-500"
+             x-transition:enter-start="opacity-0 translate-y-8"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="mt-8 container mx-auto px-4"
+             style="display: none;"
+        >
 
             <div x-show="activeTab === 'peminjaman'" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
@@ -160,6 +164,102 @@
                     <div class="relative h-64 w-full z-10">
                         <canvas id="trenChart"></canvas>
                     </div>
+
+                    {{-- Decorative Blob --}}
+                    <div
+                        class="absolute -top-10 -left-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50 pointer-events-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-center mb-12 mt-8">
+                    <a href="/peminjaman"
+                        class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-[#e92027] rounded-2xl shadow-lg hover:bg-[#c41820] hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <span>Kelola Data Peminjaman</span>
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div x-show="activeTab === 'arsip'" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 style="display: none;">
+                
+                {{-- Row 1: Klasifikasi & Media --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {{-- Chart Klasifikasi --}}
+                    <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Klasifikasi Arsip</h3>
+                                <p class="text-xs text-gray-500">Berdasarkan kategori utama</p>
+                            </div>
+                            <div class="bg-red-50 text-red-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipKlasifikasiChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Chart Media --}}
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Jenis Media</h3>
+                                <p class="text-xs text-gray-500">Distribusi media fisik/digital</p>
+                            </div>
+                            <div class="bg-blue-50 text-blue-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipMediaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Row 2: Tahun & Status --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                     {{-- Chart Status --}}
+                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Status Akhir</h3>
+                                <p class="text-xs text-gray-500">Tindakan penyusutan</p>
+                            </div>
+                            <div class="bg-green-50 text-green-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipStatusChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Chart Tahun --}}
+                    <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Volume Arsip per Tahun</h3>
+                                <p class="text-xs text-gray-500">Tren jumlah arsip berdasarkan tahun dokumen</p>
+                            </div>
+                            <div class="bg-purple-50 text-purple-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipTahunChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div x-show="activeTab === 'karyawan'" 
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 transform translate-y-4"
@@ -491,29 +591,6 @@
             </div>
 
         </div>
-
-        <div x-show="activeTab === 'arsip'" x-transition:enter="transition ease-out duration-300" class="py-12"
-            style="display: none;">
-            <div class="bg-white p-12 rounded-2xl shadow-sm text-center border border-gray-200 max-w-2xl mx-auto">
-                <div class="text-6xl mb-4 opacity-25">📂</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Statistik Arsip</h3>
-                <p class="text-gray-500 mb-6 text-sm">Visualisasi total arsip, klasifikasi, dan ruang penyimpanan.
-                </p>
-                <a href="/arsip" class="text-red-700 font-bold hover:underline text-sm">Lihat Data Arsip →</a>
-            </div>
-        </div>
-
-        <div x-show="activeTab === 'karyawan'" x-transition:enter="transition ease-out duration-300" class="py-12"
-            style="display: none;">
-            <div class="bg-white p-12 rounded-2xl shadow-sm text-center border border-gray-200 max-w-2xl mx-auto">
-                <div class="text-6xl mb-4 opacity-25">👥</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Monitoring Karyawan</h3>
-                <p class="text-gray-500 mb-6 text-sm">Dashboard aktivitas dan kinerja karyawan.</p>
-                <a href="/monitoring" class="text-red-700 font-bold hover:underline text-sm">Lihat Monitoring →</a>
-            </div>
-        </div>
-
-    </div>
     </div>
 
      <script>
@@ -572,15 +649,176 @@
                             y: { stacked: true, beginAtZero: true, grid: { borderDash: [4, 4] } }
                         },
                         plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // --- 4. MEDIA (PIE) ---
+            const ctxMedia = document.getElementById('mediaChart');
+            if (ctxMedia) {
+                new Chart(ctxMedia.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: ['Hardfile', 'Softfile'],
+                        datasets: [{
+                            data: [{{ $mediaHardfile }}, {{ $mediaSoftfile }}],
+                            backgroundColor: ['#e92027', '#fc8181'], // Use E9 for Hardfile
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { boxWidth: 10, padding: 10, font: { family: 'Montserrat' } }
+                            }
+                        }
+                    }
+                });
+            }
+            // --- 3. CHART TAHAPAN PENGARSIPAN (Horizontal Bar) ---
+            const ctxTahapan = document.getElementById('tahapanChart').getContext('2d');
+            if (ctxTahapan) {
+                new Chart(ctxTahapan, {
+                    type: 'bar', // Forcing horizontal
+                    data: {
+                        labels: @json($tahapanChartData['labels']),
+                        datasets: [{
+                            label: 'Jumlah Box',
+                            data: @json($tahapanChartData['data']),
+                            backgroundColor: [
+                                '#e92027', // Main
+                                '#b91c1c', // red-700
+                                '#ef4444', // red-500
+                                '#fca5a5'  // red-300
+                            ],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', // Convert to Horizontal Bar
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.x + ' Box';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                grid: { borderDash: [4, 4], color: '#f3f4f6' }
+                            },
+                            y: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- 4. CHART ARSIP MASUK PER BULAN (Line Chart) ---
+            const ctxBulanan = document.getElementById('arsipBulananChart').getContext('2d');
+            if (ctxBulanan) {
+                new Chart(ctxBulanan, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                        datasets: [{
                             label: 'Jumlah Arsip Masuk',
                             data: @json($arsipBulananData),
-                            borderColor: '#e92027', // red-600
-                            backgroundColor: 'rgba(233, 32, 39, 0.1)',
-                            borderWidth: 2,
+                            borderColor: '#e92027',
+                            backgroundColor: 'rgba(233, 32, 39, 0.05)',
                             fill: true,
-                            tension: 0.4, // Smooth curve
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#e92027',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { borderDash: [4, 4] } }
+                        }
+                    }
+                });
+            }
+
+            // === ARSIP DASHBOARD CHARTS ===
+
+            // 1. KLASIFIKASI (Bar)
+            const ctxKlasifikasi = document.getElementById('arsipKlasifikasiChart');
+            if (ctxKlasifikasi) {
+                new Chart(ctxKlasifikasi.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: @json($arsipKlasifikasiChart['labels']),
+                        datasets: [{
+                            label: 'Jumlah Berkas',
+                            data: @json($arsipKlasifikasiChart['data']),
+                            backgroundColor: '#e92027',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // 2. MEDIA (Doughnut)
+            const ctxMediaArsip = document.getElementById('arsipMediaChart');
+            if (ctxMediaArsip) {
+                new Chart(ctxMediaArsip.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: @json($arsipMediaChart['labels']),
+                        datasets: [{
+                            data: @json($arsipMediaChart['data']),
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }
+                        }
+                    }
+                });
+            }
+
+            // 3. TAHUN (Line)
+            const ctxTahun = document.getElementById('arsipTahunChart');
+            if (ctxTahun) {
+                new Chart(ctxTahun.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: @json($arsipTahunChart['labels']),
+                        datasets: [{
+                            label: 'Volume Arsip',
+                            data: @json($arsipTahunChart['data']),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
                             pointRadius: 4,
                             pointHoverRadius: 6
                         }]
@@ -588,13 +826,7 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -629,10 +861,11 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        cutout: '60%',
                         plugins: {
-                            legend: {
+                            legend: { 
                                 position: 'right',
-                                labels: { boxWidth: 10, padding: 10, font: { family: 'Montserrat' } }
+                                labels: { boxWidth: 12, usePointStyle: true, font: { size: 11 } }
                             }
                         }
                     }

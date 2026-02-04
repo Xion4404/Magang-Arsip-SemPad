@@ -126,45 +126,9 @@
                                         <label class="block font-bold text-gray-700 mb-2 transition group-focus-within:text-red-700 text-sm uppercase tracking-wide">Unit Pengolah</label>
                                         <select :name="isEdit ? 'isi_berkas[0][unit_pengolah]' : 'unit_pengolah'" x-model="unitPengolah" class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition shadow-sm font-bold text-gray-800 appearance-none cursor-pointer">
                                             <option value="" disabled selected>Pilih Unit Asal</option>
-                                            <option value="Sistem Manajemen">Sistem Manajemen</option>
-                                            <option value="Internal Audit">Internal Audit</option>
-                                            <option value="Komunikasi & Kesekretariatan">Komunikasi & Kesekretariatan</option>
-                                            <option value="CSR">CSR</option>
-                                            <option value="Hukum">Hukum</option>
-                                            <option value="Keamanan">Keamanan</option>
-                                            <option value="Staf Dept. Komunikasi & Hukum Perusahaan">Staf Dept. Komunikasi & Hukum Perusahaan</option>
-                                            <option value="Bisnis Inkubasi Non Semen">Bisnis Inkubasi Non Semen</option>
-                                            <option value="Quality Assurance">Quality Assurance</option>
-                                            <option value="SHE">SHE</option>
-                                            <option value="Perencanaan & Evaluasi Produksi">Perencanaan & Evaluasi Produksi</option>
-                                            <option value="Penunjang Produksi">Penunjang Produksi</option>
-                                            <option value="Quality Control">Quality Control</option>
-                                            <option value="Staf AFR">Staf AFR</option>
-                                            <option value="Operasi Tambang">Operasi Tambang</option>
-                                            <option value="Produksi Bahan Baku">Produksi Bahan Baku</option>
-                                            <option value="Perencanaan & Pengawasan Tambang">Perencanaan & Pengawasan Tambang</option>
-                                            <option value="WHRPG & Utilitas">WHRPG & Utilitas</option>
-                                            <option value="Produksi Terak">Produksi Terak</option>
-                                            <option value="Produksi Semen">Produksi Semen</option>
-                                            <option value="Pabrik Kantong">Pabrik Kantong</option>
-                                            <option value="Pabrik Dumai">Pabrik Dumai</option>
-                                            <option value="Pemeliharaan Mesin">Pemeliharaan Mesin</option>
-                                            <option value="Pemeliharaan Listrik & Instrumen">Pemeliharaan Listrik & Instrumen</option>
-                                            <option value="Maintenance Reliability">Maintenance Reliability</option>
-                                            <option value="Capex">Capex</option>
-                                            <option value="Site Engineering">Site Engineering</option>
-                                            <option value="Project Management">Project Management</option>
-                                            <option value="Perencanaan Suku Cadang">Perencanaan Suku Cadang</option>
-                                            <option value="TPM Officer">TPM Officer</option>
-                                            <option value="Produksi Mesin & Teknikal Support">Produksi Mesin & Teknikal Support</option>
-                                            <option value="Produksi BIP & Aplikasi">Produksi BIP & Aplikasi</option>
-                                            <option value="Operasional SDM">Operasional SDM</option>
-                                            <option value="Sarana Umum">Sarana Umum</option>
-                                            <option value="GRC & Internal Control">GRC & Internal Control</option>
-                                            <option value="Kinerja & Anggaran">Kinerja & Anggaran</option>
-                                            <option value="Keuangan">Keuangan</option>
-                                            <option value="Akuntansi">Akuntansi</option>
-                                            <option value="Lainnya">Lainnya</option>
+                                            @foreach($units as $unit)
+                                                <option value="{{ $unit->nama_unit }}">{{ $unit->nama_unit }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -505,3 +469,159 @@
                     this.newTindakan = 'Musnah';
                     this.$dispatch('reset-selection');
                     
+                    /* Focus back */
+                    this.$nextTick(() => {
+                        const uInput = document.querySelector('[name=unit_pengolah]');
+                        if(uInput) uInput.focus();
+                    });
+                }
+            },
+            editItem(index) {
+                const item = this.isiBerkas[index];
+                this.newIsi = item.isi;
+                this.newTahun = item.tahun;
+                this.newTanggal = item.tanggal;
+                this.newJumlah = item.jumlah;
+                this.newNoBox = item.no_box;
+                this.newHakAkses = item.hak_akses;
+                this.newMedia = item.jenis_media;
+                this.newMasaSimpan = item.masa_simpan;
+                this.newTindakan = item.tindakan_akhir;
+                this.unitPengolah = item.unit_pengolah;
+                this.kodeKlasifikasi = item.kode_klasifikasi;
+                this.klasifikasiId = item.klasifikasi_id;
+
+                this.$dispatch('set-classification', {
+                    code: item.kode_klasifikasi,
+                    id: item.klasifikasi_id,
+                    label: item.kode_klasifikasi,
+                    hak_akses: item.hak_akses,
+                    masa_simpan: item.masa_simpan,
+                    tindakan: item.tindakan_akhir
+                });
+                this.isiBerkas.splice(index, 1);
+            },
+            removeIsi(index) {
+                this.isiBerkas.splice(index, 1);
+            },
+            validateStep1() {
+                const nama = document.querySelector('[name=nama_berkas]').value;
+                if (!nama) {
+                    alert('Mohon lengkapi Nama Berkas terlebih dahulu.');
+                    return;
+                }
+                this.formStep = 2;
+            },
+            updateDefaults(data) {
+                this.newHakAkses = data.hak_akses || '';
+                this.newMasaSimpan = data.masa_simpan || '';
+                this.newTindakan = data.tindakan || '';
+                this.kodeKlasifikasi = data.code || '';
+                this.klasifikasiId = data.id || '';
+            }
+        }
+    }
+
+    function classificationDropdown(initData) {
+        return {
+            open: false,
+            step: 1, 
+            breadcrumbs: [],
+            options: [],
+            loading: false,
+            selectedItem: null,
+            displayText: 'Pilih Kode Klasifikasi',
+            
+            init() {
+                this.fetchOptions(1);
+                
+                if (initData && initData.kode_klasifikasi) {
+                    this.selectedItem = {
+                        code: initData.kode_klasifikasi,
+                        label: initData.kode_klasifikasi, // We usually don't have full label in initData, so use code
+                        id: initData.klasifikasi_id
+                    };
+                    this.displayText = initData.kode_klasifikasi;
+                }
+            },
+            
+            toggle() {
+                this.open = !this.open;
+                if(this.open) {
+                   // Ensure we start from scratch or current step? 
+                   // If they have selected something, maybe easier to just show root options to allow change
+                   if (this.options.length === 0) this.fetchOptions(1);
+                   
+                   // If we want to allow re-selection, reset step to 1 on open
+                   this.step = 1;
+                   this.breadcrumbs = [];
+                   this.fetchOptions(1);
+                }
+            },
+
+            fetchOptions(level, parent = null) {
+                this.loading = true;
+                let url = `/api/klasifikasi-options?level=${level}&parent=${parent}`;
+                
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.options = data;
+                        this.loading = false;
+                    });
+            },
+
+            selectOption(opt) {
+                if (this.step === 1) {
+                    this.breadcrumbs.push({ level: 1, label: opt.label, value: opt.code });
+                    this.step = 2;
+                    this.fetchOptions(2, opt.code);
+                } else if (this.step === 2) {
+                    this.breadcrumbs.push({ level: 2, label: opt.label, value: opt.code });
+                    this.step = 3;
+                    this.fetchOptions(3, opt.code);
+                } else if (this.step === 3) {
+                    this.selectedItem = opt;
+                    this.displayText = opt.label;
+
+                    this.$dispatch('classification-selected', { 
+                        hak_akses: opt.hak_akses, 
+                        masa_simpan: opt.masa_simpan, 
+                        tindakan: opt.tindakan_akhir,
+                        code: opt.code,
+                        id: opt.id
+                    });
+
+                    this.open = false;
+                }
+            },
+            
+            goBack() {
+                if (this.step > 1) {
+                    this.step--;
+                    this.breadcrumbs.pop();
+                    const parent = this.breadcrumbs.length > 0 ? this.breadcrumbs[this.breadcrumbs.length - 1].value : null;
+                    this.fetchOptions(this.step, parent);
+                }
+            },
+
+            reset() {
+                this.step = 1;
+                this.breadcrumbs = [];
+                this.selectedItem = null;
+                this.displayText = 'Pilih Kode Klasifikasi';
+                this.fetchOptions(1);
+                this.open = false; 
+            },
+
+            setFromParent(detail) {
+                this.selectedItem = { code: detail.code, label: detail.label, id: detail.id };
+                this.displayText = detail.code;
+                this.open = false;
+                this.step = 1;
+                this.breadcrumbs = [];
+            }
+        }
+    }
+</script>
+</x-layout>
