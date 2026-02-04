@@ -62,13 +62,15 @@
         </a>
 
         <a href="/arsip"
-            class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('arsip') || Request::is('arsip/*') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
+            class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('arsip') && !Request::is('arsip/musnah') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
             <span class="whitespace-nowrap">Arsip</span>
         </a>
+
+
 
         <a href="/peminjaman"
             class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('peminjaman*') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
@@ -99,25 +101,8 @@
                 <span class="whitespace-nowrap">Manajemen Akun</span>
             </a>
 
-<<<<<<< HEAD
-            <a href="#"
+            <a href="{{ route('manajemen-unit.index') }}"
                 class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('manajemen-unit*') ? 'bg-red-800 text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-red-700' }} rounded-lg transition">
-=======
-        @if(Auth::check() && Auth::user()->role == 'admin')
-            <a href="{{ route('management-akun.index') }}"
-                class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('management-akun*') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span class="whitespace-nowrap">Manajemen Akun</span>
-            </a>
-
-            <a href="#"
-                class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('manajemen-unit*') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -126,31 +111,25 @@
             </a>
 
             <a href="{{ route('manajemen-media.index') }}"
-<<<<<<< HEAD
                 class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('manajemen-media*') ? 'bg-red-800 text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-red-700' }} rounded-lg transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-=======
-                class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('manajemen-media*') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 </svg>
                 <span class="whitespace-nowrap">Manajemen Media</span>
             </a>
+
+            <a href="{{ route('arsip.musnah') }}"
+                class="flex items-center gap-3 px-4 py-2.5 text-sm {{ Request::is('arsip/musnah') ? 'bg-[#e92027] text-white shadow-md' : 'text-gray-600 hover:bg-red-50 hover:text-[#e92027]' }} rounded-lg transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span class="whitespace-nowrap">Data Musnah</span>
+            </a>
         @endif
-<<<<<<< HEAD
     </nav>
     
      {{-- LOGOUT BUTTON DI SIDEBAR --}}
-=======
-
-    </nav>
-
-    {{-- LOGOUT BUTTON DI SIDEBAR --}}
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
     <div class="px-6 py-4 border-t border-gray-100 min-w-[16rem]">
         <form action="{{ route('logout') }}" method="POST">
             @csrf
@@ -164,8 +143,4 @@
             </button>
         </form>
     </div>
-<<<<<<< HEAD
 </aside>
-=======
-</aside>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9

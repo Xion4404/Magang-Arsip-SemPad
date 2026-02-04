@@ -18,22 +18,8 @@
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Unit Asal</label>
                          <select name="unit_asal" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]">
                             <option value="" disabled>Pilih Unit Asal</option>
-                            @php
-                                $units = [
-                                    "Sistem Manajemen", "Internal Audit", "Komunikasi & Kesekretariatan", "CSR", "Hukum", "Keamanan", 
-                                    "Staf Dept. Komunikasi & Hukum Perusahaan", "Bisnis Inkubasi Non Semen", "Quality Assurance", 
-                                    "SHE", "Perencanaan & Evaluasi Produksi", "Penunjang Produksi", "Quality Control", 
-                                    "Staf AFR", "Operasi Tambang", "Produksi Bahan Baku", "Perencanaan & Pengawasan Tambang", 
-                                    "WHRPG & Utilitas", "Produksi Terak", "Produksi Semen", "Pabrik Kantong", "Pabrik Dumai", 
-                                    "Pemeliharaan Mesin", "Pemeliharaan Listrik & Instrumen", "Maintenance Reliability", 
-                                    "Capex", "Site Engineering", "Project Management", "Perencanaan Suku Cadang", 
-                                    "TPM Officer", "Produksi Mesin & Teknikal Support", "Produksi BIP & Aplikasi", 
-                                    "Operasional SDM", "Sarana Umum", "GRC & Internal Control", "Kinerja & Anggaran", 
-                                    "Keuangan", "Akuntansi", "Lainnya"
-                                ];
-                            @endphp
                             @foreach($units as $unit)
-                                <option value="{{ $unit }}" {{ $arsipMasuk->unit_asal == $unit ? 'selected' : '' }}>{{ $unit }}</option>
+                                <option value="{{ $unit->nama_unit }}" {{ $arsipMasuk->unit_asal == $unit->nama_unit ? 'selected' : '' }}>{{ $unit->nama_unit }}</option>
                             @endforeach
                          </select>
                      </div>

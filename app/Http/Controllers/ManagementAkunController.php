@@ -96,8 +96,4 @@ class ManagementAkunController extends Controller
 
         return redirect()->route('management-akun.index')->with('success', 'Pengguna berhasil dihapus!');
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9

@@ -119,18 +119,6 @@
                                 x-transition:enter-end="opacity-100 scale-100">
                                 <ul class="text-xs font-medium text-gray-600">
                                     <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'latest_added']) }}"
-<<<<<<< HEAD
-                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort', 'latest_added') == 'latest_added' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Terbaru
-                                            Ditambahkan</a></li>
-                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest_added']) }}"
-                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort') == 'oldest_added' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Terlama
-                                            Ditambahkan</a></li>
-                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'latest_date']) }}"
-                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort') == 'latest_date' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Tanggal
-                                            Pinjam Terbaru</a></li>
-                                    <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest_date']) }}"
-                                            class="block px-4 py-2.5 hover:bg-red-50 hover:text-red-700 {{ request('sort') == 'oldest_date' ? 'bg-red-50 text-red-700 font-bold' : '' }}">Tanggal
-=======
                                             class="block px-4 py-2.5 hover:bg-red-50 hover:text-[#c41820] {{ request('sort', 'latest_added') == 'latest_added' ? 'bg-red-50 text-[#c41820] font-bold' : '' }}">Terbaru
                                             Ditambahkan</a></li>
                                     <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest_added']) }}"
@@ -141,7 +129,6 @@
                                             Pinjam Terbaru</a></li>
                                     <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'oldest_date']) }}"
                                             class="block px-4 py-2.5 hover:bg-red-50 hover:text-[#c41820] {{ request('sort') == 'oldest_date' ? 'bg-red-50 text-[#c41820] font-bold' : '' }}">Tanggal
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                                             Pinjam Terlama</a></li>
                                 </ul>
                             </div>

@@ -12,94 +12,96 @@
         </div>
     </div>
 
-    {{-- Main Container --}}
-    <div class="min-h-screen bg-gray-50 pb-20 print:bg-white print:pb-0">
-        
-        {{-- Header Section --}}
-        {{-- Header Section --}}
-        <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden print:hidden">
-            <!-- Polygon Pattern Overlay -->
-            <div class="absolute inset-0 z-0 opacity-40">
-                 <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                    <defs>
-                        <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
-                            <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
-                        </linearGradient>
-                    </defs>
-                    <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
-                    <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
-                    <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
-                    <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
-                </svg>
-            </div>
+    <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden print:hidden">
+         <!-- Polygon Pattern Overlay -->
+         <div class="absolute inset-0 z-0 opacity-40">
+              <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                 <defs>
+                     <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                         <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
+                         <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+                     </linearGradient>
+                 </defs>
+                 <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
+                 <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
+                 <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
+                 <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
+             </svg>
+         </div>
 
-            <!-- Ornamental Icon -->
-            <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
-                <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+         <!-- Ornamental Icon -->
+         <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
+             <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+         </div>
+            
+         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
+            <div class="text-center md:text-left">
+                 <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Daftar Arsip</h2>
+                 <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Kelola dan monitor seluruh dokumen arsip perusahaan.</p>
             </div>
-
-            <div class="w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
-                <div class="text-center md:text-left">
-                    <h1 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Daftar Arsip</h1>
-                    <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Kelola dan monitor seluruh dokumen arsip perusahaan.</p>
-                </div>
-                <a href="/input-arsip" class="group bg-white text-[#e92027] hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-red-900/40 border border-white/20">
+            <div>
+                <a href="/input-arsip"
+                    class="group bg-white text-[#e92027] hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-red-900/40 border border-white/20">
                     <div class="bg-red-50 p-1.5 rounded-full group-hover:bg-red-100 transition-colors">
-                         <svg class="w-5 h-5 text-[#e92027]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                         <svg class="w-5 h-5 text-[#e92027]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     </div>
                     <span>TAMBAH ARSIP</span>
                 </a>
             </div>
         </div>
+    </div>
 
         {{-- Content Card --}}
         <div class="w-full max-w-[98%] mx-auto -mt-20 px-2 md:px-0 print:mt-0 print:px-0 relative z-20">
             <div class="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-6 md:p-8 print:shadow-none print:border-0 print:p-0">
                 
                 {{-- Toolbar (Search & Filters) --}}
-                <form action="/arsip" method="GET" class="flex flex-col xl:flex-row items-center gap-4 mb-6 print:hidden">
-                    {{-- Search Input --}}
-                    <div class="relative w-full xl:w-96 group">
-                        <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-[#e92027] transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input type="text" name="search" placeholder="Cari dokumen..." value="{{ request('search') }}" 
-                            class="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#e92027] focus:ring-4 focus:ring-red-100 transition shadow-sm font-medium text-gray-700">
-                    </div>
-                    
-                    {{-- Sorting & Filters --}}
-                    <div class="flex flex-wrap gap-3 w-full xl:w-auto">
-                        {{-- Filter Tindakan (Permanen / Musnah) --}}
-                         <select name="filter_tindakan" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
-                            <option value="">Semua Status</option>
-                            <option value="Permanen" {{ request('filter_tindakan') == 'Permanen' ? 'selected' : '' }}>Permanen</option>
-                            <option value="Musnah" {{ request('filter_tindakan') == 'Musnah' ? 'selected' : '' }}>Musnah</option>
-                        </select>
+                <div class="flex flex-col xl:flex-row items-center gap-4 mb-6 print:hidden">
+                    <form id="filterForm" action="/arsip" method="GET" class="contents">
+                        {{-- Search Input --}}
+                        <div class="relative w-full xl:w-96 group">
+                            <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 group-focus-within:text-red-500 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </span>
+                            <input type="text" name="search" placeholder="Cari dokumen..." value="{{ request('search') }}" 
+                                class="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition shadow-sm font-medium text-gray-700">
+                        </div>
+                        
+                        {{-- Sorting & Filters --}}
+                        <div class="flex flex-wrap gap-3 w-full xl:w-auto">
+                            {{-- Filter Tindakan (Permanen / Musnah) --}}
+                             <select name="filter_tindakan" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="">Semua Status</option>
+                                <option value="Permanen" {{ request('filter_tindakan') == 'Permanen' ? 'selected' : '' }}>Permanen</option>
+                                <option value="Musnah" {{ request('filter_tindakan') == 'Musnah' ? 'selected' : '' }}>Musnah</option>
+                                <option value="Dinilai Kembali" {{ request('filter_tindakan') == 'Dinilai Kembali' ? 'selected' : '' }}>Dinilai Kembali</option>
+                            </select>
+    
+                            {{-- Filter Tahun --}}
+                            <select name="filter_tahun" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="">Semua Tahun</option>
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ request('filter_tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                @endforeach
+                            </select>
+    
+                            {{-- Filter Box --}}
+                            <select name="filter_box" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="">Semua Box</option>
+                                @foreach($availableBoxes as $box)
+                                    <option value="{{ $box }}" {{ request('filter_box') == $box ? 'selected' : '' }}>Box {{ $box }}</option>
+                                @endforeach
+                            </select>
+    
+                            <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-red-500 focus:text-red-600 transition hover:bg-gray-50">
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Input Terbaru</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Input Terlama</option>
+                                <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun (Terbaru - Lama)</option>
+                                <option value="year_asc" {{ request('sort') == 'year_asc' ? 'selected' : '' }}>Tahun (Lama - Terbaru)</option>
+                            </select>
+                        </div>
+                    </form>
 
-                        {{-- Filter Tahun --}}
-                        <select name="filter_tahun" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
-                            <option value="">Semua Tahun</option>
-                            @foreach($availableYears as $year)
-                                <option value="{{ $year }}" {{ request('filter_tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
-                            @endforeach
-                        </select>
-
-                        {{-- Filter Box --}}
-                        <select name="filter_box" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
-                            <option value="">Semua Box</option>
-                            @foreach($availableBoxes as $box)
-                                <option value="{{ $box }}" {{ request('filter_box') == $box ? 'selected' : '' }}>Box {{ $box }}</option>
-                            @endforeach
-                        </select>
-
-                        <select name="sort" onchange="this.form.submit()" class="px-5 py-4 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-600 outline-none cursor-pointer focus:border-[#e92027] focus:text-[#e92027] transition hover:bg-gray-50">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
-                            <option value="year_desc" {{ request('sort') == 'year_desc' ? 'selected' : '' }}>Tahun ↓</option>
-                            <option value="year_asc" {{ request('sort') == 'year_asc' ? 'selected' : '' }}>Tahun ↑</option>
-                        </select>
-                    </div>
 
                     {{-- Action Buttons (Right Aligned) --}}
                     <div class="ml-auto flex items-center gap-3 w-full xl:w-auto justify-end">
@@ -119,7 +121,7 @@
                                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                                     <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                                        <form action="{{ route('arsip.import') }}" method="POST" enctype="multipart/form-data">
+                                        <form action="{{ route('arsip.import.process') }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                                 <div class="sm:flex sm:items-start">
@@ -163,16 +165,12 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Excel
                         </button>
-                        <button type="button" onclick="submitExport('pdf')" class="bg-red-50 text-[#c41820] px-5 py-3 rounded-xl font-bold hover:bg-red-100 hover:-translate-y-1 transition flex items-center gap-2 border border-red-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                            PDF
-                        </button>
                         <button type="button" onclick="printTable()" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl font-bold hover:bg-gray-200 hover:-translate-y-1 transition flex items-center gap-2 border border-gray-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                             Print
                         </button>
                     </div>
-                </form>
+                </div>
 
                 <form id="export-form" action="/arsip/export" method="POST" target="_blank" class="hidden">
                     @csrf
@@ -284,200 +282,108 @@
     <style>
         @media print {
             @page {
-                size: landscape;
+                size: A4 landscape;
                 margin: 5mm;
             }
             body {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 background-color: white !important;
-                font-size: 10pt; /* Increased from 8px to 10pt for better fullness */
+                font-family: sans-serif;
             }
-
-            /* RESET: Break out of the app shell layout */
-            html, body, div, main, section, header, footer {
-                background-color: white !important;
-                color: black !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                float: none !important;
-                position: static !important;
-                overflow: visible !important;
-                height: auto !important;
-                width: auto !important;
-                display: block !important;
-                max-height: none !important;
-                min-height: 0 !important;
-                transform: none !important;
-                box-shadow: none !important;
-                border: none !important;
-                transition: none !important;
+            body * {
+                visibility: hidden;
             }
-
-            /* Explicitly hide specific UI components hierarchy */
-            aside, /* Sidebar */
-            nav, 
-            .sidebar, 
-            #sidebar-wrapper,
-            form, /* Search & Filter forms */
-            .hidden, /* Tailwind hidden classes */
-            .print\:hidden /* Tailwind print:hidden */
-            {
-                display: none !important;
-            }
-
-            /* Hide the main app header (red gradient one) */
-            /* We need a specific selector if it's generic 'header', assume direct child of body path */
-            body > div > div > header {
-                display: none !important;
-            }
-            /* Backup hiding */
-            header.bg-gradient-to-r {
-                display: none !important;
+            #arsip-table-container, #arsip-table-container *, #print-header, #print-header * {
+                visibility: visible;
             }
 
             /* Make Print Header Visible and Static */
             #print-header {
                 display: block !important;
-                border-bottom: 3px solid #8B0000;
-                padding: 0 0 10px 0;
-                margin-bottom: 20px !important;
+                border-bottom: 2px solid #8B0000;
+                padding-bottom: 5px;
+                margin-bottom: 10px !important;
                 width: 100% !important;
+                position: relative;
+                left: 0;
+                top: 0;
             }
 
             /* Main Table Container */
             #arsip-table-container {
-                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 100px; /* Adjust based on header height */
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
-            /* Ensure main content wrapper is visible */
-            #main-content-wrapper, main {
-                display: block !important;
-                width: 100% !important;
-            }
-
-            /* Break pages correctly */
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
-            thead {
-                display: table-header-group;
-            }
-            tfoot {
-                display: table-footer-group;
-            }
-
-            /* Overrides for Table structure from partials */
-            .overflow-x-auto {
-                overflow: visible !important;
-                display: block !important;
-                width: 100% !important;
-                margin: 0 !important;
-            }
-            
+            /* Table Styling */
             table {
-                min-width: 0 !important;
                 width: 100% !important;
                 table-layout: fixed;
                 border-collapse: collapse;
-                border: 2px solid #000;
-                margin: 0 !important;
+                border: 1px solid #000;
+                font-size: 7pt !important; /* Aggressive small font */
             }
             
-            /* Hide unused columns to save space */
-            .group-hover\:shadow-sm, .shadow-md {
-                box-shadow: none !important;
-            }
-            
-            th, td {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                white-space: normal !important;
-                padding: 6px 4px !important;
-                border: 1px solid #000 !important;
-                color: black !important;
-                background: white !important;
-                vertical-align: top;
-            }
-            
-            th {
+            thead tr {
                 background-color: #fce4e4 !important;
+                color: #8B0000 !important;
+            }
+
+            th, td {
+                border: 1px solid #666 !important;
+                padding: 2px 4px !important; /* Tight padding */
+                vertical-align: middle;
+                overflow: hidden;
+                white-space: normal; /* Allow wrapping */
+                line-height: 1.1;
+                color: black !important;
+            }
+
+            /* Header Specifics */
+            th {
+                text-transform: uppercase;
                 font-weight: bold;
                 text-align: center;
-                vertical-align: middle;
-                font-size: 10pt !important;
-            }
-            
-            td {
-                 font-size: 9pt !important;
+                height: 25px;
             }
 
-            /* Column Widths (Approximation for A4 Landscape) - Total 100% visible */
+            /* Column Widths Optimization (Total ~100%) */
+            th:first-child, td:first-child { display: none; } /* Hide Checkbox */
             
-            /* 1. Checkbox: HIDE */
-            th:nth-child(1), td:nth-child(1) { display: none !important; width: 0 !important; }
+            /* Columns by Index (1-based because checkbox is 1) */
+            th:nth-child(2), td:nth-child(2) { width: 3% !important; text-align: center; } /* No */
+            th:nth-child(3), td:nth-child(3) { width: 8% !important; } /* Kode */
+            th:nth-child(4), td:nth-child(4) { width: 14% !important; } /* Nama Berkas */
+            th:nth-child(5), td:nth-child(5) { width: 28% !important; } /* Uraian/Isi */
+            th:nth-child(6), td:nth-child(6) { width: 4% !important; text-align: center; } /* Tahun */
+            th:nth-child(7), td:nth-child(7) { width: 6% !important; text-align: center; } /* Tanggal */
+            th:nth-child(8), td:nth-child(8) { width: 3% !important; text-align: center; } /* Jml */
+            th:nth-child(9), td:nth-child(9) { width: 6% !important; text-align: center; } /* Akses */
+            th:nth-child(10), td:nth-child(10) { width: 6% !important; text-align: center; } /* Retensi */
+            th:nth-child(11), td:nth-child(11) { width: 7% !important; text-align: center; } /* Ket */
+            th:nth-child(12), td:nth-child(12) { width: 5% !important; text-align: center; } /* Box */
+            th:nth-child(13), td:nth-child(13) { width: 10% !important; } /* Unit */
+            th:nth-child(14), td:nth-child(14) { display: none !important; } /* Hide Media to save space */
+            th:nth-child(15), td:nth-child(15) { display: none !important; } /* Hide Aksi */
 
-            /* 2. No Berkas: 5% */
-            th:nth-child(2), td:nth-child(2) { width: 4%; text-align: center !important; }
-            
-            /* 3. Kode Klasifikasi: 8% */
-            th:nth-child(3), td:nth-child(3) { width: 7%; }
-            
-            /* 4. Nama Berkas: 15% */
-            th:nth-child(4), td:nth-child(4) { width: 14%; }
-            
-            /* 5. Isi Berkas: 20% */
-            th:nth-child(5), td:nth-child(5) { width: 19%; }
-            
-            /* 6. Tahun: 4% */
-            th:nth-child(6), td:nth-child(6) { width: 4%; text-align: center !important; }
-            
-            /* 7. Tanggal: 6% */
-            th:nth-child(7), td:nth-child(7) { width: 6%; text-align: center !important; }
-            
-            /* 8. Jml: 3% */
-            th:nth-child(8), td:nth-child(8) { width: 3%; text-align: center !important; }
-            
-            /* 9. Hak Akses: 6% */
-            th:nth-child(9), td:nth-child(9) { width: 6%; text-align: center !important; }
-            
-            /* 10. Masa Simpan: 6% */
-            th:nth-child(10), td:nth-child(10) { width: 6%; text-align: center !important; }
-            
-            /* 11. Tindakan: 6% */
-            th:nth-child(11), td:nth-child(11) { width: 6%; text-align: center !important; }
-            
-            /* 12. Box: 3% */
-            th:nth-child(12), td:nth-child(12) { width: 4%; text-align: center !important; }
-            
-            /* 13. Unit Pengolah: 7% */
-            th:nth-child(13), td:nth-child(13) { width: 15%; }
-            
-            /* 14. Jenis: 5% */
-            th:nth-child(14), td:nth-child(14) { width: 6%; text-align: center !important; }
-            
-            /* 15. Aksi: HIDE */
-            th:nth-child(15), td:nth-child(15) { display: none !important; width: 0 !important; }
-
-            /* Hide Actions & Checkbox inputs specifically */
-            th:last-child, td:last-child {
-               display: none !important;
-            }
-            input[type="checkbox"] {
-                display: none !important;
-            }
-            
-            /* Fix badges in print */
-            .rounded-full, .rounded-lg {
-                background: none !important;
+            /* Badges Flattening for Print */
+            .rounded-lg, .rounded-full {
+                border-radius: 0 !important;
                 border: none !important;
+                background: none !important;
                 padding: 0 !important;
                 color: black !important;
-                display: inline;
+                font-weight: normal;
+            }
+
+            /* Hide decorative elements */
+            .hidden-print, button, input[type="checkbox"] {
+                display: none !important;
             }
         }
     </style>

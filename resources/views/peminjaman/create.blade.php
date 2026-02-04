@@ -320,17 +320,10 @@
             x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
             <div @click.away="showValidationModal = false"
-<<<<<<< HEAD
-                class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl border-t-8 border-[#9d1b1b]">
-
-                <div
-                    class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#9d1b1b] shadow-sm animate-bounce">
-=======
                 class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl border-t-8 border-[#e92027]">
 
                 <div
                     class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#e92027] shadow-sm animate-bounce">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     <i class="fas fa-exclamation-triangle text-3xl"></i>
                 </div>
 
@@ -341,11 +334,7 @@
                     <div class="text-gray-500 mb-8 text-sm text-left bg-red-50 p-4 rounded-xl border border-red-100">
                         <ul class="list-disc list-inside space-y-1">
                             <template x-for="error in serverErrors">
-<<<<<<< HEAD
-                                <li x-text="error" class="text-red-700 font-medium"></li>
-=======
                                 <li x-text="error" class="text-[#c41820] font-medium"></li>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                             </template>
                         </ul>
                     </div>
@@ -353,19 +342,11 @@
 
                 <template x-if="serverErrors.length === 0">
                     <p class="text-gray-500 mb-8 leading-relaxed">Mohon lengkapi semua field yang bertanda bintang
-<<<<<<< HEAD
-                        (<span class="text-red-600">*</span>) sebelum menyimpan.</p>
-                </template>
-
-                <button @click="showValidationModal = false"
-                    class="w-full py-3.5 bg-[#9d1b1b] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-lg transform hover:scale-[1.02] transition">
-=======
                         (<span class="text-[#e92027]">*</span>) sebelum menyimpan.</p>
                 </template>
 
                 <button @click="showValidationModal = false"
                     class="w-full py-3.5 bg-[#e92027] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-lg transform hover:scale-[1.02] transition">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     OK, Saya Mengerti
                 </button>
             </div>
@@ -403,11 +384,7 @@
                         return (item.nama_berkas || '').toLowerCase().includes(query) || (item.no_box || '').toLowerCase().includes(query);
                     }).slice(0, 10);
                 },
-<<<<<<< HEAD
-                selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.klasifikasi_keamanan; this.searchQuery = arsip.nama_berkas; },
-=======
                 selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.hak_akses; this.searchQuery = arsip.nama_berkas; },
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
 
                 addItem() {
                     if (this.tempItem.source === 'db' && !this.tempItem.id) {

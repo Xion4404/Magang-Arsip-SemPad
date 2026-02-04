@@ -131,11 +131,7 @@
                                         <td class="px-4 py-3 text-center">
                                             <div class="flex justify-center gap-2">
                                                 <button type="button" @click="openModal(index)" class="w-8 h-8 rounded-lg flex items-center justify-center text-yellow-600 bg-white border border-yellow-300 hover:bg-yellow-50 shadow-sm"><i class="fas fa-pen text-xs"></i></button>
-<<<<<<< HEAD
-                                                <button type="button" @click="removeItem(index)" class="w-8 h-8 rounded-lg flex items-center justify-center text-red-600 bg-white border border-red-200 hover:bg-red-50 shadow-sm"><i class="fas fa-trash-alt text-xs"></i></button>
-=======
                                                 <button type="button" @click="removeItem(index)" class="w-8 h-8 rounded-lg flex items-center justify-center text-[#e92027] bg-white border border-red-200 hover:bg-red-50 shadow-sm"><i class="fas fa-trash-alt text-xs"></i></button>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                                             </div>
                                             {{-- HIDDEN INPUTS (ARRAY) --}}
                                             <input type="hidden" name="items_source[]" :value="item.source">
@@ -269,11 +265,7 @@
                 </div>
                 <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
                     <button type="button" @click="closeModal()" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Batal</button>
-<<<<<<< HEAD
-                    <button type="button" @click="addItem()" class="px-6 py-2.5 bg-[#9d1b1b] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-md transition flex items-center gap-2" x-text="editingIndex !== null ? 'Ubah Item' : 'Simpan Item'"></button>
-=======
                     <button type="button" @click="addItem()" class="px-6 py-2.5 bg-[#e92027] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-md transition flex items-center gap-2" x-text="editingIndex !== null ? 'Ubah Item' : 'Simpan Item'"></button>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 </div>
             </div>
         </div>
@@ -287,15 +279,9 @@
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-90">
         <div @click.away="showValidationModal = false"
-<<<<<<< HEAD
-            class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl border-t-8 border-[#9d1b1b]">
-            
-            <div class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#9d1b1b] shadow-sm animate-bounce">
-=======
             class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl border-t-8 border-[#e92027]">
             
             <div class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#e92027] shadow-sm animate-bounce">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 <i class="fas fa-exclamation-triangle text-3xl"></i>
             </div>
             
@@ -306,28 +292,17 @@
                 <div class="text-gray-500 mb-8 text-sm text-left bg-red-50 p-4 rounded-xl border border-red-100">
                     <ul class="list-disc list-inside space-y-1">
                         <template x-for="error in serverErrors">
-<<<<<<< HEAD
-                            <li x-text="error" class="text-red-700 font-medium"></li>
-=======
                             <li x-text="error" class="text-[#c41820] font-medium"></li>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                         </template>
                     </ul>
                 </div>
             </template>
             
             <template x-if="serverErrors.length === 0">
-<<<<<<< HEAD
-                <p class="text-gray-500 mb-8 leading-relaxed">Mohon lengkapi semua field yang bertanda bintang (<span class="text-red-600">*</span>) sebelum menyimpan.</p>
-            </template>
-            
-            <button @click="showValidationModal = false" class="w-full py-3.5 bg-[#9d1b1b] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-lg transform hover:scale-[1.02] transition">
-=======
                 <p class="text-gray-500 mb-8 leading-relaxed">Mohon lengkapi semua field yang bertanda bintang (<span class="text-[#e92027]">*</span>) sebelum menyimpan.</p>
             </template>
             
             <button @click="showValidationModal = false" class="w-full py-3.5 bg-[#e92027] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-lg transform hover:scale-[1.02] transition">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 OK, Saya Mengerti
             </button>
         </div>

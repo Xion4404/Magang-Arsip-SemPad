@@ -10,11 +10,7 @@
         @endif
 
         @if ($errors->any())
-<<<<<<< HEAD
-            <div class="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
-=======
             <div class="bg-red-50 text-[#c41820] p-4 rounded-lg mb-6 border border-red-200">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>• {{ $error }}</li>
@@ -35,11 +31,7 @@
                             class="w-32 h-32 rounded-full object-cover border-4 border-gray-100 shadow-md">
                     @else
                         <div
-<<<<<<< HEAD
-                            class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-red-600 border-4 border-gray-100 shadow-md">
-=======
                             class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-[#e92027] border-4 border-gray-100 shadow-md">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                             <span class="text-4xl font-bold">{{ substr($user->nama, 0, 1) }}</span>
                         </div>
                         <img id="preview-photo" src=""
@@ -65,21 +57,13 @@
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
                         <input type="text" name="nama" value="{{ old('nama', $user->nama) }}" required
-<<<<<<< HEAD
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
-=======
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-[#e92027] outline-none transition">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
                         <input type="email" name="email" value="{{ old('email', $user->email) }}" required
-<<<<<<< HEAD
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
-=======
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-[#e92027] outline-none transition">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     </div>
                 </div>
 
@@ -88,19 +72,11 @@
                     <h4 class="font-bold text-gray-600 mb-2">Ganti Password (Opsional)</h4>
                     <div>
                         <input type="password" name="password" placeholder="Password Baru"
-<<<<<<< HEAD
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
-                    </div>
-                    <div>
-                        <input type="password" name="password_confirmation" placeholder="Konfirmasi Password Baru"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition">
-=======
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-[#e92027] outline-none transition">
                     </div>
                     <div>
                         <input type="password" name="password_confirmation" placeholder="Konfirmasi Password Baru"
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#e92027] focus:border-[#e92027] outline-none transition">
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     </div>
                 </div>
             </div>
@@ -132,8 +108,4 @@
             }
         }
     </script>
-<<<<<<< HEAD
 </x-layout>
-=======
-</x-layout>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9

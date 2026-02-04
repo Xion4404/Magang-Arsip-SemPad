@@ -1,51 +1,6 @@
 <x-layout>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<<<<<<< HEAD
-    <div x-data="{ activeTab: 'peminjaman', mounted: false }" x-init="setTimeout(() => mounted = true, 100)"
-        class="pb-20 bg-gray-50 min-h-screen">
-
-        {{-- HERO SECTION --}}
-        <div class="bg-[#9d1b1b] px-8 pt-6 pb-20 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
-            <div class="container mx-auto px-4 relative z-10 text-center md:text-left">
-                <h1 class="text-2xl md:text-3xl font-bold text-white tracking-wide mb-2">Dashboard Arsip & Peminjaman
-                </h1>
-                <p class="text-red-100 text-sm opacity-90 font-light max-w-2xl">
-                    Sistem informasi pengelolaan arsip dan monitoring peminjaman PT Semen Padang.
-                </p>
-            </div>
-            {{-- Decorative Elements --}}
-            <div
-                class="hidden md:block absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none">
-            </div>
-            <div
-                class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent">
-            </div>
-        </div>
-
-        {{-- NAVIGATION TABS (Floating) --}}
-        <div class="container mx-auto px-4 -mt-12 relative z-20 mb-10">
-            <div x-show="mounted" x-transition:enter="transition ease-out duration-700 delay-200"
-                x-transition:enter-start="translate-y-4 opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
-                class="bg-white p-2 rounded-2xl shadow-xl border border-gray-100 flex flex-col md:flex-row justify-between gap-3"
-                style="display: none;">
-                <button @click="activeTab = 'arsip'"
-                    :class="activeTab === 'arsip' ? 'bg-[#9d1b1b] text-white shadow-lg transform scale-[1.02]' : 'text-gray-500 hover:bg-red-50 hover:text-[#9d1b1b]'"
-                    class="flex-1 py-4 px-6 rounded-xl font-bold text-sm transition-all duration-300 text-center flex items-center justify-center gap-2.5">
-                    <span class="text-lg">📂</span> Data Arsip
-                </button>
-
-                <button @click="activeTab = 'peminjaman'"
-                    :class="activeTab === 'peminjaman' ? 'bg-[#9d1b1b] text-white shadow-lg transform scale-[1.02]' : 'text-gray-500 hover:bg-red-50 hover:text-[#9d1b1b]'"
-                    class="flex-1 py-4 px-6 rounded-xl font-bold text-sm transition-all duration-300 text-center flex items-center justify-center gap-2.5">
-                    <span class="text-lg">🔄</span> Peminjaman
-                </button>
-
-                <button @click="activeTab = 'karyawan'"
-                    :class="activeTab === 'karyawan' ? 'bg-[#9d1b1b] text-white shadow-lg transform scale-[1.02]' : 'text-gray-500 hover:bg-red-50 hover:text-[#9d1b1b]'"
-                    class="flex-1 py-4 px-6 rounded-xl font-bold text-sm transition-all duration-300 text-center flex items-center justify-center gap-2.5">
-                    <span class="text-lg">👥</span> Monitoring
-=======
     <div x-data="{ activeTab: '{{ request()->query('active_tab', 'peminjaman') }}', mounted: false }" 
          x-init="setTimeout(() => mounted = true, 100)" 
          x-init="setTimeout(() => mounted = true, 100)" 
@@ -106,14 +61,17 @@
                     :class="activeTab === 'karyawan' ? 'bg-[#e92027] text-white ring-2 ring-[#e92027] shadow-lg scale-105' : 'bg-white text-gray-600 hover:bg-gray-50 shadow-sm hover:shadow-md'"
                     class="flex-1 py-3 px-2 md:px-6 rounded-xl font-bold text-xs md:text-base transition-all duration-300 text-center border border-gray-100">
                     Monitoring Karyawan
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                 </button>
             </div>
         </div>
 
-        <div x-show="mounted" x-transition:enter="transition ease-out duration-700 delay-300"
-            x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-            class="mt-8 container mx-auto px-4 md:px-6" style="display: none;">
+        <div x-show="mounted"
+             x-transition:enter="transition ease-out duration-700 delay-500"
+             x-transition:enter-start="opacity-0 translate-y-8"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="mt-8 container mx-auto px-4"
+             style="display: none;"
+        >
 
             <div x-show="activeTab === 'peminjaman'" x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
@@ -130,17 +88,10 @@
 
                     <!-- Card 2: Sedang Dipinjam -->
                     <div
-<<<<<<< HEAD
-                        class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-[#9d1b1b] hover:-translate-y-1 transition duration-300">
-                        <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sedang Dipinjam
-                        </p>
-                        <p class="text-4xl font-extrabold text-[#9d1b1b]">{{ $dipinjam }}</p>
-=======
                         class="bg-white rounded-xl p-5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-center justify-center text-center h-28 border-b-4 border-[#e92027] hover:-translate-y-1 transition duration-300">
                         <p class="text-gray-500 font-bold text-[10px] uppercase tracking-widest mb-1">Sedang Dipinjam
                         </p>
                         <p class="text-4xl font-extrabold text-[#e92027]">{{ $dipinjam }}</p>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     </div>
 
                     <!-- Card 3: Sudah Kembali -->
@@ -152,11 +103,7 @@
                 </div>
 
                 <div class="flex items-center gap-3 mb-6">
-<<<<<<< HEAD
-                    <div class="w-1.5 h-8 bg-[#9d1b1b] rounded-full"></div>
-=======
                     <div class="w-1.5 h-8 bg-[#e92027] rounded-full"></div>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     <h2 class="text-2xl font-bold text-gray-800">Analisis Peminjaman</h2>
                 </div>
 
@@ -171,11 +118,7 @@
                                 <h3 class="text-gray-800 font-bold text-lg">Rasio Status</h3>
                                 <p class="text-xs text-gray-400">Dipinjam vs Kembali</p>
                             </div>
-<<<<<<< HEAD
-                            <div class="bg-red-50 p-2 rounded-lg text-[#9d1b1b]"><span class="text-lg">📉</span></div>
-=======
                             <div class="bg-red-50 p-2 rounded-lg text-[#e92027]"><span class="text-lg">📉</span></div>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                         </div>
 
                         <div class="relative h-52 w-full flex justify-center items-center z-10">
@@ -215,18 +158,12 @@
                             <h3 class="text-gray-800 font-bold text-lg">Tren Bulanan</h3>
                             <p class="text-xs text-gray-400">Aktivitas Tahun {{ date('Y') }}</p>
                         </div>
-<<<<<<< HEAD
-                        <div class="bg-red-50 p-2 rounded-lg text-[#9d1b1b]"><span class="text-lg">📈</span></div>
-=======
                         <div class="bg-red-50 p-2 rounded-lg text-[#e92027]"><span class="text-lg">📈</span></div>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     </div>
 
                     <div class="relative h-64 w-full z-10">
                         <canvas id="trenChart"></canvas>
                     </div>
-<<<<<<< HEAD
-=======
 
                     {{-- Decorative Blob --}}
                     <div
@@ -245,26 +182,84 @@
                     </a>
                 </div>
             </div>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
 
-                    {{-- Decorative Blob --}}
-                    <div
-                        class="absolute -top-10 -left-10 w-32 h-32 bg-red-50 rounded-full blur-2xl opacity-50 pointer-events-none">
+            <div x-show="activeTab === 'arsip'" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 style="display: none;">
+                
+                {{-- Row 1: Klasifikasi & Media --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {{-- Chart Klasifikasi --}}
+                    <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Klasifikasi Arsip</h3>
+                                <p class="text-xs text-gray-500">Berdasarkan kategori utama</p>
+                            </div>
+                            <div class="bg-red-50 text-red-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipKlasifikasiChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Chart Media --}}
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Jenis Media</h3>
+                                <p class="text-xs text-gray-500">Distribusi media fisik/digital</p>
+                            </div>
+                            <div class="bg-blue-50 text-blue-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipMediaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Row 2: Tahun & Status --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                     {{-- Chart Status --}}
+                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Status Akhir</h3>
+                                <p class="text-xs text-gray-500">Tindakan penyusutan</p>
+                            </div>
+                            <div class="bg-green-50 text-green-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipStatusChart"></canvas>
+                        </div>
+                    </div>
+
+                    {{-- Chart Tahun --}}
+                    <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg">Volume Arsip per Tahun</h3>
+                                <p class="text-xs text-gray-500">Tren jumlah arsip berdasarkan tahun dokumen</p>
+                            </div>
+                            <div class="bg-purple-50 text-purple-600 rounded-lg p-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="arsipTahunChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
 
-<<<<<<< HEAD
-            <div class="flex justify-center mb-12 mt-8">
-                <a href="/peminjaman"
-                    class="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-[#9d1b1b] rounded-2xl shadow-lg hover:bg-[#801010] hover:shadow-xl transition-all transform hover:-translate-y-1">
-                    <span>Kelola Data Peminjaman</span>
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                    </svg>
-                </a>
-=======
             <div x-show="activeTab === 'karyawan'" 
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 transform translate-y-4"
@@ -593,48 +588,14 @@
                         }
                     });
                 </script>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
             </div>
 
         </div>
-
-        <div x-show="activeTab === 'arsip'" x-transition:enter="transition ease-out duration-300" class="py-12"
-            style="display: none;">
-            <div class="bg-white p-12 rounded-2xl shadow-sm text-center border border-gray-200 max-w-2xl mx-auto">
-                <div class="text-6xl mb-4 opacity-25">📂</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Statistik Arsip</h3>
-                <p class="text-gray-500 mb-6 text-sm">Visualisasi total arsip, klasifikasi, dan ruang penyimpanan.
-                </p>
-                <a href="/arsip" class="text-red-700 font-bold hover:underline text-sm">Lihat Data Arsip →</a>
-            </div>
-        </div>
-
-        <div x-show="activeTab === 'karyawan'" x-transition:enter="transition ease-out duration-300" class="py-12"
-            style="display: none;">
-            <div class="bg-white p-12 rounded-2xl shadow-sm text-center border border-gray-200 max-w-2xl mx-auto">
-                <div class="text-6xl mb-4 opacity-25">👥</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Monitoring Karyawan</h3>
-                <p class="text-gray-500 mb-6 text-sm">Dashboard aktivitas dan kinerja karyawan.</p>
-                <a href="/monitoring" class="text-red-700 font-bold hover:underline text-sm">Lihat Monitoring →</a>
-            </div>
-        </div>
-
-    </div>
     </div>
 
-<<<<<<< HEAD
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            // Konfigurasi Default Font
-            Chart.defaults.font.family = "'Montserrat', 'sans-serif'";
-            Chart.defaults.font.size = window.innerWidth < 768 ? 10 : 12; // Responsif font
-
-=======
      <script>
         document.addEventListener('DOMContentLoaded', function() {
             
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
             // --- 1. STATUS (DONUT) ---
             const ctxStatus = document.getElementById('statusChart');
             if (ctxStatus) {
@@ -644,11 +605,7 @@
                         labels: ['Dipinjam', 'Kembali'],
                         datasets: [{
                             data: [{{ $dipinjam }}, {{ $kembali }}],
-<<<<<<< HEAD
-                            backgroundColor: ['#9d1b1b', '#fca5a5'], // Red Primary & Faded Red
-=======
                             backgroundColor: ['#e92027', '#fca5a5'], // Red Primary & Faded Red
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                             borderWidth: 0,
                             hoverOffset: 4
                         }]
@@ -673,21 +630,13 @@
                             {
                                 label: 'Dipinjam',
                                 data: @json($dataDipinjam),
-<<<<<<< HEAD
-                                backgroundColor: '#9d1b1b', // Red Primary
-=======
                                 backgroundColor: ['#e92027'], // Red Primary
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                                 borderRadius: 2,
                             },
                             {
                                 label: 'Kembali',
                                 data: @json($dataKembali),
-<<<<<<< HEAD
-                                backgroundColor: '#fca5a5', // Faded Red
-=======
                                 backgroundColor: ['#fca5a5'], // Faded Red
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                                 borderRadius: 2,
                             }
                         ]
@@ -700,8 +649,6 @@
                             y: { stacked: true, beginAtZero: true, grid: { borderDash: [4, 4] } }
                         },
                         plugins: { legend: { display: false } }
-<<<<<<< HEAD
-=======
                     }
                 });
             }
@@ -774,33 +721,104 @@
                                 grid: { display: false }
                             }
                         }
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                     }
                 });
             }
 
-            // --- 4. MEDIA (PIE) ---
-            const ctxMedia = document.getElementById('mediaChart');
-            if (ctxMedia) {
-                new Chart(ctxMedia.getContext('2d'), {
-                    type: 'pie',
+            // --- 4. CHART ARSIP MASUK PER BULAN (Line Chart) ---
+            const ctxBulanan = document.getElementById('arsipBulananChart').getContext('2d');
+            if (ctxBulanan) {
+                new Chart(ctxBulanan, {
+                    type: 'line',
                     data: {
-                        labels: ['Hardfile', 'Softfile'],
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
                         datasets: [{
-<<<<<<< HEAD
-                            data: [{{ $mediaHardfile }}, {{ $mediaSoftfile }}],
-                            backgroundColor: ['#7f1d1d', '#fc8181'], // Dark Maroon & Soft Red
-                            borderWidth: 2,
-=======
                             label: 'Jumlah Arsip Masuk',
                             data: @json($arsipBulananData),
-                            borderColor: '#e92027', // red-600
-                            backgroundColor: 'rgba(233, 32, 39, 0.1)',
-                            borderWidth: 2,
+                            borderColor: '#e92027',
+                            backgroundColor: 'rgba(233, 32, 39, 0.05)',
                             fill: true,
-                            tension: 0.4, // Smooth curve
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#e92027',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { borderDash: [4, 4] } }
+                        }
+                    }
+                });
+            }
+
+            // === ARSIP DASHBOARD CHARTS ===
+
+            // 1. KLASIFIKASI (Bar)
+            const ctxKlasifikasi = document.getElementById('arsipKlasifikasiChart');
+            if (ctxKlasifikasi) {
+                new Chart(ctxKlasifikasi.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: @json($arsipKlasifikasiChart['labels']),
+                        datasets: [{
+                            label: 'Jumlah Berkas',
+                            data: @json($arsipKlasifikasiChart['data']),
+                            backgroundColor: '#e92027',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // 2. MEDIA (Doughnut)
+            const ctxMediaArsip = document.getElementById('arsipMediaChart');
+            if (ctxMediaArsip) {
+                new Chart(ctxMediaArsip.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: @json($arsipMediaChart['labels']),
+                        datasets: [{
+                            data: @json($arsipMediaChart['data']),
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }
+                        }
+                    }
+                });
+            }
+
+            // 3. TAHUN (Line)
+            const ctxTahun = document.getElementById('arsipTahunChart');
+            if (ctxTahun) {
+                new Chart(ctxTahun.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: @json($arsipTahunChart['labels']),
+                        datasets: [{
+                            label: 'Volume Arsip',
+                            data: @json($arsipTahunChart['data']),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
                             pointRadius: 4,
                             pointHoverRadius: 6
                         }]
@@ -808,13 +826,7 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -843,17 +855,17 @@
                                 '#fca5a5', '#fecaca', '#fee2e2'
                             ], // Red shades
                             borderWidth: 1,
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
                             borderColor: '#ffffff'
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        cutout: '60%',
                         plugins: {
-                            legend: {
+                            legend: { 
                                 position: 'right',
-                                labels: { boxWidth: 10, padding: 10, font: { family: 'Montserrat' } }
+                                labels: { boxWidth: 12, usePointStyle: true, font: { size: 11 } }
                             }
                         }
                     }

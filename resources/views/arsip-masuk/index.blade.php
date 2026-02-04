@@ -25,13 +25,8 @@
          
          <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
             <div class="text-center md:text-left">
-<<<<<<< HEAD
-                 <h2 class="text-4xl font-extrabold tracking-tight mb-2">Daftar Arsip Masuk</h2>
-                 <p class="text-red-100 text-base font-light opacity-90 max-w-lg">Kelola dan monitor seluruh dokumen arsip perusahaan dengan mudah dan efisien di satu tempat.</p>
-=======
                  <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Daftar Arsip Masuk</h2>
                  <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Kelola dan monitor seluruh arsip masuk dengan mudah dan efisien.</p>
->>>>>>> 7d4f385849d706498d1a4faaf8f83b504a2a87f9
             </div>
             <a href="{{ route('arsip-masuk.create') }}" class="group bg-white text-[#e92027] hover:bg-gray-50 px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-red-900/40 border border-white/20">
                 <div class="bg-red-50 p-1.5 rounded-full group-hover:bg-red-100 transition-colors">

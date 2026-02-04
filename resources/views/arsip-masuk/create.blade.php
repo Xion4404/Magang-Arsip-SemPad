@@ -17,45 +17,9 @@
                          <label class="block text-gray-800 font-bold mb-2 text-sm">Unit Asal</label>
                          <select name="unit_asal" required class="w-full bg-[#fff1f2] border border-red-200 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#e92027]">
                             <option value="" disabled selected>Pilih Unit Asal</option>
-                            <option value="Sistem Manajemen">Sistem Manajemen</option>
-                            <option value="Internal Audit">Internal Audit</option>
-                            <option value="Komunikasi & Kesekretariatan">Komunikasi & Kesekretariatan</option>
-                            <option value="CSR">CSR</option>
-                            <option value="Hukum">Hukum</option>
-                            <option value="Keamanan">Keamanan</option>
-                            <option value="Staf Dept. Komunikasi & Hukum Perusahaan">Staf Dept. Komunikasi & Hukum Perusahaan</option>
-                            <option value="Bisnis Inkubasi Non Semen">Bisnis Inkubasi Non Semen</option>
-                            <option value="Quality Assurance">Quality Assurance</option>
-                            <option value="SHE">SHE</option>
-                            <option value="Perencanaan & Evaluasi Produksi">Perencanaan & Evaluasi Produksi</option>
-                            <option value="Penunjang Produksi">Penunjang Produksi</option>
-                            <option value="Quality Control">Quality Control</option>
-                            <option value="Staf AFR">Staf AFR</option>
-                            <option value="Operasi Tambang">Operasi Tambang</option>
-                            <option value="Produksi Bahan Baku">Produksi Bahan Baku</option>
-                            <option value="Perencanaan & Pengawasan Tambang">Perencanaan & Pengawasan Tambang</option>
-                            <option value="WHRPG & Utilitas">WHRPG & Utilitas</option>
-                            <option value="Produksi Terak">Produksi Terak</option>
-                            <option value="Produksi Semen">Produksi Semen</option>
-                            <option value="Pabrik Kantong">Pabrik Kantong</option>
-                            <option value="Pabrik Dumai">Pabrik Dumai</option>
-                            <option value="Pemeliharaan Mesin">Pemeliharaan Mesin</option>
-                            <option value="Pemeliharaan Listrik & Instrumen">Pemeliharaan Listrik & Instrumen</option>
-                            <option value="Maintenance Reliability">Maintenance Reliability</option>
-                            <option value="Capex">Capex</option>
-                            <option value="Site Engineering">Site Engineering</option>
-                            <option value="Project Management">Project Management</option>
-                            <option value="Perencanaan Suku Cadang">Perencanaan Suku Cadang</option>
-                            <option value="TPM Officer">TPM Officer</option>
-                            <option value="Produksi Mesin & Teknikal Support">Produksi Mesin & Teknikal Support</option>
-                            <option value="Produksi BIP & Aplikasi">Produksi BIP & Aplikasi</option>
-                            <option value="Operasional SDM">Operasional SDM</option>
-                            <option value="Sarana Umum">Sarana Umum</option>
-                            <option value="GRC & Internal Control">GRC & Internal Control</option>
-                            <option value="Kinerja & Anggaran">Kinerja & Anggaran</option>
-                            <option value="Keuangan">Keuangan</option>
-                            <option value="Akuntansi">Akuntansi</option>
-                            <option value="Lainnya">Lainnya</option>
+                             @foreach($units as $unit)
+                                 <option value="{{ $unit->nama_unit }}">{{ $unit->nama_unit }}</option>
+                             @endforeach
                          </select>
                      </div>
 

@@ -2,140 +2,184 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogAktivitas;
+use App\Models\User;
+use App\Models\ArsipMasuk;
+use App\Models\BerkasArsipMasuk;
 use Illuminate\Http\Request;
 
 class MonitoringKaryawanController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        // Query Dasar
-        $query = \App\Models\MonitoringKaryawan::with('user');
+        $query = LogAktivitas::with('user')->orderBy('id', 'desc');
 
-        // Filter Pencarian
+        // Search Filter
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('nba', 'like', "%{$search}%")
-                    ->orWhere('unit_kerja', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($u) use ($search) {
-                        $u->where('nama', 'like', "%{$search}%");
-                    });
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($userQuery) use ($search) {
+                    $userQuery->where('nama', 'like', "%{$search}%");
+                })
+                ->orWhere('tahapan', 'like', "%{$search}%")
+                ->orWhere('unit_kerja', 'like', "%{$search}%")
+                ->orWhere('nba', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
 
-        // Filter PIC
+        // PIC Filter
         if ($request->has('pic') && $request->pic != '') {
             $query->where('user_id', $request->pic);
         }
 
-        // Filter Tahapan
+        // Tahapan Filter
         if ($request->has('tahapan') && $request->tahapan != '') {
             $query->where('tahapan', $request->tahapan);
         }
 
-        // Data Table (Paginate)
-        $monitoring = $query->latest('tanggal_kerja')->paginate(10)->withQueryString();
-
-        // Data Statistik (Card)
-        // Hitung total keseluruhan tanpa filter paginate tapi tetap kena filter search/pic/tahapan jika diinginkan?
-        // Biasanya card statistik itu TOTAL GLOBAL atau TOTAL TERFILTER. 
-        // Berdasarkan UI, sepertinya Total Global (atau minimal mengikuti filter jika user mau).
-        // Kita buat ikut filter activity agar dinamis.
-
-        // Clone query untuk statistik agar tidak kena paginate
-        $statsQuery = \App\Models\MonitoringKaryawan::query();
-
-        $total = $statsQuery->count();
-        $bulanIni = $statsQuery->clone()->whereMonth('tanggal_kerja', now()->month)
-            ->whereYear('tanggal_kerja', now()->year)->count();
-        $pemilahan = $statsQuery->clone()->where('tahapan', 'Pemilahan')->count();
-        $pendataan = $statsQuery->clone()->where('tahapan', 'Pendataan')->count();
-        $pelabelan = $statsQuery->clone()->where('tahapan', 'Pelabelan')->count();
-        $inputEArsip = $statsQuery->clone()->where('tahapan', 'Input E-Arsip')->count();
-
-        // List Users untuk Filter
-        $users = \App\Models\User::where('role', 'karyawan')->get();
-
-        return view('monitoring.index', compact(
-            'monitoring',
-            'total',
-            'bulanIni',
-            'pemilahan',
-            'pendataan',
-            'pelabelan',
-            'inputEArsip',
-            'users'
-        ));
+        $monitoring = $query->get();
+        $users = User::all(); // Fetch users for dropdown
+        
+        // Cards Data
+        $total = ArsipMasuk::count();
+        $bulanIni = ArsipMasuk::whereMonth('tanggal_terima', now()->month)
+            ->whereYear('tanggal_terima', now()->year)
+            ->count();
+            
+        $pemilahan = LogAktivitas::where('tahapan', 'Pemilahan')->count();
+        $pendataan = LogAktivitas::where('tahapan', 'Pendataan')->count();
+        $pelabelan = LogAktivitas::where('tahapan', 'Pelabelan')->count();
+        $inputEArsip = LogAktivitas::where('tahapan', 'Input E-Arsip')->count();
+        
+        return view('monitoring.index', compact('monitoring', 'total', 'bulanIni', 'pemilahan', 'pendataan', 'pelabelan', 'inputEArsip', 'users'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('monitoring.create');
+        $users = User::all();
+        $arsipMasuk = ArsipMasuk::all(); // Get all ArsipMasuk for dropdown
+        return view('monitoring.create', compact('users', 'arsipMasuk'));
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'tahapan' => 'required|in:Pemilahan,Pendataan,Pelabelan,Input E-Arsip',
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'arsip_masuk_id' => 'required|exists:arsip_masuk,id',
+            'tahapan' => 'required|string|in:Pemilahan,Pendataan,Pelabelan,Input E-Arsip',
+            'jumlah_box_selesai' => 'nullable|integer',
             'tanggal_kerja' => 'required|date',
-            'nba' => 'required|string|max:255',
-            'unit_kerja' => 'required|string|max:255',
-            'jumlah_box_selesai' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
         ]);
 
-        $validated['user_id'] = auth()->id();
+        $arsipMasuk = ArsipMasuk::findOrFail($request->arsip_masuk_id);
 
-        \App\Models\MonitoringKaryawan::create($validated);
-
-        return redirect()->route('monitoring.index')->with('success', 'Data berhasil disimpan');
+        LogAktivitas::create([
+            'user_id' => $request->user_id,
+            'arsip_masuk_id' => $arsipMasuk->id,
+            'nba' => $arsipMasuk->nomor_berita_acara,
+            'tahapan' => $request->tahapan,
+            'jumlah_box' => $arsipMasuk->jumlah_box_masuk,
+            'jumlah_box_selesai' => $request->jumlah_box_selesai ?? 0,
+            'tanggal_kerja' => $request->tanggal_kerja,
+            'unit_kerja' => $arsipMasuk->unit_asal,
+            'keterangan' => $request->keterangan,
+            'status_kerja' => 'Proses', // Default status
+        ]);
+        
+        return redirect()->route('monitoring.index')->with('success', 'Data Monitoring berhasil ditambahkan!');
     }
 
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit($id)
     {
-        $monitoring = \App\Models\MonitoringKaryawan::findOrFail($id);
-        return view('monitoring.edit', compact('monitoring'));
+        $monitoring = LogAktivitas::findOrFail($id);
+        $users = User::all();
+        $arsipMasuk = ArsipMasuk::all();
+        return view('monitoring.edit', compact('monitoring', 'users', 'arsipMasuk'));
     }
 
     public function update(Request $request, $id)
     {
-        $monitoring = \App\Models\MonitoringKaryawan::findOrFail($id);
-
-        $validated = $request->validate([
-            'tahapan' => 'required|in:Pemilahan,Pendataan,Pelabelan,Input E-Arsip',
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'arsip_masuk_id' => 'required|exists:arsip_masuk,id',
+            'tahapan' => 'required|string|in:Pemilahan,Pendataan,Pelabelan,Input E-Arsip',
+            'jumlah_box_selesai' => 'nullable|integer',
             'tanggal_kerja' => 'required|date',
-            'nba' => 'required|string|max:255',
-            'unit_kerja' => 'required|string|max:255',
-            'jumlah_box_selesai' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
         ]);
 
-        $monitoring->update($validated);
+        $logAktivitas = LogAktivitas::findOrFail($id);
+        $arsipMasuk = ArsipMasuk::findOrFail($request->arsip_masuk_id);
+    
+        $logAktivitas->update([
+            'user_id' => $request->user_id,
+            'arsip_masuk_id' => $arsipMasuk->id,
+            'nba' => $arsipMasuk->nomor_berita_acara,
+            'tahapan' => $request->tahapan,
+            'jumlah_box' => $arsipMasuk->jumlah_box_masuk,
+            'jumlah_box_selesai' => $request->jumlah_box_selesai ?? 0,
+            'tanggal_kerja' => $request->tanggal_kerja,
+            'unit_kerja' => $arsipMasuk->unit_asal,
+            'keterangan' => $request->keterangan,
+        ]);
 
-        return redirect()->route('monitoring.index')->with('success', 'Data berhasil diupdate');
+        return redirect()->route('monitoring.index')->with('success', 'Data berhasil diperbarui!');
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
-        $monitoring = \App\Models\MonitoringKaryawan::findOrFail($id);
-        $monitoring->delete();
-
-        return back()->with('success', 'Data berhasil dihapus');
+        $logAktivitas = LogAktivitas::findOrFail($id);
+        $logAktivitas->delete();
+        return redirect()->route('monitoring.index')->with('success', 'Data berhasil dihapus!');
     }
 
+    /**
+     * Advance the stage of the specified resource.
+     */
     public function advanceStage($id)
     {
-        $monitoring = \App\Models\MonitoringKaryawan::findOrFail($id);
-
+        $monitoring = LogAktivitas::findOrFail($id);
         $stages = ['Pemilahan', 'Pendataan', 'Pelabelan', 'Input E-Arsip'];
-        $currentKey = array_search($monitoring->tahapan, $stages);
-
-        if ($currentKey !== false && isset($stages[$currentKey + 1])) {
-            $monitoring->tahapan = $stages[$currentKey + 1];
+        
+        $currentStageIndex = array_search($monitoring->tahapan, $stages);
+        
+        if ($currentStageIndex !== false && $currentStageIndex < count($stages) - 1) {
+            $nextStage = $stages[$currentStageIndex + 1];
+            
+            // Check if Input E Arsip is complete or just transition to it?
+            // User request only mentioned button to continue to next stage.
+            
+            $monitoring->tahapan = $nextStage;
             $monitoring->save();
-            return back()->with('success', 'Tahapan berhasil diperbarui ke ' . $monitoring->tahapan);
+            
+            return redirect()->back()->with('success', 'Tahapan berhasil dilanjutkan ke ' . $nextStage);
         }
 
-        return back()->with('error', 'Tahapan sudah maksimal');
+        return redirect()->back()->with('info', 'Tahapan sudah mencapai batas atau tidak valid.');
     }
 }
