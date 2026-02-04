@@ -4,7 +4,7 @@
             <div class="absolute inset-0 bg-gradient-to-r from-red-900 to-[#e92027]"></div>
             <div class="p-8 relative z-10">
                 <h2 class="text-3xl font-bold text-white">Input Arsip Masuk</h2>
-                <p class="text-[#e92027] mt-2">Data awal arsip masuk</p>
+                <p class="text-white mt-2">Data awal arsip masuk</p>
             </div>
         </div>
         

@@ -7,7 +7,7 @@
             </div>
             <div class="p-8 relative z-10">
                 <h2 class="text-3xl font-bold text-white">Formulir Monitoring Kinerja Karyawan</h2>
-                <p class="text-[#e92027] mt-2">Silakan lengkapi data monitoring di bawah ini</p>
+                <p class="text-white mt-2">Silakan lengkapi data monitoring di bawah ini</p>
             </div>
         </div>
         
