@@ -1,10 +1,10 @@
 <x-layout>
     {{-- Print Header (Visible only in Print) --}}
-    <div id="print-header" class="hidden mb-8 border-b-2 border-red-800 pb-4">
+    <div id="print-header" class="hidden mb-8 border-b-2 border-[#e92027] pb-4">
         <div class="flex items-center justify-between px-8">
             <img src="{{ asset('images/logo-sp.png') }}" alt="Logo" class="h-20 w-auto">
             <div class="text-center">
-                <h1 class="text-2xl font-bold text-red-800 uppercase">PT Semen Padang</h1>
+                <h1 class="text-2xl font-bold text-[#c41820] uppercase">PT Semen Padang</h1>
                 <h2 class="text-xl font-bold text-gray-800">Daftar Arsip Dokumen</h2>
                 <p class="text-sm text-gray-600">Indarung, Padang 25237, Sumatera Barat</p>
             </div>
@@ -12,11 +12,7 @@
         </div>
     </div>
 
-    {{-- Main Container --}}
-    <div class="min-h-screen bg-gray-50 pb-20 print:bg-white print:pb-0">
-        
-        {{-- Header Section --}}
-        <div class="bg-red-800 rounded-b-[3rem] shadow-2xl pt-8 pb-32 px-4 md:px-6 print:hidden relative overflow-hidden">
+    <div class="bg-red-800 rounded-b-[3rem] shadow-2xl pt-8 pb-32 px-4 md:px-6 print:hidden relative overflow-hidden">
              {{-- Decor --}}
             <div class="absolute top-0 right-0 w-64 h-64 bg-red-700 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -mr-20 -mt-20"></div>
             <div class="absolute bottom-0 left-0 w-64 h-64 bg-red-900 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -ml-20 -mb-20"></div>
@@ -266,229 +262,108 @@
     <style>
         @media print {
             @page {
-                size: landscape;
+                size: A4 landscape;
                 margin: 5mm;
             }
             body {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 background-color: white !important;
-                font-size: 7pt; 
+                font-family: sans-serif;
             }
-
-            /* RESET: Break out of the app shell layout */
-            html, body, div, main, section, header, footer {
-                background-color: white !important;
-                color: black !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                float: none !important;
-                position: static !important;
-                overflow: visible !important;
-                height: auto !important;
-                width: auto !important;
-                display: block !important;
-                max-height: none !important;
-                min-height: 0 !important;
-                transform: none !important;
-                box-shadow: none !important;
-                border: none !important;
-                transition: none !important;
+            body * {
+                visibility: hidden;
             }
-
-            /* Explicitly hide specific UI components hierarchy */
-            aside, /* Sidebar */
-            nav, 
-            .sidebar, 
-            #sidebar-wrapper,
-            form, /* Search & Filter forms */
-            .hidden, /* Tailwind hidden classes */
-            .print\:hidden /* Tailwind print:hidden */
-            {
-                display: none !important;
-            }
-
-            /* Hide the main app header (red gradient one) */
-            /* We need a specific selector if it's generic 'header', assume direct child of body path */
-            body > div > div > header {
-                display: none !important;
-            }
-            /* Backup hiding */
-            header.bg-gradient-to-r {
-                display: none !important;
+            #arsip-table-container, #arsip-table-container *, #print-header, #print-header * {
+                visibility: visible;
             }
 
             /* Make Print Header Visible and Static */
             #print-header {
                 display: block !important;
-                border-bottom: 3px solid #8B0000;
-                padding: 0 0 10px 0;
-                margin-bottom: 20px !important;
+                border-bottom: 2px solid #8B0000;
+                padding-bottom: 5px;
+                margin-bottom: 10px !important;
                 width: 100% !important;
+                position: relative;
+                left: 0;
+                top: 0;
             }
 
             /* Main Table Container */
             #arsip-table-container {
-                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 100px; /* Adjust based on header height */
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
-            /* Ensure main content wrapper is visible */
-            #main-content-wrapper, main {
-                display: block !important;
-                width: 100% !important;
-            }
-
-            /* Break pages correctly */
-            tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-            }
-            thead {
-                display: table-header-group;
-            }
-            tfoot {
-                display: table-footer-group;
-            }
-
-            /* Overrides for Table structure from partials */
-            .overflow-x-auto {
-                overflow: visible !important;
-                display: block !important;
-                width: 100% !important;
-                margin: 0 !important;
-            }
-            
+            /* Table Styling */
             table {
-                min-width: 0 !important;
                 width: 100% !important;
                 table-layout: fixed;
                 border-collapse: collapse;
-                border: 2px solid #000;
-                margin: 0 !important;
+                border: 1px solid #000;
+                font-size: 7pt !important; /* Aggressive small font */
             }
             
-            /* Hide unused columns to save space */
-            .group-hover\:shadow-sm, .shadow-md {
-                box-shadow: none !important;
-            }
-            
-            th, td {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                white-space: normal !important;
-                padding: 3px 2px !important;
-                border: 1px solid #000 !important;
-                color: black !important;
-                background: white !important;
-                vertical-align: middle;
-            }
-            
-            th {
+            thead tr {
                 background-color: #fce4e4 !important;
-                font-weight: bold;
-                text-align: center;
-                vertical-align: middle;
-                font-size: 7pt !important;
+                color: #8B0000 !important;
             }
-            
-            td {
-                 font-size: 7pt !important;
-            }
+
             th, td {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                white-space: normal !important;
-                padding: 3px 2px !important;
-                border: 1px solid #000 !important;
-                color: black !important;
-                background: white !important;
+                border: 1px solid #666 !important;
+                padding: 2px 4px !important; /* Tight padding */
                 vertical-align: middle;
+                overflow: hidden;
+                white-space: normal; /* Allow wrapping */
+                line-height: 1.1;
+                color: black !important;
             }
 
+            /* Header Specifics */
             th {
-                background-color: #7f1d1d !important; /* Dark Red */
-                color: white !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                text-transform: uppercase;
                 font-weight: bold;
                 text-align: center;
-                vertical-align: middle;
-                font-size: 7pt !important;
+                height: 25px;
             }
 
-            /* Un-truncate text for print */
-            .truncate {
-                overflow: visible !important;
-                text-overflow: clip !important;
-                white-space: normal !important;
-                max-width: none !important;
-            }
+            /* Column Widths Optimization (Total ~100%) */
+            th:first-child, td:first-child { display: none; } /* Hide Checkbox */
+            
+            /* Columns by Index (1-based because checkbox is 1) */
+            th:nth-child(2), td:nth-child(2) { width: 3% !important; text-align: center; } /* No */
+            th:nth-child(3), td:nth-child(3) { width: 8% !important; } /* Kode */
+            th:nth-child(4), td:nth-child(4) { width: 14% !important; } /* Nama Berkas */
+            th:nth-child(5), td:nth-child(5) { width: 28% !important; } /* Uraian/Isi */
+            th:nth-child(6), td:nth-child(6) { width: 4% !important; text-align: center; } /* Tahun */
+            th:nth-child(7), td:nth-child(7) { width: 6% !important; text-align: center; } /* Tanggal */
+            th:nth-child(8), td:nth-child(8) { width: 3% !important; text-align: center; } /* Jml */
+            th:nth-child(9), td:nth-child(9) { width: 6% !important; text-align: center; } /* Akses */
+            th:nth-child(10), td:nth-child(10) { width: 6% !important; text-align: center; } /* Retensi */
+            th:nth-child(11), td:nth-child(11) { width: 7% !important; text-align: center; } /* Ket */
+            th:nth-child(12), td:nth-child(12) { width: 5% !important; text-align: center; } /* Box */
+            th:nth-child(13), td:nth-child(13) { width: 10% !important; } /* Unit */
+            th:nth-child(14), td:nth-child(14) { display: none !important; } /* Hide Media to save space */
+            th:nth-child(15), td:nth-child(15) { display: none !important; } /* Hide Aksi */
 
-            /* Column Widths (Approximation for A4 Landscape) - Total 100% visible */
-            
-            /* 1. Checkbox: HIDE */
-            th:nth-child(1), td:nth-child(1) { display: none !important; width: 0 !important; }
-
-            /* 2. No Berkas: 4% */
-            th:nth-child(2), td:nth-child(2) { width: 4%; text-align: center !important; }
-            
-            /* 3. Kode Klasifikasi: 10% (+2%) - Auto Wrap */
-            th:nth-child(3), td:nth-child(3) { width: 10%; white-space: normal !important; }
-            
-            /* 4. Nama Berkas: 20% (-1%) */
-            th:nth-child(4), td:nth-child(4) { width: 20%; }
-            
-            /* 5. Isi Berkas: 21% (-2%) */
-            th:nth-child(5), td:nth-child(5) { width: 21%; }
-            
-            /* 6. Tahun: 4% */
-            th:nth-child(6), td:nth-child(6) { width: 4%; text-align: center !important; }
-            
-            /* 7. Tanggal: 6% */
-            th:nth-child(7), td:nth-child(7) { width: 6%; text-align: center !important; }
-            
-            /* 8. Jml: 3% */
-            th:nth-child(8), td:nth-child(8) { width: 3%; text-align: center !important; }
-            
-            /* 9. Hak Akses: 6% */
-            th:nth-child(9), td:nth-child(9) { width: 6%; text-align: center !important; }
-            
-            /* 10. Masa Simpan: 6% */
-            th:nth-child(10), td:nth-child(10) { width: 6%; text-align: center !important; }
-            
-            /* 11. Tindakan: 7% (+1%) - No Wrap */
-            th:nth-child(11), td:nth-child(11) { width: 7%; text-align: center !important; white-space: nowrap !important; }
-            
-            /* 12. Box: 4% */
-            th:nth-child(12), td:nth-child(12) { width: 4%; text-align: center !important; }
-            
-            /* 13. Unit Pengolah: 9% */
-            th:nth-child(13), td:nth-child(13) { width: 9%; }
-            
-            /* 14. Jenis/Media: HIDE */
-            th:nth-child(14), td:nth-child(14) { display: none !important; width: 0 !important; }
-            
-            /* 15. Aksi: HIDE */
-            th:nth-child(15), td:nth-child(15) { display: none !important; width: 0 !important; }
-
-            /* Hide Actions & Checkbox inputs specifically */
-            th:last-child, td:last-child {
-               display: none !important;
-            }
-            input[type="checkbox"] {
-                display: none !important;
-            }
-            
-            /* Fix badges in print */
-            .rounded-full, .rounded-lg {
-                background: none !important;
+            /* Badges Flattening for Print */
+            .rounded-lg, .rounded-full {
+                border-radius: 0 !important;
                 border: none !important;
+                background: none !important;
                 padding: 0 !important;
                 color: black !important;
-                display: inline;
+                font-weight: normal;
+            }
+
+            /* Hide decorative elements */
+            .hidden-print, button, input[type="checkbox"] {
+                display: none !important;
             }
         }
     </style>

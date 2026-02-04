@@ -1,9 +1,9 @@
 <x-layout>
     <div class="max-w-6xl mx-auto my-10">
         <!-- Header Info -->
-        <div class="bg-[#8B1A1A] rounded-t-2xl shadow-lg p-6 text-white mb-6">
+        <div class="bg-[#e92027] rounded-t-2xl shadow-lg p-6 text-white mb-6">
             <h2 class="text-2xl font-bold">Input Berkas Arsip (Tahap 2/2)</h2>
-            <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-red-900 bg-opacity-30 p-4 rounded-lg">
+            <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-[#e92027] bg-opacity-30 p-4 rounded-lg">
                 <div>
                     <span class="block opacity-70">Unit Asal</span>
                     <span class="font-bold text-lg">{{ $arsipMasuk->unit_asal }}</span>
@@ -26,8 +26,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Form Input Berkas -->
             <div class="lg:col-span-1">
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-red-50 sticky top-4">
-                    <h3 class="text-xl font-bold text-[#8B1A1A] mb-4 border-b pb-2">Tambah Berkas</h3>
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-red-100 sticky top-4">
+                    <h3 class="text-xl font-bold text-[#e92027] mb-4 border-b pb-2">Tambah Berkas</h3>
                     
                     @if(session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -36,7 +36,7 @@
                     @endif
 
                     @if($errors->any())
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                        <div class="bg-red-100 border border-[#e92027] text-[#c41820] px-4 py-3 rounded relative mb-4">
                             <ul>
                                 @foreach($errors->all() as $error)
                                     <li>- {{ $error }}</li>
@@ -57,7 +57,7 @@
                                 <label class="block text-gray-800 font-bold mb-2 text-sm">No Box</label>
                                 <input type="text" name="no_box" required 
                                     value="{{ old('no_box', $berkas->no_box ?? '') }}"
-                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#8B1A1A] focus:outline-none placeholder-gray-400 transition-shadow" 
+                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#e92027] focus:outline-none placeholder-gray-400 transition-shadow" 
                                     placeholder="Contoh: 1">
                             </div>
 
@@ -69,7 +69,7 @@
                                     <!-- Trigger Button -->
                                     <div id="dropdownTrigger" class="w-full bg-white border border-gray-300 rounded-xl p-4 cursor-pointer flex justify-between items-center hover:border-red-300 transition-colors shadow-sm group">
                                         <span id="triggerText" class="text-gray-500 font-medium">Pilih Kode Klasifikasi</span>
-                                        <svg class="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors transform transition-transform" id="chevronIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5 text-gray-400 group-hover:text-[#e92027] transition-colors transform transition-transform" id="chevronIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
@@ -78,8 +78,8 @@
                                     <div id="dropdownMenu" class="hidden absolute z-50 w-full mt-2 bg-white rounded-xl shadow-xl border border-red-100 overflow-hidden ring-1 ring-black ring-opacity-5">
                                         <!-- Header -->
                                         <div class="bg-red-50 px-4 py-3 border-b border-red-100 flex justify-between items-center">
-                                            <span id="dropdownHeader" class="text-xs font-bold text-red-800 uppercase tracking-wider">PILIH JENIS JRA</span>
-                                            <button type="button" id="resetStepBtn" class="text-red-500 hover:text-red-700 text-xs font-semibold hidden">
+                                            <span id="dropdownHeader" class="text-xs font-bold text-[#a0131a] uppercase tracking-wider">PILIH JENIS JRA</span>
+                                            <button type="button" id="resetStepBtn" class="text-[#e92027] hover:text-[#c41820] text-xs font-semibold hidden">
                                                 <span class="flex items-center gap-1">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                                                     KEMBALI
@@ -107,7 +107,7 @@
                                             <div class="text-xs text-green-600 font-bold uppercase">Klasifikasi Terpilih</div>
                                             <div id="finalLabel" class="font-medium text-sm truncate"></div>
                                         </div>
-                                        <button type="button" id="fullResetBtn" class="text-gray-400 hover:text-red-500 p-1 flex-shrink-0">
+                                        <button type="button" id="fullResetBtn" class="text-gray-400 hover:text-[#e92027] p-1 flex-shrink-0">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                         </button>
                                     </div>
@@ -185,7 +185,7 @@
                                             updateHeader(level);
                                         })
                                         .catch(() => {
-                                            list.innerHTML = '<li class="px-4 py-3 text-center text-red-400 text-sm">Gagal memuat data.</li>';
+                                            list.innerHTML = '<li class="px-4 py-3 text-center text-[#e92027] text-sm">Gagal memuat data.</li>';
                                         });
                                 }
 
@@ -200,8 +200,8 @@
                                         const li = document.createElement('li');
                                         li.className = 'px-4 py-3 hover:bg-red-50 cursor-pointer text-gray-700 text-sm flex justify-between items-center transition-colors border-b border-gray-50 last:border-0 group';
                                         li.innerHTML = `
-                                            <span class="font-medium group-hover:text-red-700">${item.label}</span>
-                                            <svg class="w-4 h-4 text-gray-300 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                            <span class="font-medium group-hover:text-[#c41820]">${item.label}</span>
+                                            <svg class="w-4 h-4 text-gray-300 group-hover:text-[#e92027]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         `;
                                         
                                         li.addEventListener('click', (e) => {
@@ -314,27 +314,27 @@
                                 <label class="block text-gray-800 font-bold mb-2 text-sm">Nama Berkas</label>
                                 <input type="text" name="nama_berkas" required 
                                     value="{{ old('nama_berkas', $berkas->nama_berkas ?? '') }}"
-                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#8B1A1A] focus:outline-none placeholder-gray-400 transition-shadow">
+                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#e92027] focus:outline-none placeholder-gray-400 transition-shadow">
                             </div>
 
                             <div>
                                 <label class="block text-gray-800 font-bold mb-2 text-sm">Isi Berkas</label>
                                 <textarea name="isi_berkas" rows="3" 
-                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#8B1A1A] focus:outline-none placeholder-gray-400 transition-shadow">{{ old('isi_berkas', $berkas->isi_berkas ?? '') }}</textarea>
+                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#e92027] focus:outline-none placeholder-gray-400 transition-shadow">{{ old('isi_berkas', $berkas->isi_berkas ?? '') }}</textarea>
                             </div>
 
                             <div>
                                 <label class="block text-gray-800 font-bold mb-2 text-sm">Tanggal Berkas</label>
                                 <input type="date" name="tanggal_berkas" 
                                     value="{{ old('tanggal_berkas', $berkas->tanggal_berkas ?? '') }}"
-                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#8B1A1A] focus:outline-none placeholder-gray-400 transition-shadow">
+                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#e92027] focus:outline-none placeholder-gray-400 transition-shadow">
                             </div>
 
                             <div>
                                 <label class="block text-gray-800 font-bold mb-2 text-sm">Jumlah</label>
                                 <input type="number" name="jumlah" 
                                     value="{{ old('jumlah', $berkas->jumlah ?? '') }}"
-                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#8B1A1A] focus:outline-none placeholder-gray-400 transition-shadow">
+                                    class="w-full bg-white border border-gray-300 rounded-xl p-4 focus:ring-1 focus:ring-[#e92027] focus:outline-none placeholder-gray-400 transition-shadow">
                             </div>
 
                             <div class="flex gap-3 mt-4">
@@ -343,7 +343,7 @@
                                         Batal Edit
                                     </a>
                                 @endif
-                                <button type="submit" class="flex-1 bg-[#8B1A1A] hover:bg-[#a92b2b] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                                <button type="submit" class="flex-1 bg-[#e92027] hover:bg-[#a92b2b] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
                                     {{ isset($berkas) ? 'Simpan Perubahan' : 'Tambah Berkas' }}
                                 </button>
                             </div>
@@ -354,10 +354,10 @@
 
             <!-- List Berkas Table -->
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-lg border border-red-50 overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-lg border border-red-100 overflow-hidden">
                     <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                         <h3 class="text-lg font-bold text-gray-800">Daftar Berkas Terinput</h3>
-                        <span class="bg-red-100 text-[#8B1A1A] text-xs font-bold px-3 py-1 rounded-full">{{ $arsipMasuk->berkas->count() }} Berkas</span>
+                        <span class="bg-red-100 text-[#e92027] text-xs font-bold px-3 py-1 rounded-full">{{ $arsipMasuk->berkas->count() }} Berkas</span>
                     </div>
                     
                     <div class="overflow-x-auto">
@@ -388,7 +388,7 @@
                                     </td>
                                     <td class="py-3 px-4">
                                         @if($file->klasifikasi->tindakan_akhir == 'Musnah')
-                                            <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">Musnah</span>
+                                            <span class="px-2 py-1 bg-red-100 text-[#c41820] rounded-full text-xs font-bold">Musnah</span>
                                         @else
                                             <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">{{ $file->klasifikasi->tindakan_akhir }}</span>
                                         @endif
@@ -401,7 +401,7 @@
                                             <form action="{{ route('arsip-masuk.berkas.destroy', ['id' => $arsipMasuk->id, 'berkasId' => $file->id]) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="text-red-500 hover:text-red-700 delete-btn-berkas">
+                                                <button type="button" class="text-[#e92027] hover:text-[#c41820] delete-btn-berkas">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                 </button>
                                             </form>
@@ -444,7 +444,7 @@
                     text: "Apakah Anda yakin ingin menghapus berkas ini? Data yang dihapus tidak dapat dikembalikan.",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#8B1A1A',
+                    confirmButtonColor: '#e92027',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Ya, hapus!',
                     cancelButtonText: 'Batal'

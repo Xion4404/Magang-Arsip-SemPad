@@ -19,10 +19,12 @@ class PeminjamanController extends Controller
         $totalPeminjaman = DetailPeminjaman::count();
         $masihDipinjam = DetailPeminjaman::whereHas('peminjaman', function ($q) {
             $q->where('status', 'Sedang Dipinjam');
-        })->count();
+        })->where('jenis_arsip', '!=', 'Softfile')->count();
 
-        $sudahDikembalikan = DetailPeminjaman::whereHas('peminjaman', function ($q) {
-            $q->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
+        $sudahDikembalikan = DetailPeminjaman::where(function ($q) {
+            $q->whereHas('peminjaman', function ($qp) {
+                $qp->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
+            })->orWhere('jenis_arsip', 'Softfile');
         })->count();
 
         // 2. Query Utama (Detail Based)
@@ -52,13 +54,22 @@ class PeminjamanController extends Controller
         // 4. Filter Lainnya
         if ($request->has('status') && $request->status != 'All') {
             $status = $request->status;
-            $query->whereHas('peminjaman', function ($q) use ($status) {
-                if ($status == 'Sudah Dikembalikan') {
-                    $q->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
-                } else {
+
+            if ($status == 'Sudah Dikembalikan') {
+                $query->where(function ($q) {
+                    $q->whereHas('peminjaman', function ($qp) {
+                        $qp->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
+                    })->orWhere('jenis_arsip', 'Softfile');
+                });
+            } else if ($status == 'Sedang Dipinjam') {
+                $query->whereHas('peminjaman', function ($q) {
+                    $q->where('status', 'Sedang Dipinjam');
+                })->where('jenis_arsip', '!=', 'Softfile');
+            } else {
+                $query->whereHas('peminjaman', function ($q) use ($status) {
                     $q->where('status', $status);
-                }
-            });
+                });
+            }
         }
 
         if ($request->has('media') && $request->media != 'All') {
@@ -80,10 +91,27 @@ class PeminjamanController extends Controller
             });
         }
 
-        // Urutkan berdasarkan tanggal pinjam parent terbaru
+        // 5. Sorting Dynamic
+        $sort = $request->get('sort', 'latest_added');
+
         $query->select('detail_peminjaman.*')
-            ->join('peminjaman', 'detail_peminjaman.peminjaman_id', '=', 'peminjaman.id')
-            ->orderBy('peminjaman.tanggal_pinjam', 'desc');
+            ->join('peminjaman', 'detail_peminjaman.peminjaman_id', '=', 'peminjaman.id');
+
+        switch ($sort) {
+            case 'oldest_added':
+                $query->orderBy('detail_peminjaman.created_at', 'asc');
+                break;
+            case 'latest_date':
+                $query->orderBy('peminjaman.tanggal_pinjam', 'desc');
+                break;
+            case 'oldest_date':
+                $query->orderBy('peminjaman.tanggal_pinjam', 'asc');
+                break;
+            case 'latest_added':
+            default:
+                $query->orderBy('detail_peminjaman.created_at', 'desc');
+                break;
+        }
 
         // Pagination diperbesar jadi 25 agar semua data 22 baris muncul
         $peminjaman = $query->paginate(25)->withQueryString();
@@ -101,7 +129,7 @@ class PeminjamanController extends Controller
 
         // 2. Ambil Arsip Available
         $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
-            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'klasifikasi_keamanan', 'unit_pengolah')
+            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'hak_akses', 'unit_pengolah')
             ->orderBy('nama_berkas', 'asc')
             ->get();
 
@@ -215,7 +243,7 @@ class PeminjamanController extends Controller
             ->orderBy('nama_berkas', 'asc')
             ->get();
 
-        $formattedItems = $editData->details->map(function ($detail) {
+        $currentItems = $editData->details->map(function ($detail) {
             return [
                 'id' => $detail->arsip_id,
                 'source' => $detail->arsip_id ? 'db' : 'manual',
@@ -229,7 +257,7 @@ class PeminjamanController extends Controller
             ];
         });
 
-        return view('peminjaman.edit', compact('editData', 'id', 'daftarArsip', 'formattedItems'));
+        return view('peminjaman.edit', compact('editData', 'id', 'daftarArsip', 'currentItems'));
     }
 
     public function update(Request $request, $id)

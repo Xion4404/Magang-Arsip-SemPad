@@ -10,8 +10,18 @@ class MasterKlasifikasi extends Model
     use HasFactory;
 
     protected $table = 'master_klasifikasi';
-    
-    // Assuming structure based on typical master tables, modifying later if needed
-    // Usually has id, code, name/description
-    protected $guarded = ['id']; 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'kode_klasifikasi', 
+        'jenis_arsip', 
+        'masa_simpan', 
+        'tindakan_akhir'
+    ];
+
+    // Relasi: Satu klasifikasi bisa punya banyak arsip
+    public function arsip()
+    {
+        return $this->hasMany(Arsip::class, 'klasifikasi_id');
+    }
 }

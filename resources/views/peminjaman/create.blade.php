@@ -1,15 +1,32 @@
 <x-layout>
     {{-- Header Page --}}
     {{-- Header Page --}}
-    <div
-        class="bg-[#9d1b1b] px-8 pt-6 pb-20 rounded-b-[2.5rem] shadow-xl mb-8 flex items-center justify-between relative overflow-hidden">
-        <div class="relative z-10">
-            <h1 class="text-3xl font-bold text-white tracking-wide">Form Peminjaman Baru</h1>
-            <p class="text-red-100 text-sm mt-2 opacity-90 font-light">Isi formulir di bawah ini untuk mengajukan
-                peminjaman arsip.</p>
+    {{-- Header Page --}}
+    <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
+        <!-- Polygon Pattern Overlay -->
+        <div class="absolute inset-0 z-0 opacity-40">
+             <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                    <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+                    </linearGradient>
+                </defs>
+                <path fill="url(#polyGrad)" d="M0 0 L1000 0 L1000 500 L0 300 Z" />
+                <path fill="#000000" opacity="0.1" d="M-100 0 L500 0 L200 600 L-100 400 Z" />
+                <path fill="#580000" opacity="0.2" d="M800 0 L1400 0 L1400 400 L600 600 Z" />
+                <path fill="url(#polyGrad)" opacity="0.3" d="M500 600 L1200 600 L800 200 Z" />
+            </svg>
         </div>
-        <div
-            class="hidden md:block absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
+
+        <!-- Ornamental Icon -->
+        <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
+            <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+        </div>
+        
+        <div class="max-w-7xl mx-auto relative z-10 text-center md:text-left">
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Form Peminjaman Baru</h1>
+            <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Isi formulir di bawah ini untuk mengajukan peminjaman arsip.</p>
         </div>
     </div>
 
@@ -17,57 +34,41 @@
     <div class="max-w-5xl mx-auto px-6 -mt-20 relative z-20 mb-10" x-data="peminjamanForm()">
 
         {{-- Alert Error --}}
-        @if ($errors->any())
-            <div class="mb-6 bg-red-50 border-l-4 border-red-700 p-4 rounded-r shadow-sm">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0"><svg class="h-5 w-5 text-red-700" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clip-rule="evenodd" />
-                        </svg></div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-bold text-red-800">Gagal Menyimpan Data!</h3>
-                        <ul class="mt-2 list-disc list-inside text-sm text-red-700">@foreach ($errors->all() as $error)<li>
-                            {{ $error }}
-                        </li>@endforeach</ul>
-                    </div>
-                </div>
-            </div>
-        @endif
+        {{-- Validasi Error dipindah ke Modal --}}
 
         <form action="/peminjaman" method="POST" enctype="multipart/form-data" @submit.prevent="submitForm($el)"
-            class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden" novalidate>
             @csrf
 
             <div class="p-8 space-y-8">
                 {{-- DATA PEMINJAM --}}
                 <div>
                     <h2
-                        class="text-lg font-bold text-[#9d1b1b] border-b border-gray-100 pb-3 mb-6 flex items-center gap-3">
-                        <i class="fas fa-user-circle text-[#9d1b1b]"></i> Data Peminjaman
+                        class="text-lg font-bold text-[#e92027] border-b border-gray-100 pb-3 mb-6 flex items-center gap-3">
+                        <i class="fas fa-user-circle text-[#e92027]"></i> Data Peminjaman
                     </h2>
                     <div class="space-y-5">
                         <div><label class="block text-sm font-bold text-gray-800 mb-2">Tanggal Peminjaman <span
-                                    class="text-red-600">*</span></label><input type="date" name="tanggal"
+                                    class="text-[#e92027]">*</span></label><input type="date" name="tanggal"
                                 value="{{ old('tanggal') }}" required
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
                         </div>
                         <div><label class="block text-sm font-bold text-gray-800 mb-2">Nama Peminjam <span
-                                    class="text-red-600">*</span></label><input type="text" name="nama_peminjam"
+                                    class="text-[#e92027]">*</span></label><input type="text" name="nama_peminjam"
                                 value="{{ old('nama_peminjam') }}" required
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
                         </div>
                         <div><label class="block text-sm font-bold text-gray-800 mb-2">NIP <span
-                                    class="text-red-600">*</span></label><input type="text" name="nip"
+                                    class="text-[#e92027]">*</span></label><input type="text" name="nip"
                                 value="{{ old('nip') }}" required
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-800 mb-2">Jabatan <span
-                                    class="text-red-600">*</span></label>
+                                    class="text-[#e92027]">*</span></label>
                             <div class="relative">
                                 <select name="jabatan_peminjam" x-model="jabatan" required
-                                    class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 outline-none appearance-none cursor-pointer focus:bg-white focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 outline-none appearance-none cursor-pointer focus:bg-white focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
                                     <option value="" disabled selected>-- Pilih Jabatan --</option>
                                     <option value="Direksi">Direksi</option>
                                     <option value="Band I">Band I</option>
@@ -83,13 +84,13 @@
                             </div>
                         </div>
                         <div><label class="block text-sm font-bold text-gray-800 mb-2">Unit Kerja <span
-                                    class="text-red-600">*</span></label><input type="text" name="unit"
+                                    class="text-[#e92027]">*</span></label><input type="text" name="unit"
                                 value="{{ old('unit') }}" required
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
                         </div>
                         <div><label class="block text-sm font-bold text-gray-800 mb-2">Keperluan <span
-                                    class="text-red-600">*</span></label><textarea name="keperluan" rows="3" required
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#9d1b1b] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">{{ old('keperluan') }}</textarea>
+                                    class="text-[#e92027]">*</span></label><textarea name="keperluan" rows="3" required
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">{{ old('keperluan') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -97,15 +98,15 @@
                 {{-- DAFTAR ARSIP --}}
                 <div class="bg-red-50/50 p-6 rounded-2xl border border-red-100">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-[#9d1b1b] flex items-center gap-3"><i
+                        <h3 class="text-lg font-bold text-[#e92027] flex items-center gap-3"><i
                                 class="fas fa-box-open"></i> Daftar Arsip</h3>
                         <button type="button" @click="openModal()"
-                            class="px-5 py-2.5 bg-[#9d1b1b] text-white text-sm font-bold rounded-xl hover:bg-[#801010] shadow-md transition flex items-center gap-2"><i
+                            class="px-5 py-2.5 bg-[#e92027] text-white text-sm font-bold rounded-xl hover:bg-[#801010] shadow-md transition flex items-center gap-2"><i
                                 class="fas fa-plus-circle"></i> Tambah Arsip</button>
                     </div>
                     <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                         <table class="w-full text-left">
-                            <thead class="bg-[#9d1b1b] text-white">
+                            <thead class="bg-[#e92027] text-white">
                                 <tr>
                                     <th class="px-4 py-3 text-xs font-bold uppercase w-12 text-center">No</th>
                                     <th class="px-4 py-3 text-xs font-bold uppercase">Nama Arsip</th>
@@ -128,11 +129,11 @@
                                         <td class="px-4 py-3 text-sm text-center font-mono" x-text="item.no_box || '-'">
                                         </td>
                                         <td class="px-4 py-3 text-center"><span
-                                                class="text-[11px] font-bold px-3 py-1 rounded-full bg-red-50 text-red-800 border border-red-200"
+                                                class="text-[11px] font-bold px-3 py-1 rounded-full bg-red-50 text-[#a0131a] border border-red-200"
                                                 x-text="item.media"></span></td>
                                         <td class="px-4 py-3 text-center">
                                             <button type="button" @click="removeItem(index)"
-                                                class="text-red-600 hover:text-red-800 bg-white border border-red-200 w-8 h-8 rounded flex items-center justify-center mx-auto shadow-sm"><i
+                                                class="text-[#e92027] hover:text-[#a0131a] bg-white border border-red-200 w-8 h-8 rounded flex items-center justify-center mx-auto shadow-sm"><i
                                                     class="fas fa-trash-alt text-xs"></i></button>
                                             <input type="hidden" name="items_source[]" :value="item.source">
                                             <input type="hidden" name="items_arsip_id[]" :value="item.id">
@@ -156,17 +157,17 @@
                 {{-- BUKTI --}}
                 <div>
                     <h2
-                        class="text-lg font-bold text-[#9d1b1b] border-b border-gray-100 pb-3 mb-6 flex items-center gap-3">
-                        <i class="fas fa-paperclip text-[#9d1b1b]"></i> Bukti Peminjaman
+                        class="text-lg font-bold text-[#e92027] border-b border-gray-100 pb-3 mb-6 flex items-center gap-3">
+                        <i class="fas fa-paperclip text-[#e92027]"></i> Bukti Peminjaman
                     </h2>
                     <div class="space-y-4">
                         <template x-for="(file, index) in files" :key="file.id">
                             <div class="flex items-center gap-3">
                                 <label
-                                    class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-red-500 hover:ring-1 hover:ring-red-200 transition">
+                                    class="flex-1 flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg cursor-pointer hover:border-[#e92027] hover:ring-1 hover:ring-red-200 transition">
                                     <div class="flex items-center gap-4">
                                         <div
-                                            class="bg-red-100 text-red-800 w-10 h-10 rounded-lg flex items-center justify-center">
+                                            class="bg-red-100 text-[#a0131a] w-10 h-10 rounded-lg flex items-center justify-center">
                                             <i class="fas fa-file-alt text-lg"></i>
                                         </div>
                                         <div class="flex flex-col"><span class="text-sm font-bold truncate"
@@ -179,7 +180,7 @@
                                         @change="handleFileChange($event, index)">
                                 </label>
                                 <button type="button" @click="removeFile(index)"
-                                    class="w-12 h-12 flex items-center justify-center rounded-lg border border-red-200 text-red-600 bg-white hover:bg-red-100"
+                                    class="w-12 h-12 flex items-center justify-center rounded-lg border border-red-200 text-[#e92027] bg-white hover:bg-red-100"
                                     x-show="files.length > 1 || file.name"><i
                                         class="fas fa-trash-alt text-lg"></i></button>
                             </div>
@@ -187,7 +188,7 @@
                         </template>
                     </div>
                     <button type="button" @click="addFile()"
-                        class="mt-5 w-full py-3 border-2 border-dashed border-red-200 rounded-xl text-[#9d1b1b] font-bold hover:bg-red-50 hover:border-[#9d1b1b] transition flex items-center justify-center gap-2"><i
+                        class="mt-5 w-full py-3 border-2 border-dashed border-red-200 rounded-xl text-[#e92027] font-bold hover:bg-red-50 hover:border-[#e92027] transition flex items-center justify-center gap-2"><i
                             class="fas fa-plus-circle"></i> Tambah File Lain</button>
                 </div>
             </div>
@@ -196,7 +197,7 @@
                 <a href="/peminjaman"
                     class="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition">Batal</a>
                 <button type="submit"
-                    class="px-8 py-3 bg-[#9d1b1b] text-white rounded-xl font-bold shadow-lg hover:bg-[#7a1515] hover:shadow-xl transition transform hover:-translate-y-0.5">Simpan
+                    class="px-8 py-3 bg-[#e92027] text-white rounded-xl font-bold shadow-lg hover:bg-[#7a1515] hover:shadow-xl transition transform hover:-translate-y-0.5">Simpan
                     Data</button>
             </div>
         </form>
@@ -206,7 +207,7 @@
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg border border-red-200 relative"
                 @click.away="closeModal()">
-                <div class="bg-[#9d1b1b] px-6 py-4 flex justify-between items-center border-b border-red-800">
+                <div class="bg-[#e92027] px-6 py-4 flex justify-between items-center border-b border-red-800">
                     <h3 class="text-white font-bold text-lg">Tambah Item Arsip</h3>
                     <button @click="closeModal()" class="text-white/80 hover:text-white"><i
                             class="fas fa-times text-xl"></i></button>
@@ -215,11 +216,11 @@
                     <div class="flex bg-red-50 p-1 rounded-xl border border-red-200">
                         <button type="button" @click="tempItem.source = 'db'"
                             class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
-                            :class="tempItem.source === 'db' ? 'bg-white text-red-900 shadow' : 'text-red-600 hover:bg-red-100'">Cari
+                            :class="tempItem.source === 'db' ? 'bg-white text-red-900 shadow' : 'text-[#e92027] hover:bg-red-100'">Cari
                             Database</button>
                         <button type="button" @click="tempItem.source = 'manual'"
                             class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
-                            :class="tempItem.source === 'manual' ? 'bg-white text-red-900 shadow' : 'text-red-600 hover:bg-red-100'">Input
+                            :class="tempItem.source === 'manual' ? 'bg-white text-red-900 shadow' : 'text-[#e92027] hover:bg-red-100'">Input
                             Manual</button>
                     </div>
 
@@ -248,8 +249,8 @@
                                                         <span x-text="opt.no_box || '-'"></span></span>
                                                 </div>
                                             </div>
-                                            <div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-red-800 border border-red-200 shadow-sm whitespace-nowrap"
-                                                x-text="opt.klasifikasi_keamanan"></div>
+                                            <div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-[#a0131a] border border-red-200 shadow-sm whitespace-nowrap"
+                                                x-text="opt.hak_akses"></div>
                                         </li>
                                     </template>
                                 </ul>
@@ -305,14 +306,54 @@
                     <button type="button" @click="closeModal()"
                         class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-bold">Batal</button>
                     <button type="button" @click="addItem()"
-                        class="px-6 py-2.5 bg-[#9d1b1b] text-white rounded-xl font-bold hover:bg-[#801010] shadow-md transition">Simpan
+                        class="px-6 py-2.5 bg-[#e92027] text-white rounded-xl font-bold hover:bg-[#801010] shadow-md transition">Simpan
                         Item</button>
                 </div>
             </div>
         </div>
+
+        {{-- UPDATED SCRIPT: ADDED openDropdown to main scope --}}
+        <!-- Validation Modal -->
+        <div x-show="showValidationModal" style="display: none;"
+            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90">
+            <div @click.away="showValidationModal = false"
+                class="bg-white rounded-[2rem] w-full max-w-sm p-8 text-center relative overflow-hidden shadow-2xl border-t-8 border-[#e92027]">
+
+                <div
+                    class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#e92027] shadow-sm animate-bounce">
+                    <i class="fas fa-exclamation-triangle text-3xl"></i>
+                </div>
+
+                <h3 class="text-xl font-extrabold text-gray-800 mb-2">Perhatian!</h3>
+
+                <!-- Dynamic Error Message -->
+                <template x-if="serverErrors.length > 0">
+                    <div class="text-gray-500 mb-8 text-sm text-left bg-red-50 p-4 rounded-xl border border-red-100">
+                        <ul class="list-disc list-inside space-y-1">
+                            <template x-for="error in serverErrors">
+                                <li x-text="error" class="text-[#c41820] font-medium"></li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
+                <template x-if="serverErrors.length === 0">
+                    <p class="text-gray-500 mb-8 leading-relaxed">Mohon lengkapi semua field yang bertanda bintang
+                        (<span class="text-[#e92027]">*</span>) sebelum menyimpan.</p>
+                </template>
+
+                <button @click="showValidationModal = false"
+                    class="w-full py-3.5 bg-[#e92027] text-white rounded-xl text-sm font-bold hover:bg-[#801010] shadow-lg transform hover:scale-[1.02] transition">
+                    OK, Saya Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
     </div>
 
-    {{-- UPDATED SCRIPT: ADDED openDropdown to main scope --}}
     <script>
         const daftarArsip = @json($daftarArsip ?? []);
         document.addEventListener('alpine:init', () => {
@@ -321,10 +362,18 @@
                 items: [],
                 files: [{ id: Date.now(), name: null }],
                 showModal: false,
+                showValidationModal: false, // State Modal Validasi
+                serverErrors: @json($errors->all()),
                 searchQuery: '',
-                openDropdown: false, // DEFINISI VARIABEL DISINI
+                openDropdown: false,
 
                 tempItem: { source: 'db', id: null, display_name: '', nama_manual: '', no_box: '', akses: 'Biasa', media: 'Softfile', fisik: 'Berkas Asli' },
+
+                init() {
+                    if (this.serverErrors.length > 0) {
+                        this.showValidationModal = true;
+                    }
+                },
 
                 openModal() { this.tempItem = { source: 'db', id: null, display_name: '', nama_manual: '', no_box: '', akses: 'Biasa', media: 'Softfile', fisik: 'Berkas Asli' }; this.searchQuery = ''; this.showModal = true; },
                 closeModal() { this.showModal = false; },
@@ -335,18 +384,77 @@
                         return (item.nama_berkas || '').toLowerCase().includes(query) || (item.no_box || '').toLowerCase().includes(query);
                     }).slice(0, 10);
                 },
-                selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.klasifikasi_keamanan; this.searchQuery = arsip.nama_berkas; },
+                selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.hak_akses; this.searchQuery = arsip.nama_berkas; },
+
                 addItem() {
-                    if (this.tempItem.source === 'db' && !this.tempItem.id) return alert('Pilih arsip!');
-                    if (this.tempItem.source === 'manual' && !this.tempItem.nama_manual) return alert('Isi nama arsip!');
+                    if (this.tempItem.source === 'db' && !this.tempItem.id) {
+                        this.serverErrors = ['Silakan pilih arsip dari database!'];
+                        this.showValidationModal = true;
+                        return;
+                    }
+                    if (this.tempItem.source === 'manual' && !this.tempItem.nama_manual) {
+                        this.serverErrors = ['Isi nama arsip untuk input manual!'];
+                        this.showValidationModal = true;
+                        return;
+                    }
                     if (this.tempItem.source === 'manual') this.tempItem.display_name = this.tempItem.nama_manual;
                     this.items.push({ ...this.tempItem }); this.closeModal();
                 },
+
                 removeItem(index) { this.items.splice(index, 1); },
                 addFile() { this.files.push({ id: Date.now(), name: null }); },
                 removeFile(index) { if (this.files.length > 1) this.files.splice(index, 1); else this.files[0].name = null; },
                 handleFileChange(e, i) { this.files[i].name = e.target.files[0] ? e.target.files[0].name : null; },
-                submitForm(form) { if (!this.jabatan) return alert('Pilih Jabatan!'); if (!this.items.length) return alert('Minimal 1 arsip!'); if (!this.files.some(f => f.name)) return alert('Upload bukti!'); form.submit(); }
+
+                submitForm(form) {
+                    this.serverErrors = [];
+                    let formValid = true;
+
+                    // Mapping field names for friendly validation messages
+                    const fieldLabels = {
+                        'tanggal': 'Tanggal Peminjaman',
+                        'nama_peminjam': 'Nama Peminjam',
+                        'nip': 'NIP',
+                        'unit': 'Unit Kerja',
+                        'keperluan': 'Keperluan'
+                    };
+
+                    // CHECK ALL REQUIRED FIELDS MANUALLY
+                    const requiredFields = ['tanggal', 'nama_peminjam', 'nip', 'unit', 'keperluan'];
+
+                    requiredFields.forEach(field => {
+                        const input = form.querySelector(`[name="${field}"]`);
+                        if (!input || !input.value.trim()) {
+                            this.serverErrors.push(`Kotak ${fieldLabels[field]} harus diisi`);
+                            formValid = false;
+                        }
+                    });
+
+                    if (!this.jabatan) {
+                        this.serverErrors.push('Kotak Jabatan harus dipilih');
+                        formValid = false;
+                    }
+
+                    // ITEMS CHECK
+                    if (this.items.length === 0) {
+                        this.serverErrors.push('Minimal harus ada 1 arsip yang dipinjam');
+                        formValid = false;
+                    }
+
+                    // FILE CHECK (New Files)
+                    const hasFile = this.files.some(f => f.name !== null);
+                    if (!hasFile) {
+                        this.serverErrors.push('Bukti Peminjaman (File) harus diupload');
+                        formValid = false;
+                    }
+
+                    if (!formValid) {
+                        this.showValidationModal = true;
+                        return;
+                    }
+
+                    form.submit();
+                }
             }));
         });
     </script>

@@ -460,7 +460,6 @@ class MasterKlasifikasiSeeder extends Seeder
                 'inaktif' => $item['inaktif'],
                 'masa_simpan' => $masaSimpan,
                 'tindakan_akhir' => $item['tindakan_akhir'],
-                'jenis_jra' => 'Fasilitatif'
             ];
         }
 
@@ -479,7 +478,6 @@ class MasterKlasifikasiSeeder extends Seeder
                 'inaktif' => $item['inaktif'],
                 'masa_simpan' => $masaSimpan,
                 'tindakan_akhir' => $item['tindakan_akhir'],
-                'jenis_jra' => 'Substantif'
             ];
         }
 

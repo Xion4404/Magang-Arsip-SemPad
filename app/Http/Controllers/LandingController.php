@@ -25,13 +25,31 @@ class LandingController extends Controller
             ->orderBy('bulan')
             ->pluck('total', 'bulan')
             ->toArray();
-        
+
         // Fill 1-12 months with 0 if missing
         $arsipBulananData = [];
-        for($m=1; $m<=12; $m++) {
+        for ($m = 1; $m <= 12; $m++) {
             $arsipBulananData[] = $arsipTrendData[$m] ?? 0;
         }
 
-        return view('landing', compact('totalArsip', 'bulanIniArsip', 'arsipBulananData'));
+        // Fetch Media Info
+        $mediaInfo = \App\Models\MediaInformasi::latest('tanggal')->get();
+
+        return view('landing', compact('totalArsip', 'bulanIniArsip', 'arsipBulananData', 'mediaInfo'));
+    }
+
+    public function visiMisi()
+    {
+        return view('visi-misi');
+    }
+
+    public function sejarah()
+    {
+        return view('sejarah');
+    }
+
+    public function penghargaan()
+    {
+        return view('penghargaan');
     }
 }

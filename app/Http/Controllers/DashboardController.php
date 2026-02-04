@@ -4,67 +4,60 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Peminjaman; 
+use App\Models\DetailPeminjaman; 
 use App\Models\LogAktivitas;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        // 1. DATA RINGKAS (Untuk Widget Atas & Chart Donut)
-        $dipinjam = Peminjaman::where('status', 'Sedang Dipinjam')->count();
-        $kembali  = Peminjaman::whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan'])->count();
+        // ==========================================
+        // 1. DATA RINGKAS (Card Atas & Chart Donut)
+        // ==========================================
+        $dipinjam = DetailPeminjaman::whereHas('peminjaman', function ($q) {
+            $q->where('status', 'Sedang Dipinjam');
+        })->count();
 
-        // 2. DATA TREN BULANAN (Untuk Stacked Bar Chart)
-        // Siapkan array kosong isi 0 untuk 12 bulan
-        $dataDipinjam = array_fill(0, 12, 0); 
-        $dataKembali  = array_fill(0, 12, 0);
+        $kembali = DetailPeminjaman::whereHas('peminjaman', function ($q) {
+            $q->whereIn('status', ['Sudah Dikembalikan', 'Telah Dikembalikan']);
+        })->count();
 
-        // Ambil data tahun ini saja biar relevan
+        // ==========================================
+        // 2. DATA TREN BULANAN (Bar Chart)
+        // ==========================================
+        $dataDipinjam = array_fill(0, 12, 0);
+        $dataKembali = array_fill(0, 12, 0);
+
         $tahunIni = date('Y');
-        $transaksiTahunIni = Peminjaman::whereYear('tanggal_pinjam', $tahunIni)->get();
 
-        // Looping data untuk dimasukkan ke bulan yang tepat
-        foreach ($transaksiTahunIni as $item) {
-            // Ambil angka bulan (01 - 12), kurangi 1 biar jadi index array (0 - 11)
-            $bulanIndex = (int)date('m', strtotime($item->tanggal_pinjam)) - 1;
+        // Ambil semua DETAIL Item tahun ini (berdasarkan tgl pinjam parent)
+        $itemsTahunIni = DetailPeminjaman::with('peminjaman')
+            ->whereHas('peminjaman', function ($q) use ($tahunIni) {
+                $q->whereYear('tanggal_pinjam', $tahunIni);
+            })->get();
 
-            if ($item->status == 'Sedang Dipinjam') {
+        foreach ($itemsTahunIni as $item) {
+            if (!$item->peminjaman)
+                continue;
+
+            $bulanIndex = (int) date('m', strtotime($item->peminjaman->tanggal_pinjam)) - 1;
+
+            if ($item->peminjaman->status == 'Sedang Dipinjam') {
                 $dataDipinjam[$bulanIndex]++;
             } else {
                 $dataKembali[$bulanIndex]++;
             }
         }
 
-        // Filter Data for Dropdowns
-        $allPics = \App\Models\User::all();
-        $allUnits = LogAktivitas::select('unit_kerja')->distinct()->pluck('unit_kerja');
 
-        // Base Query Builder Helper
-        $applyFilters = function($query) use ($request) {
-            if ($request->has('pic') && $request->pic != '') {
-                $query->where('user_id', $request->pic);
-            }
-            if ($request->has('unit_kerja') && $request->unit_kerja != '') {
-                $query->where('unit_kerja', $request->unit_kerja);
-            }
-            if ($request->has('bulan') && $request->bulan != '') {
-                $query->whereMonth('tanggal_kerja', $request->bulan);
-            }
-            if ($request->has('minggu') && $request->minggu != '') {
-                 $query->whereRaw('FLOOR((Day(tanggal_kerja) - 1) / 7) + 1 = ?', [$request->minggu]);
-            }
-            return $query;
-        };
 
-        // 3. MONITORING KARYAWAN DATA AGGREGATION
-        $totalArsip = \App\Models\ArsipMasuk::count();
-        $totalBox = \App\Models\ArsipMasuk::sum('jumlah_box_masuk');
-        // $totalBerkas removed
-        $inputEArsip = $applyFilters(LogAktivitas::where('tahapan', 'Input E-Arsip'))->count();
-        $bulanIniArsip = \App\Models\ArsipMasuk::whereMonth('tanggal_terima', now()->month)
-            ->whereYear('tanggal_terima', now()->year)
-            ->count();
+        // ==========================================
+        // 4. (BARU) PROPORSI MEDIA (Pie Chart)
+        // ==========================================
+        // Menggantikan Jabatan yang tidak penting
+        $mediaHardfile = DetailPeminjaman::where('jenis_arsip', 'Hardfile')->count();
+        $mediaSoftfile = DetailPeminjaman::where('jenis_arsip', 'Softfile')->count();
 
         $pemilahan = $applyFilters(LogAktivitas::where('tahapan', 'Pemilahan'))->count();
         $pendataan = $applyFilters(LogAktivitas::where('tahapan', 'Pendataan'))->count();
@@ -231,6 +224,13 @@ class DashboardController extends Controller
             return strcmp($a['user']->nama, $b['user']->nama);
         });
 
+        // ==========================================
+        // 4. (BARU) PROPORSI MEDIA (Pie Chart)
+        // ==========================================
+        // Menggantikan Jabatan yang tidak penting
+        $mediaHardfile = DetailPeminjaman::where('jenis_arsip', 'Hardfile')->count();
+        $mediaSoftfile = DetailPeminjaman::where('jenis_arsip', 'Softfile')->count();
+
         // Kirim semua variabel ke View
         return view('beranda', compact(
             'dipinjam', 'kembali', 'dataDipinjam', 'dataKembali',
@@ -238,7 +238,8 @@ class DashboardController extends Controller
             'totalArsip', 'totalBox', 'inputEArsip', 'bulanIniArsip', 
             'pemilahan', 'pendataan', 'pelabelan', 'monitoringLogs', 'userStats',
             'allPics', 'allUnits',
-            'tahapanChartData', 'arsipBulananData', 'arsipUnitChart'
+            'tahapanChartData', 'arsipBulananData', 'arsipUnitChart',
+            'mediaHardfile', 'mediaSoftfile'
         ));
     }
 }

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             MasterKlasifikasiSeeder::class,
+            UpdateKlasifikasiHakAksesSeeder::class,
             // ArsipSeeder::class,
         ]);
     }

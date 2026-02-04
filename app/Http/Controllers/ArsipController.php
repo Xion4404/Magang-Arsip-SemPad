@@ -12,24 +12,9 @@ class ArsipController extends Controller
 {
     public function import(Request $request) 
     {
-        // DEBUGGING START
-        \Illuminate\Support\Facades\Log::info("DEBUG: Import Controller Reached");
-        \Illuminate\Support\Facades\Log::info("Request All: ", $request->all());
-        \Illuminate\Support\Facades\Log::info("Has File: " . ($request->hasFile('file') ? 'YES' : 'NO'));
-        
-        // Uncomment this line to force a visible debug screen
-        // dd('DEBUG SCREEN: Controller Reached!', $request->all(), $request->file('file'));
-        
-        // DEBUGGING END
-
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'file' => 'required' // Relaxed validation temporarily
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
         ]);
-
-        if ($validator->fails()) {
-            \Illuminate\Support\Facades\Log::error("Validation Error: ", $validator->errors()->toArray());
-            return back()->withErrors($validator)->withInput(); // Return with input to see what happens
-        }
         
         try {
             Excel::import(new ArsipImport, $request->file('file'));
@@ -44,7 +29,6 @@ class ArsipController extends Controller
     {
         return view('arsip.import');
     }
-
     public function index(Request $request)
     {
         $query = Arsip::with(['klasifikasi']); // Removed isiArsip relation
