@@ -126,7 +126,7 @@ class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
 
         // Logic Hak Akses: View Logic
         // View: $akses = $detail->arsip ? $detail->arsip->klasifikasi_keamanan : $detail->hak_akses;
-        $hakAkses = $detail->arsip ? $detail->arsip->klasifikasi_keamanan : $detail->hak_akses;
+        $hakAkses = $detail->arsip ? $detail->arsip->hak_akses : $detail->hak_akses;
 
         return [
             $this->rowNumber,

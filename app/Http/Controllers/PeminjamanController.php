@@ -205,7 +205,7 @@ class PeminjamanController extends Controller
                     $arsipId = $arsipMaster->id;
                     $namaArsip = $arsipMaster->nama_berkas; // COPY NAMA
                     $noBox = $arsipMaster->no_box;          // COPY BOX
-                    $hakAkses = $arsipMaster->klasifikasi_keamanan; // COPY AKSES
+                    $hakAkses = $arsipMaster->hak_akses; // COPY AKSES
                 }
             } else {
                 // Jika Manual, ambil dari input
@@ -239,7 +239,7 @@ class PeminjamanController extends Controller
         })->whereNotNull('arsip_id')->pluck('arsip_id');
 
         $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
-            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'klasifikasi_keamanan')
+            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'hak_akses')
             ->orderBy('nama_berkas', 'asc')
             ->get();
 
@@ -332,7 +332,7 @@ class PeminjamanController extends Controller
                         $arsipId = $arsipMaster->id;
                         $namaArsip = $arsipMaster->nama_berkas; // Copy Name
                         $noBox = $arsipMaster->no_box;          // Copy Box
-                        $hakAkses = $arsipMaster->klasifikasi_keamanan; // Copy Akses
+                        $hakAkses = $arsipMaster->hak_akses; // Copy Akses
                     }
                 } else {
                     $arsipId = null;
