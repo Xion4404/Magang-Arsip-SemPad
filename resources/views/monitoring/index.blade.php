@@ -152,16 +152,17 @@
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" 
-                                            class="px-4 py-1.5 rounded-full text-xs font-extra bold shadow-sm transition-all duration-200 border transform hover:scale-105
-                                            {{ $item->tahapan == 'Pemilahan' ? 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100' : '' }}
-                                            {{ $item->tahapan == 'Pendataan' ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' : '' }}
-                                            {{ $item->tahapan == 'Pelabelan' ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' : '' }}
-                                            {{ $item->tahapan == 'Input E-Arsip' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default hover:scale-100' : '' }}"
-                                            title="Klik untuk lanjut ke tahapan berikutnya"
+                                            class="px-4 py-1.5 rounded-full text-xs font-extrabold shadow-sm transition-all duration-200 border transform 
+                                            {{ $item->tahapan == 'Pemilahan' ? 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100 hover:scale-105' : '' }}
+                                            {{ $item->tahapan == 'Pendataan' ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:scale-105' : '' }}
+                                            {{ $item->tahapan == 'Pelabelan' ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 hover:scale-105' : '' }}
+                                            {{ $item->tahapan == 'Input E-Arsip' ? ($item->status_kerja == 'Selesai' ? 'bg-emerald-600 text-white border-emerald-600 cursor-default' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:scale-105') : '' }}"
+                                            title="{{ $item->status_kerja == 'Selesai' ? 'Tahapan Selesai' : 'Klik untuk lanjut ke tahapan berikutnya' }}"
                                             data-current="{{ $item->tahapan }}"
-                                            {{ $item->tahapan == 'Input E-Arsip' ? 'disabled' : '' }}
+                                            data-status="{{ $item->status_kerja }}"
+                                            {{ ($item->tahapan == 'Input E-Arsip' && $item->status_kerja == 'Selesai') ? 'disabled' : '' }}
                                         >
-                                            {{ $item->tahapan }}
+                                            {{ $item->tahapan == 'Input E-Arsip' && $item->status_kerja == 'Selesai' ? '✓ UPDATE SELESAI' : $item->tahapan }}
                                         </button>
                                     </form>
                                 </td>
@@ -186,6 +187,7 @@
                                 </td>
                                 <td class="py-4 px-6 text-center">
                                     <div class="flex items-center justify-center gap-3">
+                                        @if($item->status_kerja != 'Selesai')
                                         <a href="{{ route('monitoring.edit', $item->id) }}" class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                         </a>
@@ -196,6 +198,9 @@
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
+                                        @else
+                                        <span class="text-xs text-gray-400 font-medium italic">Locked</span>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -267,22 +272,43 @@
                         e.preventDefault();
                         const btn = this.querySelector('button');
                         const currentStage = btn.getAttribute('data-current');
+                        const status = btn.getAttribute('data-status');
                         
+                        // Prevent if already completed (double safety)
+                        if(status === 'Selesai') return;
+
                         let nextStage = '';
-                        if(currentStage === 'Pemilahan') nextStage = 'Pendataan';
-                        else if(currentStage === 'Pendataan') nextStage = 'Pelabelan';
-                        else if(currentStage === 'Pelabelan') nextStage = 'Input E-Arsip';
+                        let confirmTitle = 'Lanjutkan Tahapan?';
+                        let confirmText = '';
+
+                        if(currentStage === 'Pemilahan') {
+                             nextStage = 'Pendataan';
+                             confirmText = `Ubah status dari ${currentStage} ke ${nextStage}?`;
+                        }
+                        else if(currentStage === 'Pendataan') {
+                             nextStage = 'Pelabelan';
+                             confirmText = `Ubah status dari ${currentStage} ke ${nextStage}?`;
+                        }
+                        else if(currentStage === 'Pelabelan') {
+                             nextStage = 'Input E-Arsip';
+                             confirmText = `Ubah status dari ${currentStage} ke ${nextStage}?`;
+                        }
+                        else if(currentStage === 'Input E-Arsip') {
+                            nextStage = 'SELESAI';
+                            confirmTitle = 'Selesaikan Input E-Arsip?';
+                            confirmText = 'Status akan diubah menjadi SELESAI dan data akan dikunci (tidak bisa diedit lagi).';
+                        }
                         
                         if (!nextStage) return; 
  
                         Swal.fire({
-                            title: 'Lanjutkan Tahapan?',
-                            text: `Ubah status dari ${currentStage} ke ${nextStage}?`,
-                            icon: 'question',
+                            title: confirmTitle,
+                            text: confirmText,
+                            icon: currentStage === 'Input E-Arsip' ? 'warning' : 'question',
                             showCancelButton: true,
-                            confirmButtonColor: '#e92027',
+                            confirmButtonColor: currentStage === 'Input E-Arsip' ? '#10b981' : '#e92027',
                             cancelButtonColor: '#E5E7EB',
-                            confirmButtonText: 'Ya, Lanjutkan',
+                            confirmButtonText: currentStage === 'Input E-Arsip' ? 'Ya, Selesaikan' : 'Ya, Lanjutkan',
                             cancelButtonText: 'Batal',
                             customClass: {
                                 cancelButton: 'text-gray-700 font-bold'
@@ -295,7 +321,6 @@
                     });
                 });
             }
- 
             // Initial attach
             attachDeleteListeners();
             attachAdvanceListeners();
@@ -321,7 +346,7 @@
                 window.history.pushState({path: url}, '', url);
                 
                 tableBody.classList.add('opacity-50');
-
+ 
                 fetch(url, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
@@ -346,7 +371,7 @@
                     tableBody.classList.remove('opacity-50');
                 });
             }
-
+ 
             searchInput.addEventListener('input', function() {
                 clearTimeout(timeout);
                 timeout = setTimeout(fetchData, 400);

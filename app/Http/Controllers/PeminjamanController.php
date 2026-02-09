@@ -9,7 +9,7 @@ use App\Models\Arsip;
 use App\Exports\PeminjamanExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class PeminjamanController extends Controller
 {
@@ -128,10 +128,15 @@ class PeminjamanController extends Controller
         })->whereNotNull('arsip_id')->pluck('arsip_id');
 
         // 2. Ambil Arsip Available
-        $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
-            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'hak_akses', 'unit_pengolah')
+        $daftarArsip = Arsip::with('klasifikasi')
+            ->whereNotIn('id', $arsipDipinjam)
             ->orderBy('nama_berkas', 'asc')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                // Map hak_akses from relation for frontend
+                $item->hak_akses = $item->klasifikasi ? $item->klasifikasi->hak_akses : 'Biasa';
+                return $item;
+            });
 
         return view('peminjaman.create', compact('daftarArsip'));
     }
@@ -166,7 +171,39 @@ class PeminjamanController extends Controller
             }
         }
 
-        // 3. Upload File
+        // 3. Validasi Aturan Hak Akses (Band IV & Karyawan hanya boleh Biasa)
+        $restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
+        $restrictedAkses = ['Rahasia', 'Terbatas'];
+
+        $jabatanInput = trim($request->jabatan_peminjam);
+        Log::info('Validation Start: ' . $jabatanInput);
+
+        if (in_array($jabatanInput, $restrictedJabatan)) {
+            for ($i = 0; $i < count($sources); $i++) {
+                $checkAkses = 'Biasa';
+
+                // Cek Akses Item
+                if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                    $arsipCheck = Arsip::with('klasifikasi')->find($request->items_arsip_id[$i]);
+                    if ($arsipCheck) {
+                        $checkAkses = $arsipCheck->klasifikasi ? $arsipCheck->klasifikasi->hak_akses : 'Biasa';
+                    }
+                } else {
+                    $checkAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+                }
+
+                Log::info('Checking Item: ' . $checkAkses);
+
+                // Validate
+                if (in_array($checkAkses, $restrictedAkses)) {
+                    Log::error('Validation Failed for: ' . $checkAkses);
+                    return back()->withErrors(['msg' => 'Gagal! Jabatan ' . $request->jabatan_peminjam . ' tidak diizinkan meminjam arsip ' . $checkAkses . '.'])->withInput();
+                }
+            }
+        }
+
+
+        // 4. Upload File
         $filePaths = [];
         if ($request->hasFile('bukti_pinjam')) {
             foreach ($request->file('bukti_pinjam') as $file) {
@@ -205,7 +242,7 @@ class PeminjamanController extends Controller
                     $arsipId = $arsipMaster->id;
                     $namaArsip = $arsipMaster->nama_berkas; // COPY NAMA
                     $noBox = $arsipMaster->no_box;          // COPY BOX
-                    $hakAkses = $arsipMaster->hak_akses; // COPY AKSES
+                    $hakAkses = $arsipMaster->klasifikasi ? $arsipMaster->klasifikasi->hak_akses : 'Biasa'; // COPY AKSES DARI MASTER
                 }
             } else {
                 // Jika Manual, ambil dari input
@@ -238,10 +275,14 @@ class PeminjamanController extends Controller
                 ->where('id', '!=', $id);
         })->whereNotNull('arsip_id')->pluck('arsip_id');
 
-        $daftarArsip = Arsip::whereNotIn('id', $arsipDipinjam)
-            ->select('id', 'nama_berkas', 'no_berkas', 'no_box', 'hak_akses')
+        $daftarArsip = Arsip::with('klasifikasi')
+            ->whereNotIn('id', $arsipDipinjam)
             ->orderBy('nama_berkas', 'asc')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->hak_akses = $item->klasifikasi ? $item->klasifikasi->hak_akses : 'Biasa';
+                return $item;
+            });
 
         $currentItems = $editData->details->map(function ($detail) {
             return [
@@ -320,6 +361,33 @@ class PeminjamanController extends Controller
                         return back()->withErrors(['msg' => 'Gagal update! Arsip dipinjam orang lain.']);
                 }
 
+                // VALIDASI ATURAN HAK AKSES (Logic sama dengan Store)
+                $restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
+                $restrictedAkses = ['Rahasia', 'Terbatas'];
+
+                $jabatanInput = trim($request->jabatan_peminjam);
+                Log::info('Update Validation Start: ' . $jabatanInput);
+
+                if (in_array($jabatanInput, $restrictedJabatan)) {
+                    $checkAkses = 'Biasa';
+                    if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                        $arsipCheck = Arsip::with('klasifikasi')->find($request->items_arsip_id[$i]);
+                        if ($arsipCheck) {
+                            $checkAkses = $arsipCheck->klasifikasi ? $arsipCheck->klasifikasi->hak_akses : 'Biasa';
+                        }
+                    } else {
+                        $checkAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+                    }
+
+                    Log::info('Update Checking Item: ' . $checkAkses);
+
+                    if (in_array($checkAkses, $restrictedAkses)) {
+                        Log::error('Update Validation Failed for: ' . $checkAkses);
+                        return back()->withErrors(['msg' => 'Gagal Update! Jabatan ' . $request->jabatan_peminjam . ' tidak diizinkan meminjam arsip ' . $checkAkses . '.']);
+                    }
+                }
+
+
                 // SIAPKAN DATA (SNAPSHOT LOGIC JUGA DITERAPKAN DISINI)
                 $arsipId = null;
                 $namaArsip = null;
@@ -332,7 +400,7 @@ class PeminjamanController extends Controller
                         $arsipId = $arsipMaster->id;
                         $namaArsip = $arsipMaster->nama_berkas; // Copy Name
                         $noBox = $arsipMaster->no_box;          // Copy Box
-                        $hakAkses = $arsipMaster->hak_akses; // Copy Akses
+                        $hakAkses = $arsipMaster->klasifikasi ? $arsipMaster->klasifikasi->hak_akses : 'Biasa'; // Copy Akses
                     }
                 } else {
                     $arsipId = null;

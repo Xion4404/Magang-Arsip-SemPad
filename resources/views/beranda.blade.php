@@ -1,7 +1,7 @@
 <x-layout>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <div x-data="{ activeTab: '{{ request()->query('active_tab', 'peminjaman') }}', mounted: false }" 
+    <div x-data="{ activeTab: '{{ request()->query('active_tab', 'arsip') }}', mounted: false }" 
          x-init="setTimeout(() => mounted = true, 100)" 
          x-init="setTimeout(() => mounted = true, 100)" 
          class="pb-20 bg-gray-50 min-h-screen">

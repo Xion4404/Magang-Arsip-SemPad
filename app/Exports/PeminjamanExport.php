@@ -10,8 +10,12 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use Maatwebsite\Excel\Concerns\WithDrawings;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithColumnFormatting, WithDrawings
 {
     protected $filters;
     private $rowNumber = 0;
@@ -86,7 +90,7 @@ class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
         // Urutkan berdasarkan tanggal pinjam terbaru (via parent)
         $query->select('detail_peminjaman.*')
             ->join('peminjaman', 'detail_peminjaman.peminjaman_id', '=', 'peminjaman.id')
-            ->orderBy('peminjaman.tanggal_pinjam', 'desc');
+            ->orderBy('peminjaman.created_at', 'desc');
 
         return $query;
     }
@@ -94,19 +98,25 @@ class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
     public function headings(): array
     {
         return [
-            'No',
-            'Tanggal',
-            'Peminjam',
-            'NIP',
-            'Jabatan',
-            'Unit',
-            'Keperluan',
-            'Nama Arsip',
-            'Hak Akses',
-            'Jenis Arsip',
-            'Otentikasi',
-            'No. Box',
-            'Status'
+            ['PT SEMEN PADANG'],
+            ['DAFTAR ARSIP DOKUMEN'],
+            ['Indarung, Padang 25237, Sumatera Barat'],
+            [''], // Baris Kosong
+            [
+                'No',
+                'Tanggal',
+                'Peminjam',
+                'NIP',
+                'Jabatan',
+                'Unit',
+                'Keperluan',
+                'Nama Arsip',
+                'Hak Akses',
+                'Jenis Arsip',
+                'Otentikasi', // Mapped to Detail Fisik
+                'No. Box',
+                'Status'
+            ]
         ];
     }
 
@@ -115,31 +125,31 @@ class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
         $this->rowNumber++;
         $peminjaman = $detail->peminjaman;
 
-        // Logika Nama Arsip: DB Relation > Snapshot
-        // Note: Meskipun Detail ada 'nama_arsip', kita cek relasi dulu untuk konsistensi jika ada update master, 
-        // TAPI karena request snapshot logic, kita pakai logic view:
-        // View: $detail->arsip ? $detail->arsip->nama_berkas : $detail->nama_arsip
+        // Logika Nama Arsip: DB Relation > Snapshot (View Logic)
         $namaArsip = $detail->arsip ? $detail->arsip->nama_berkas : $detail->nama_arsip;
 
         // Logic No Box: View Logic
         $noBox = ($detail->arsip && $detail->arsip->no_box) ? $detail->arsip->no_box : ($detail->no_box ?? '-');
 
-        // Logic Hak Akses: View Logic
-        // View: $akses = $detail->arsip ? $detail->arsip->klasifikasi_keamanan : $detail->hak_akses;
-        $hakAkses = $detail->arsip ? $detail->arsip->hak_akses : $detail->hak_akses;
+        // Logic Hak Akses: Snapshot Priority (NEW FIX)
+        // Prioritize updated snapshot (hak_akses column on detail table)
+        $hakAkses = $detail->hak_akses;
+        if (empty($hakAkses) && $detail->arsip && $detail->arsip->klasifikasi) {
+            $hakAkses = $detail->arsip->klasifikasi->hak_akses;
+        }
 
         return [
             $this->rowNumber,
             $peminjaman ? Carbon::parse($peminjaman->tanggal_pinjam)->format('d M Y') : '-',
             $peminjaman->nama_peminjam ?? '-',
-            $peminjaman->nip ?? '-',
+            $peminjaman->nip ? " " . $peminjaman->nip : '-', // ADD SPACE TO FORCE TEXT
             $peminjaman->jabatan_peminjam ?? '-',
             $peminjaman->unit_peminjam ?? '-',
             $peminjaman->keperluan ?? '-',
             $namaArsip,
-            $hakAkses,
+            $hakAkses ?? '-',
             $detail->jenis_arsip,
-            $detail->detail_fisik ?? '-', // 'Otentikasi' mapped to Detail Fisik as per index.blade.php
+            $detail->detail_fisik ?? '-',
             $noBox,
             $peminjaman->status ?? '-'
         ];
@@ -147,8 +157,104 @@ class PeminjamanExport implements FromQuery, WithHeadings, WithMapping, ShouldAu
 
     public function styles(Worksheet $sheet)
     {
+        // 1. Merge Header Rows (A1:M1, A2:M2, A3:M3)
+        $sheet->mergeCells('A1:M1');
+        $sheet->mergeCells('A2:M2');
+        $sheet->mergeCells('A3:M3');
+
+        // 2. Style: PT SEMEN PADANG (Red, Bold, Center, 14pt)
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'FFFF0000'], // Red
+                'size' => 14,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // 3. Style: DAFTAR ARSIP DOKUMEN (Black, Bold, Center, 12pt)
+        $sheet->getStyle('A2')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // 4. Style: Address (Black, Regular, Center, 10pt)
+        $sheet->getStyle('A3')->applyFromArray([
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // 5. Style: Table Headers (Row 5 - Bold, Border, Light Red Background)
+        $sheet->getStyle('A5:M5')->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFFFCCCC'], // Light Red
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ]);
+
+        // 6. Style: Data Rows (Border for all cells starting from A6)
+        $highestRow = $sheet->getHighestRow();
+        if ($highestRow >= 6) {
+            $sheet->getStyle('A6:M' . $highestRow)->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'alignment' => [
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            // Center alignment for specific columns (No, NIP, Jabatan, Unit, Akses, Jenis, Otentikasi, Box, Status)
+            // Columns: A, D, E, F, I, J, K, L, M
+            $sheet->getStyle('A6:A' . $highestRow)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('B6:B' . $highestRow)->getAlignment()->setHorizontal('center'); // Tanggal
+            $sheet->getStyle('D6:F' . $highestRow)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('I6:M' . $highestRow)->getAlignment()->setHorizontal('center');
+        }
+
+        return [];
+    }
+
+    public function columnFormats(): array
+    {
         return [
-            1 => ['font' => ['bold' => true]], // Bold Header
+            'D' => NumberFormat::FORMAT_TEXT, // NIP (D)
+            'L' => NumberFormat::FORMAT_TEXT, // No. Box (L)
         ];
+    }
+
+    public function drawings()
+    {
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Logo PT Semen Padang');
+        $drawing->setPath(public_path('images/logo-sp.png'));
+        $drawing->setHeight(60);
+        $drawing->setCoordinates('A1');
+        $drawing->setOffsetX(10);
+        $drawing->setOffsetY(5);
+        return [$drawing];
     }
 }

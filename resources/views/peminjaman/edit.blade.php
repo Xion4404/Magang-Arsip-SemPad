@@ -228,7 +228,7 @@
                                                     <span class="bg-red-50 px-1.5 py-0.5 rounded border border-red-100">Box: <span x-text="opt.no_box || '-'"></span></span>
                                                 </div>
                                             </div>
-                                            <div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-[#a0131a] border border-red-200 shadow-sm whitespace-nowrap" x-text="opt.klasifikasi_keamanan"></div>
+                                            <div class="text-[10px] font-bold px-2 py-1 rounded bg-white text-[#a0131a] border border-red-200 shadow-sm whitespace-nowrap" x-text="opt.hak_akses"></div>
                                         </li>
                                     </template>
                                 </ul>
@@ -241,7 +241,15 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Hak Akses</label>
                             <div class="relative">
-                                <select x-model="tempItem.akses" class="w-full border border-gray-300 rounded-lg p-3 text-sm bg-white focus:ring-2 focus:ring-red-200 focus:border-red-800 outline-none appearance-none cursor-pointer" style="-webkit-appearance: none; -moz-appearance: none; appearance: none;"><option value="Biasa">Biasa / Terbuka</option><option value="Terbatas">Terbatas</option><option value="Rahasia">Rahasia</option></select>
+                                <select x-model="tempItem.akses" class="w-full border border-gray-300 rounded-lg p-3 text-sm bg-white focus:ring-2 focus:ring-red-200 focus:border-red-800 outline-none appearance-none cursor-pointer" style="-webkit-appearance: none; -moz-appearance: none; appearance: none;">
+                                    <option value="Biasa">Biasa</option>
+                                    <template x-if="!['Band IV', 'Karyawan/Pelaksana'].includes(jabatan)">
+                                        <option value="Terbatas">Terbatas</option>
+                                    </template>
+                                    <template x-if="!['Band IV', 'Karyawan/Pelaksana'].includes(jabatan)">
+                                        <option value="Rahasia">Rahasia</option>
+                                    </template>
+                                </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></div>
                             </div>
                         </div>
@@ -365,9 +373,17 @@
                 
                 get filteredArsip() {
                     const query = this.searchQuery.toLowerCase();
+                    const restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
+                    const isRestricted = restrictedJabatan.includes(this.jabatan);
+
                     return daftarArsip.filter(item => {
-                        return (item.nama_berkas && item.nama_berkas.toLowerCase().includes(query)) ||
+                        const matchQuery = (item.nama_berkas && item.nama_berkas.toLowerCase().includes(query)) ||
                                (item.no_box && item.no_box.toLowerCase().includes(query));
+                        
+                        if (isRestricted && ['Rahasia', 'Terbatas'].includes(item.hak_akses)) {
+                            return false;
+                        }
+                        return matchQuery;
                     }).slice(0, 10);
                 },
 
@@ -375,7 +391,7 @@
                     this.tempItem.id = arsip.id;
                     this.tempItem.display_name = arsip.nama_berkas;
                     this.tempItem.no_box = arsip.no_box;
-                    this.tempItem.akses = arsip.klasifikasi_keamanan;
+                    this.tempItem.akses = arsip.hak_akses; // FIX: Use hak_akses
                     this.searchQuery = arsip.nama_berkas; 
                 },
 
@@ -384,6 +400,16 @@
                     if (this.tempItem.source === 'manual' && !this.tempItem.nama_manual) { this.serverErrors = ['Nama arsip wajib diisi!']; this.showValidationModal = true; return; }
                     if (this.tempItem.source === 'manual') this.tempItem.display_name = this.tempItem.nama_manual;
                     
+                    // NEW CHECK: Access Control
+                    const restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
+                    const restrictedAkses = ['Rahasia', 'Terbatas'];
+                    
+                    if (restrictedJabatan.includes(this.jabatan) && restrictedAkses.includes(this.tempItem.akses)) {
+                        this.serverErrors = [`Gagal Update! Jabatan ${this.jabatan} tidak diizinkan akses arsip ${this.tempItem.akses}.`];
+                        this.showValidationModal = true;
+                        return;
+                    }
+
                     if (this.editingIndex !== null) {
                         this.items[this.editingIndex] = {...this.tempItem};
                     } else {

@@ -121,6 +121,13 @@ class MonitoringKaryawanController extends Controller
 
     public function update(Request $request, $id)
     {
+        $logAktivitas = LogAktivitas::findOrFail($id);
+        
+        // Prevent editing if status is Selesai
+        if ($logAktivitas->status_kerja == 'Selesai') {
+            return redirect()->back()->with('error', 'Data yang sudah selesai tidak dapat diedit!');
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'arsip_masuk_id' => 'required|exists:arsip_masuk,id',
@@ -130,7 +137,6 @@ class MonitoringKaryawanController extends Controller
             'keterangan' => 'nullable|string',
         ]);
 
-        $logAktivitas = LogAktivitas::findOrFail($id);
         $arsipMasuk = ArsipMasuk::findOrFail($request->arsip_masuk_id);
     
         $logAktivitas->update([
@@ -154,6 +160,12 @@ class MonitoringKaryawanController extends Controller
     public function destroy($id)
     {
         $logAktivitas = LogAktivitas::findOrFail($id);
+        
+        // Prevent deleting if status is Selesai
+        if ($logAktivitas->status_kerja == 'Selesai') {
+            return redirect()->back()->with('error', 'Data yang sudah selesai tidak dapat dihapus!');
+        }
+        
         $logAktivitas->delete();
         return redirect()->route('monitoring.index')->with('success', 'Data berhasil dihapus!');
     }
@@ -168,18 +180,25 @@ class MonitoringKaryawanController extends Controller
         
         $currentStageIndex = array_search($monitoring->tahapan, $stages);
         
+        // Handle transitions between normal stages
         if ($currentStageIndex !== false && $currentStageIndex < count($stages) - 1) {
             $nextStage = $stages[$currentStageIndex + 1];
-            
-            // Check if Input E Arsip is complete or just transition to it?
-            // User request only mentioned button to continue to next stage.
-            
             $monitoring->tahapan = $nextStage;
             $monitoring->save();
-            
             return redirect()->back()->with('success', 'Tahapan berhasil dilanjutkan ke ' . $nextStage);
         }
+        
+        // Handle completion of the final stage (Input E-Arsip)
+        if ($monitoring->tahapan == 'Input E-Arsip') {
+            if ($monitoring->status_kerja != 'Selesai') {
+                $monitoring->status_kerja = 'Selesai';
+                // Automatically set jumlah_box_selesai to max to reflect 100% progress
+                $monitoring->jumlah_box_selesai = $monitoring->jumlah_box; 
+                $monitoring->save();
+                return redirect()->back()->with('success', 'Tahapan Input E-Arsip selesai! Aktivitas ditandai COMPLETED.');
+            }
+        }
 
-        return redirect()->back()->with('info', 'Tahapan sudah mencapai batas atau tidak valid.');
+        return redirect()->back()->with('info', 'Tahapan sudah mencapai batas atau sudah selesai.');
     }
 }
