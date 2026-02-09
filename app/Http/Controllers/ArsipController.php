@@ -100,7 +100,14 @@ class ArsipController extends Controller
                 break;
         }
 
-        $arsips = $query->paginate(100);
+        // Check for Print Mode
+        $printMode = $request->get('print') === 'true';
+
+        if ($printMode) {
+             $arsips = $query->get();
+        } else {
+             $arsips = $query->paginate(100);
+        }
         
         // Calculate grouping and numbering based on Entry Order (First ID)
         $groupData = [];
@@ -152,7 +159,7 @@ class ArsipController extends Controller
             return view('arsip.partials.table', compact('arsips', 'groupData'));
         }
 
-        return view('arsip.arsip', compact('arsips', 'availableYears', 'availableBoxes', 'groupData'));
+        return view('arsip.arsip', compact('arsips', 'availableYears', 'availableBoxes', 'groupData', 'printMode'));
     }
 
     public function create()
