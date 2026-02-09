@@ -133,12 +133,15 @@ class PeminjamanController extends Controller
             ->orderBy('nama_berkas', 'asc')
             ->get()
             ->map(function ($item) {
-                // Map hak_akses from relation for frontend
+                // Map hak_akses and ensure unit_pengolah is accessible
                 $item->hak_akses = $item->klasifikasi ? $item->klasifikasi->hak_akses : 'Biasa';
+                $item->unit_pengolah_name = $item->unit_pengolah ?? '-'; // Map for safety
                 return $item;
             });
 
-        return view('peminjaman.create', compact('daftarArsip'));
+        $units = \App\Models\Unit::orderBy('nama_unit')->get();
+
+        return view('peminjaman.create', compact('daftarArsip', 'units'));
     }
 
     public function store(Request $request)
@@ -171,33 +174,43 @@ class PeminjamanController extends Controller
             }
         }
 
-        // 3. Validasi Aturan Hak Akses (Band IV & Karyawan hanya boleh Biasa)
+        // 3. Validasi Aturan Hak Akses & Unit (Enhanced)
+        $jabatanInput = trim($request->jabatan_peminjam);
+        $unitInput = trim($request->unit); // Peminjam Unit
+
         $restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
         $restrictedAkses = ['Rahasia', 'Terbatas'];
 
-        $jabatanInput = trim($request->jabatan_peminjam);
-        Log::info('Validation Start: ' . $jabatanInput);
+        for ($i = 0; $i < count($sources); $i++) {
+            $checkAkses = 'Biasa';
+            $arsipUnit = null;
 
-        if (in_array($jabatanInput, $restrictedJabatan)) {
-            for ($i = 0; $i < count($sources); $i++) {
-                $checkAkses = 'Biasa';
-
-                // Cek Akses Item
-                if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
-                    $arsipCheck = Arsip::with('klasifikasi')->find($request->items_arsip_id[$i]);
-                    if ($arsipCheck) {
-                        $checkAkses = $arsipCheck->klasifikasi ? $arsipCheck->klasifikasi->hak_akses : 'Biasa';
-                    }
-                } else {
-                    $checkAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+            if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                $arsipCheck = Arsip::with('klasifikasi')->find($request->items_arsip_id[$i]);
+                if ($arsipCheck) {
+                    $checkAkses = $arsipCheck->klasifikasi ? $arsipCheck->klasifikasi->hak_akses : 'Biasa';
+                    $arsipUnit = $arsipCheck->unit_pengolah;
                 }
+            } else {
+                // Manual items assume valid unit/access or skip check? 
+                // Currently manual items don't have unit_pengolah info, assume 'Biasa' or allow.
+                // For strictness, manual items might need review. Here we focus on DB items.
+                $checkAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+            }
 
-                Log::info('Checking Item: ' . $checkAkses);
+            // RULE CHECKING
 
-                // Validate
+            // 1. Unit Match Check (Skip for Direksi or if Manual Item)
+            if ($jabatanInput !== 'Direksi' && $arsipUnit) {
+                if ($arsipUnit !== $unitInput) {
+                    return back()->withErrors(['msg' => 'Gagal! Jabatan ' . $jabatanInput . ' hanya boleh meminjam arsip dari unit ' . $unitInput . '. Arsip yang dipilih milik ' . $arsipUnit . '.'])->withInput();
+                }
+            }
+
+            // 2. Access Level Check (Band IV & Karyawan)
+            if (in_array($jabatanInput, $restrictedJabatan)) {
                 if (in_array($checkAkses, $restrictedAkses)) {
-                    Log::error('Validation Failed for: ' . $checkAkses);
-                    return back()->withErrors(['msg' => 'Gagal! Jabatan ' . $request->jabatan_peminjam . ' tidak diizinkan meminjam arsip ' . $checkAkses . '.'])->withInput();
+                    return back()->withErrors(['msg' => 'Gagal! Jabatan ' . $jabatanInput . ' tidak diizinkan meminjam arsip dengan klasifikasi ' . $checkAkses . '.'])->withInput();
                 }
             }
         }
@@ -281,8 +294,11 @@ class PeminjamanController extends Controller
             ->get()
             ->map(function ($item) {
                 $item->hak_akses = $item->klasifikasi ? $item->klasifikasi->hak_akses : 'Biasa';
+                $item->unit_pengolah_name = $item->unit_pengolah ?? '-';
                 return $item;
             });
+
+        $units = \App\Models\Unit::orderBy('nama_unit')->get();
 
         $currentItems = $editData->details->map(function ($detail) {
             return [
@@ -298,7 +314,7 @@ class PeminjamanController extends Controller
             ];
         });
 
-        return view('peminjaman.edit', compact('editData', 'id', 'daftarArsip', 'currentItems'));
+        return view('peminjaman.edit', compact('editData', 'id', 'daftarArsip', 'currentItems', 'units'));
     }
 
     public function update(Request $request, $id)
@@ -366,23 +382,33 @@ class PeminjamanController extends Controller
                 $restrictedAkses = ['Rahasia', 'Terbatas'];
 
                 $jabatanInput = trim($request->jabatan_peminjam);
+                $unitInput = trim($request->unit); // DEFINED HERE
                 Log::info('Update Validation Start: ' . $jabatanInput);
 
-                if (in_array($jabatanInput, $restrictedJabatan)) {
-                    $checkAkses = 'Biasa';
-                    if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
-                        $arsipCheck = Arsip::with('klasifikasi')->find($request->items_arsip_id[$i]);
-                        if ($arsipCheck) {
-                            $checkAkses = $arsipCheck->klasifikasi ? $arsipCheck->klasifikasi->hak_akses : 'Biasa';
-                        }
-                    } else {
-                        $checkAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+                // VALIDASI ATURAN HAK AKSES & UNIT (Enhanced Update)
+                $checkAkses = 'Biasa';
+                $arsipUnit = null;
+
+                if ($sources[$i] == 'db' && !empty($request->items_arsip_id[$i])) {
+                    $arsipCheck = Arsip::with('klasifikasi')->find($request->items_arsip_id[$i]);
+                    if ($arsipCheck) {
+                        $checkAkses = $arsipCheck->klasifikasi ? $arsipCheck->klasifikasi->hak_akses : 'Biasa';
+                        $arsipUnit = $arsipCheck->unit_pengolah;
                     }
+                } else {
+                    $checkAkses = $request->items_akses_manual[$i] ?? 'Biasa';
+                }
 
-                    Log::info('Update Checking Item: ' . $checkAkses);
+                // 1. Unit Check
+                if ($jabatanInput !== 'Direksi' && $arsipUnit) {
+                    if ($arsipUnit !== $unitInput) {
+                        return back()->withErrors(['msg' => 'Gagal Update! Arsip dari unit ' . $arsipUnit . ' tidak boleh dipinjam oleh unit ' . $unitInput . '.']);
+                    }
+                }
 
+                // 2. Access Check
+                if (in_array($jabatanInput, $restrictedJabatan)) {
                     if (in_array($checkAkses, $restrictedAkses)) {
-                        Log::error('Update Validation Failed for: ' . $checkAkses);
                         return back()->withErrors(['msg' => 'Gagal Update! Jabatan ' . $request->jabatan_peminjam . ' tidak diizinkan meminjam arsip ' . $checkAkses . '.']);
                     }
                 }

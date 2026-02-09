@@ -71,9 +71,22 @@
 
                         {{-- Unit --}}
                         <div>
-                            <label class="block text-sm font-bold text-gray-800 mb-2">Unit Kerja <span class="text-[#e92027]">*</span></label>
-                            <input type="text" name="unit" value="{{ $editData->unit_peminjam }}" required 
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 outline-none transition bg-gray-50 focus:bg-white focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 scale-100">
+                            <label class="block text-sm font-bold text-gray-800 mb-2">Unit Kerja <span
+                                    class="text-[#e92027]">*</span></label>
+                            <div class="relative">
+                                <select name="unit" x-model="unit" required
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 outline-none appearance-none cursor-pointer focus:bg-white focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                    <option value="" disabled>-- Pilih Unit --</option>
+                                    @foreach($units as $u)
+                                        <option value="{{ $u->nama_unit }}" {{ $editData->unit_peminjam == $u->nama_unit ? 'selected' : '' }}>
+                                            {{ $u->nama_unit }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Keperluan --}}
@@ -325,6 +338,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('peminjamanEdit', () => ({
                 jabatan: '{{ $editData->jabatan_peminjam }}',
+                unit: '{{ $editData->unit_peminjam }}',
                 items: currentItems.map(item => ({
                     source: item.source, 
                     id: item.id || null, 
@@ -373,17 +387,28 @@
                 
                 get filteredArsip() {
                     const query = this.searchQuery.toLowerCase();
-                    const restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
-                    const isRestricted = restrictedJabatan.includes(this.jabatan);
+                    const jabatan = this.jabatan;
+                    const unit = this.unit;
 
                     return daftarArsip.filter(item => {
-                        const matchQuery = (item.nama_berkas && item.nama_berkas.toLowerCase().includes(query)) ||
-                               (item.no_box && item.no_box.toLowerCase().includes(query));
-                        
-                        if (isRestricted && ['Rahasia', 'Terbatas'].includes(item.hak_akses)) {
-                            return false;
+                        // 1. Text Search
+                        const matchQuery = (item.nama_berkas || '').toLowerCase().includes(query) || 
+                                         (item.no_box || '').toLowerCase().includes(query);
+                        if (!matchQuery) return false;
+
+                        // 2. Access Control Rules
+                        if (jabatan === 'Direksi') return true;
+
+                        // Rule: Unit match
+                        if (item.unit_pengolah_name !== unit) return false;
+
+                        // Rule: Band IV check
+                        if (['Band IV', 'Karyawan/Pelaksana'].includes(jabatan)) {
+                            if (['Rahasia', 'Terbatas'].includes(item.hak_akses)) {
+                                return false;
+                            }
                         }
-                        return matchQuery;
+                        return true;
                     }).slice(0, 10);
                 },
 

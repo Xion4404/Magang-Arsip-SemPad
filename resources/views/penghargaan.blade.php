@@ -102,7 +102,7 @@
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
-                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">2016-2026</h3>
+                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">Akreditasi Kearsipan</h3>
                            <p class="text-gray-700 leading-relaxed text-justify">Sertifikat Akreditasi Kearsipan yang diberikan oleh Arsip Nasional Republik Indonesia kepada PT Semen Padang sebagai Unit Kearsipan terakreditasi untuk penyelenggaraan kearsipan dengan kualifikasi Akreditasi A (Sangat Baik), masa berlaku 5 tahun (2021-2026). Ini merupakan akreditasi kedua yang dicapai ole Kearsipan PT Semen Padang dimana sebelumnya juga sudah meraih akreditasi A pada tahun 2015-2021 dimana merupakan satu-satunya perusahaan persemenan yang sudah terakreditasi Unit Kearsipannya.</p>
                       </div>
                  </div>
@@ -117,7 +117,7 @@
         <div class="w-full bg-black py-16 px-6">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl text-white">
                  <div class="w-full md:w-1/2 order-1 text-right space-y-4">
-                       <h3 class="text-3xl font-bold text-[#e92027] mb-4">2024</h3>
+                       <h3 class="text-3xl font-bold text-[#e92027] mb-4">MOWCAP</h3>
                        <p class="text-white leading-relaxed text-justify" dir="rtl">Arsip Pabrik Indarung ditetapkan sebagai UNESCO Memory Of The World Committee Asia & Pacific (MOWCAP) pada 8 Mei 2024 di Ulaanbaatar, Mongolia. Terdapat 20 nominasi yang diajukan oleh negara-negara di Asia Pasifik sebagai MOWCAP Register.</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
@@ -137,7 +137,7 @@
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
-                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">2024</h3>
+                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">GOLD 5R</h3>
                            <p class="text-gray-700 leading-relaxed text-justify">Kearsipan PT Semen Padang juga ikut berpartisipasi pada kegiatan inovasi nasional tahun 2024 yang diadakan oleh TKMPN (Temu Karya Mutu & Produktivitas Nasional) dan IOPC (International Quality & Productivity Convention), Meraih predikat GOLD dalam kategori 5R.</p>
                       </div>
                  </div>
@@ -148,8 +148,8 @@
         <div class="w-full bg-[#E92027] py-16 px-6">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl text-white">
                  <div class="w-full md:w-1/2 order-1 text-right space-y-4">
-                       <h3 class="text-3xl font-bold text-white mb-4">2023</h3>
-                       <p class="text-white leading-relaxed text-justify" dir="rtl">Keputusan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 54/M/2023 tentang penetapan Pabrik Semen Indarung I sebagai Kawasan Cagar Budaya Peringkat Nasional pada tanggal 25 Oktober 2023. Yang sebelumnya juga ditetapkan sebagai Cagar Budaya Tingkat Provinsi pada tanggal 10 November 2022 oleh Gubernur Sumatera Barat dan Cagar Budaya Tingkat Kota Padang pada tanggal 28 Oktober 2022 oleh Walikota Padang.</p>
+                       <h3 class="text-3xl font-bold text-white mb-4">Cagar Budaya Nasional</h3>
+                       <p class="text-white leading-relaxed text-justify" dir="rtl">Keputusan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 54/M/2023 tentang penetapan Pabrik Semen Indarung I sebagai Kawasan Cagar Budaya Peringkat Nasional pada tanggal 25 Oktober 2023. Yang sebelumnya juga ditetapkan sebagai Cagar Budaya Tingkat Provinsi pada tanggal 10 November 2022 oleh Gubernur Sumatera Barat dan Cagar Budaya Tingkat Kota Padang pada tanggal 28 Oktober 2022 oleh Walikota Padang</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
                        <img src="{{ asset('images/pabrik-sp.png') }}" class="rounded-lg shadow-lg w-full h-80 object-cover opacity-90 hover:opacity-100 transition duration-500">
@@ -165,7 +165,7 @@
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
-                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">2023</h3>
+                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">Memori Kolektif Bangsa</h3>
                            <p class="text-gray-700 leading-relaxed text-justify">Arsip Pabrik Semen Pertama di Indonesia 1910-1972 ditetapkan dalam Register Nasional Memori Kolektif Bangsa, ditetapkan tanggal 15 Mei 2023 oleh Kepala Arsip Nasional Republik Indonesia sebagai Ketua Komite Nasional Memory Of The World Indonesia.</p>
                       </div>
                  </div>
@@ -176,7 +176,7 @@
         <div class="w-full bg-black py-16 px-6">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl text-white">
                  <div class="w-full md:w-1/2 order-1 text-right space-y-4">
-                       <h3 class="text-3xl font-bold text-[#e92027] mb-4">2022</h3>
+                       <h3 class="text-3xl font-bold text-[#e92027] mb-4">ANRI</h3>
                        <p class="text-white leading-relaxed text-justify" dir="rtl">Piagam penghargaan yang diberikan oleh Kepala Arsip Nasional Republik Indonesia (ANRI) pada tanggal 7 Desember 2022 kepada PT Semen Padang karena sudah melakukan penyerahan arsip statis kepada ANRI. Penyerahan arsip statis ini sebagai bentuk pemenuhan dari amanat Undang-Undang Nomor 43 Tahun 2009 tentang Kearsipan dan Peraturan Pemerintah Nomor 34 tahun 1979 tentang Penyusutan Arsip. Selain itu, penyerahan arsip statis juga merupakan sebagai pertanggungjawaban nasional PT Semen Padang dalam kehidupan bermasyarakat, berbangsa, dan bernegara serta identitas dan memori kolektif bangsa.</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
@@ -193,7 +193,7 @@
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
-                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">2017</h3>
+                           <h3 class="text-2xl font-bold text-[#e92027] mb-2">Akreditasi BUMN-ANRI</h3>
                            <p class="text-gray-700 leading-relaxed text-justify">Piagam penghargaan yang diberikan oleh Arsip Nasional Republik Indonesia kepada PT Semen Padang sebagai Badan Usaha Milik Negara terakreditasi A, pada tanggal 7 November 2017 dengan nilai (Sangat Baik) dalam penyelenggaraan Kearsipan, ini merupakan hasil dari pengawasan ANRI terhadap kearsipan yang sudah memperoleh Akreditasi A.</p>
                       </div>
                  </div>
@@ -204,7 +204,7 @@
         <div class="w-full bg-[#E92027] py-16 px-6">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl text-white">
                  <div class="w-full md:w-1/2 order-1 text-right space-y-4">
-                       <h3 class="text-3xl font-bold text-white mb-4">2016</h3>
+                       <h3 class="text-3xl font-bold text-white mb-4">Juara 1 Arsip BUMN</h3>
                        <p class="text-white leading-relaxed text-justify" dir="rtl">Kearsipan PT Semen Padang terpilih sebagai juara 1 tingkat Badan Usaha Milik Negara (BUMN) dalam pemilihan Unit Kearsipan dan Lembaga Kearsipan Perguruan Tinggi Negeri Terbaik Tingkat Nasional Tahun 2016. Kegiatan ini dilaksanakan oleh Arsip Nasional Republik Indonesia di Jakarta pada tanggal 1 Maret - 14 Juni 2016</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">

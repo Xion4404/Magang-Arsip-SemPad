@@ -89,10 +89,22 @@
                                 </div>
                             </div>
                         </div>
-                        <div><label class="block text-sm font-bold text-gray-800 mb-2">Unit Kerja <span
-                                    class="text-[#e92027]">*</span></label><input type="text" name="unit"
-                                value="{{ old('unit') }}" required
-                                class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 focus:bg-white outline-none focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-800 mb-2">Unit Kerja <span
+                                    class="text-[#e92027]">*</span></label>
+                            <div class="relative">
+                                <select name="unit" x-model="unit" required
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-800 outline-none appearance-none cursor-pointer focus:bg-white focus:border-[#e92027] focus:ring-4 focus:ring-[#9d1b1b]/10 transition duration-200">
+                                    <option value="" disabled selected>-- Pilih Unit --</option>
+                                    @foreach($units as $u)
+                                        <option value="{{ $u->nama_unit }}">{{ $u->nama_unit }}</option>
+                                    @endforeach
+                                </select>
+                                <div
+                                    class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </div>
+                            </div>
                         </div>
                         <div><label class="block text-sm font-bold text-gray-800 mb-2">Keperluan <span
                                     class="text-[#e92027]">*</span></label><textarea name="keperluan" rows="3" required
@@ -369,6 +381,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('peminjamanForm', () => ({
                 jabatan: '',
+                unit: '',
                 items: [],
                 files: [{ id: Date.now(), name: null }],
                 showModal: false,
@@ -390,16 +403,31 @@
 
                 get filteredArsip() {
                     const query = this.searchQuery.toLowerCase();
-                    const restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
-                    const isRestricted = restrictedJabatan.includes(this.jabatan);
+                    const jabatan = this.jabatan;
+                    const unit = this.unit;
 
                     return daftarArsip.filter(item => {
+                        // 1. Filter Text Search
                         const matchQuery = (item.nama_berkas || '').toLowerCase().includes(query) || (item.no_box || '').toLowerCase().includes(query);
+                        if (!matchQuery) return false;
 
-                        if (isRestricted && ['Rahasia', 'Terbatas'].includes(item.hak_akses)) {
-                            return false;
+                        // 2. Access Control Rules
+                        // Rule 1: Direksi - Boleh Lihat Semua Unit & Semua Klasifikasi
+                        if (jabatan === 'Direksi') return true;
+
+                        // Rule 2 & 3: Wajib Unit Yang Sama (Kecuali Direksi) because "Hanya Unit/Dept Dia Sendiri"
+                        // Note: item.unit_pengolah_name must match selected this.unit
+                        if (item.unit_pengolah_name !== unit) return false;
+
+                        // Rule 3: Band IV & Karyawan - Hanya 'Biasa'
+                        if (['Band IV', 'Karyawan/Pelaksana'].includes(jabatan)) {
+                            if (['Rahasia', 'Terbatas'].includes(item.hak_akses)) {
+                                return false;
+                            }
                         }
-                        return matchQuery;
+
+                        // Band I, II, III (Implied: Unit match checked above, Access all allowed)
+                        return true;
                     }).slice(0, 10);
                 },
                 selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.hak_akses; this.searchQuery = arsip.nama_berkas; },
