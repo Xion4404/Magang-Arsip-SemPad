@@ -32,7 +32,7 @@
 
             <div class="text-center mb-8">
                 <h1 class="text-2xl md:text-3xl font-bold text-black leading-tight mb-5">
-                    e-Arsip <br>
+                    Record Center <br>
                     PT Semen Padang
                 </h1>
                 <h2 class="text-xl md:text-2xl font-bold text-[#e92027]">Login</h2>

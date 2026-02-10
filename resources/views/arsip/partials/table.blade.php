@@ -13,7 +13,7 @@
                     <th class="py-5 px-4 font-bold whitespace-nowrap">Nama Berkas</th>
                     
                     {{-- Details --}}
-                    <th class="py-5 px-4 font-bold min-w-[250px]">Uraian Arsip</th>
+                    <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Isi Arsip</th>
                     <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Thn</th>
                     <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Tgl</th>
                     <th class="py-5 px-4 font-bold text-center whitespace-nowrap">Jml</th>

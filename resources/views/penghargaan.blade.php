@@ -67,9 +67,9 @@
     </style>
     <div class="relative h-[40vh] w-full overflow-hidden">
         <div class="absolute inset-0">
-             <img src="{{ asset('images/hp 2.jpeg') }}" class="w-full h-full object-cover animate-zoom">
+             <img src="{{ asset('images/gerbang.JPG') }}" class="w-full h-full object-cover animate-zoom">
              <!-- Overlay Gradient -->
-             <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+             <div class="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
         </div>
 
         <!-- Content -->
@@ -98,7 +98,7 @@
         <div class="w-full py-16 px-6 relative overflow-hidden z-10">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl">
                  <div class="w-full md:w-1/2 order-2 md:order-1">
-                      <img src="{{ asset('images/hp 1.jpg') }}" class="rounded-lg shadow-lg w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                      <img src="{{ asset('images/AK.jpg') }}" class="w-full h-auto">
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
@@ -118,13 +118,10 @@
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl text-white">
                  <div class="w-full md:w-1/2 order-1 text-right space-y-4">
                        <h3 class="text-3xl font-bold text-[#e92027] mb-4">MOWCAP</h3>
-                       <p class="text-white leading-relaxed text-justify" dir="rtl">Arsip Pabrik Indarung ditetapkan sebagai UNESCO Memory Of The World Committee Asia & Pacific (MOWCAP) pada 8 Mei 2024 di Ulaanbaatar, Mongolia. Terdapat 20 nominasi yang diajukan oleh negara-negara di Asia Pasifik sebagai MOWCAP Register.</p>
+                       <p class="text-white leading-relaxed text-justify" dir="rtl">Arsip Pabrik Indarung ditetapkan sebagai UNESCO Memory Of The World Committee Asia & Pacific (MOWCAP) pada 8 Mei 2024 di Ulaanbaatar, Mongolia. Terdapat 20 nominasi yang diajukan oleh negara-negara di Asia Pasifik sebagai MOWCAP Register</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
-                      <div class="relative h-80 w-full overflow-hidden rounded-lg shadow-2xl">
-                          <img src="{{ asset('images/hp 5.jpeg') }}" class="w-full h-full object-cover">
-                          <div class="absolute inset-0 bg-black/20"></div>
-                      </div>
+                      <img src="{{ asset('images/UNESCO.jpg') }}" class="w-full h-auto">
                  </div>
             </div>
         </div>
@@ -133,7 +130,7 @@
         <div class="w-full bg-white py-16 px-6">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl">
                  <div class="w-full md:w-1/2 order-2 md:order-1">
-                      <img src="{{ asset('images/hp 7.jpeg') }}" class="rounded-lg shadow-lg w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                      <img src="{{ asset('images/GOLD.jpg') }}" class="w-full h-auto">
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
@@ -152,7 +149,7 @@
                        <p class="text-white leading-relaxed text-justify" dir="rtl">Keputusan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 54/M/2023 tentang penetapan Pabrik Semen Indarung I sebagai Kawasan Cagar Budaya Peringkat Nasional pada tanggal 25 Oktober 2023. Yang sebelumnya juga ditetapkan sebagai Cagar Budaya Tingkat Provinsi pada tanggal 10 November 2022 oleh Gubernur Sumatera Barat dan Cagar Budaya Tingkat Kota Padang pada tanggal 28 Oktober 2022 oleh Walikota Padang</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
-                       <img src="{{ asset('images/pabrik-sp.png') }}" class="rounded-lg shadow-lg w-full h-80 object-cover opacity-90 hover:opacity-100 transition duration-500">
+                       <img src="{{ asset('images/CAGAR.jpg') }}" class="w-full h-auto">
                  </div>
             </div>
         </div>
@@ -161,7 +158,7 @@
         <div class="w-full bg-white py-16 px-6 relative overflow-hidden">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl">
                  <div class="w-full md:w-1/2 order-2 md:order-1">
-                      <img src="{{ asset('images/hp 3.jpeg') }}" class="rounded-lg shadow-lg w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                      <img src="{{ asset('images/MKB.jpg') }}" class="w-full h-auto">
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
@@ -177,10 +174,10 @@
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl text-white">
                  <div class="w-full md:w-1/2 order-1 text-right space-y-4">
                        <h3 class="text-3xl font-bold text-[#e92027] mb-4">ANRI</h3>
-                       <p class="text-white leading-relaxed text-justify" dir="rtl">Piagam penghargaan yang diberikan oleh Kepala Arsip Nasional Republik Indonesia (ANRI) pada tanggal 7 Desember 2022 kepada PT Semen Padang karena sudah melakukan penyerahan arsip statis kepada ANRI. Penyerahan arsip statis ini sebagai bentuk pemenuhan dari amanat Undang-Undang Nomor 43 Tahun 2009 tentang Kearsipan dan Peraturan Pemerintah Nomor 34 tahun 1979 tentang Penyusutan Arsip. Selain itu, penyerahan arsip statis juga merupakan sebagai pertanggungjawaban nasional PT Semen Padang dalam kehidupan bermasyarakat, berbangsa, dan bernegara serta identitas dan memori kolektif bangsa.</p>
+                       <p class="text-white leading-relaxed text-justify" dir="rtl">Piagam penghargaan yang diberikan oleh Kepala Arsip Nasional Republik Indonesia (ANRI) pada tanggal 7 Desember 2022 kepada PT Semen Padang karena sudah melakukan penyerahan arsip statis kepada ANRI. Penyerahan arsip statis ini sebagai bentuk pemenuhan dari amanat Undang-Undang Nomor 43 Tahun 2009 tentang Kearsipan dan Peraturan Pemerintah Nomor 34 tahun 1979 tentang Penyusutan Arsip. Selain itu, penyerahan arsip statis juga merupakan sebagai pertanggungjawaban nasional PT Semen Padang dalam kehidupan bermasyarakat, berbangsa, dan bernegara serta identitas dan memori kolektif bangsa</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
-                      <img src="{{ asset('images/hp 5.jpeg') }}" class="rounded-lg shadow-lg w-full h-80 object-cover opacity-80 hover:opacity-100 transition duration-500">
+                      <img src="{{ asset('images/ANRI.jpg') }}" class="w-full h-auto">
                  </div>
             </div>
         </div>
@@ -189,7 +186,7 @@
         <div class="w-full bg-white py-16 px-6 relative overflow-hidden">
             <div class="container mx-auto flex flex-col md:flex-row items-center gap-12 max-w-7xl">
                  <div class="w-full md:w-1/2 order-2 md:order-1">
-                      <img src="{{ asset('images/hp 4.jpeg') }}" class="rounded-lg shadow-lg w-full h-80 object-cover grayscale hover:grayscale-0 transition duration-500">
+                      <img src="{{ asset('images/BUMN-ANRI.jpg') }}" class="w-full h-auto">
                  </div>
                  <div class="w-full md:w-1/2 order-1 md:order-2 space-y-6">
                       <div>
@@ -208,7 +205,7 @@
                        <p class="text-white leading-relaxed text-justify" dir="rtl">Kearsipan PT Semen Padang terpilih sebagai juara 1 tingkat Badan Usaha Milik Negara (BUMN) dalam pemilihan Unit Kearsipan dan Lembaga Kearsipan Perguruan Tinggi Negeri Terbaik Tingkat Nasional Tahun 2016. Kegiatan ini dilaksanakan oleh Arsip Nasional Republik Indonesia di Jakarta pada tanggal 1 Maret - 14 Juni 2016</p>
                  </div>
                  <div class="w-full md:w-1/2 order-2">
-                       <img src="{{ asset('images/hp 2.jpeg') }}" class="rounded-lg shadow-lg w-full h-80 object-cover opacity-90 hover:opacity-100 transition duration-500">
+                       <img src="{{ asset('images/JUARA.jpg') }}" class="w-full h-auto">
                  </div>
             </div>
         </div>
@@ -294,30 +291,22 @@
     <footer id="kontak" class="relative bg-cover bg-center border-t border-gray-200" style="background-image: url('{{ asset('images/SuperGrafis.png') }}');">
         <!-- Main Footer Content with Pattern -->
         <div class="pt-12 pb-8">
-            <div class="container mx-auto px-6">
+            <div class="container mx-auto px-12 md:px-24">
                 <!-- Top Section: 3 Columns -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <!-- Column 1: Kantor Utama -->
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-lg mb-3">Kantor Utama</h4>
+                    <div class="text-left">
+                        <h4 class="font-bold text-gray-900 text-lg mb-3">Record Center</h4>
                         <p class="text-gray-600 text-sm leading-relaxed max-w-xs">
                             Jl. Raya Indarung, Kec. Lubuk Kilangan<br>
                             Kota Padang 25237, Sumatera Barat
                         </p>
                     </div>
-                    
-                    <!-- Column 2: Kantor Perwakilan -->
-                    <div>
-                        <h4 class="font-bold text-gray-900 text-lg mb-3">Kantor Perwakilan Jakarta</h4>
-                        <p class="text-gray-600 text-sm leading-relaxed max-w-sm">
-                            Graha Irama, Lt. 11, Jl. H. R. Rasuna Said No. 1 & 2, RT.6/RW.4, Kuningan Timur, Kecamatan Setiabudi, Kota Jakarta Selatan 12950, DKI Jakarta
-                        </p>
-                    </div>
 
                     <!-- Column 3: Media Sosial & SIG Group -->
-                    <div>
+                    <div class="text-right">
                         <h4 class="font-bold text-gray-900 text-lg mb-3">Media Sosial</h4>
-                        <div class="flex gap-4 mb-6">
+                        <div class="flex justify-end gap-4 mb-6">
                             <a href="https://twitter.com/semenpadang1910" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-black transition" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
                             <a href="https://www.instagram.com/semenpadang/" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
                             <a href="https://www.youtube.com/channel/UCIi9Yy9jRMlB8k9_8djAJcA/feed" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
@@ -325,22 +314,8 @@
                             <a href="https://web.facebook.com/PTsemenpadang1910/" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-[#e92027] transition" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
                         </div>
                         
-                        <h4 class="font-bold text-gray-900 text-lg mb-2">SIG Group</h4>
-                        <a href="https://sig.id/" target="_blank" class="text-gray-600 hover:text-[#e92027] transition font-medium">www.sig.id</a>
-                    </div>
-                </div>
-
-                <!-- Bottom Section: Logo and Hotline -->
-                <div class="flex flex-col md:flex-row justify-between items-center border-t border-gray-200/50 pt-6">
-                    <!-- Logo -->
-                    <div class="mb-4 md:mb-0">
-                        <img src="{{ asset('images/sp-black.png') }}" class="h-16 object-contain">
-                    </div>
-
-                    <!-- Hotline -->
-                    <div class="text-center md:text-right">
-                        <h4 class="font-bold text-gray-900 text-xl tracking-widest uppercase mb-0">HOTLINE</h4>
-                        <p class="text-2xl font-bold text-gray-900">0800 1088888</p>
+                        <h4 class="font-bold text-gray-900 text-lg mb-2">Record Center</h4>
+                        <p class="text-gray-600 hover:text-[#e92027] transition font-medium">arsipsp@sig.id</p>
                     </div>
                 </div>
             </div>
@@ -349,16 +324,13 @@
         <!-- Red Bar -->
         <div class="bg-[#e92027] h-14 w-full relative">
             <div class="container mx-auto px-6 h-full flex justify-end items-center">
-                 <button @click="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-6 h-6 flex items-center justify-center bg-red-800/50 hover:bg-red-900 text-white rounded transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                 </button>
             </div>
         </div>
             
         <!-- Copyright -->
         <div class="py-4">
             <div class="container mx-auto px-6 text-center">
-                  <p class="text-gray-800 text-sm font-medium">PT Sinergi Informatika Semen Indonesia &copy; Copyright {{ date('Y') }}. All rights reserved.</p>
+                  <p class="text-gray-800 text-sm font-medium">Record Center PT Semen Padang &copy; Copyright {{ date('Y') }}.</p>
             </div>
         </div>
     </footer>

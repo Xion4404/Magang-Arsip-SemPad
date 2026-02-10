@@ -31,7 +31,7 @@
              
              <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center relative z-10 gap-6">
                 <div class="text-center md:text-left">
-                     <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Beranda e-Arsip</h2>
+                     <h2 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Dashboard Record Center</h2>
                      <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Ringkasan statistik dan aktivitas kearsipan PT Semen Padang.</p>
                 </div>
             </div>
