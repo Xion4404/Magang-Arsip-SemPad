@@ -7,6 +7,7 @@
     <title>Login - Manajemen Arsip PT Semen Padang</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     {{-- Google Fonts: Montserrat --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,79 +18,142 @@
         body {
             font-family: 'Montserrat', sans-serif !important;
         }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label {
+            transform: scale(0.85) translateY(-2.5rem);
+            color: #e92027;
+            background-color: white;
+            padding: 0 0.5rem;
+        }
     </style>
 </head>
 
-<body class="bg-white antialiased">
+<body class="bg-gray-50 antialiased overflow-hidden">
 
-    <div class="h-screen w-screen flex flex-col md:flex-row relative overflow-hidden">
+    <div class="h-screen w-screen flex flex-col md:flex-row shadow-2xl overflow-hidden rounded-none md:rounded-2xl m-0 md:m-0 bg-white">
 
-        <div class="absolute top-6 left-6 flex items-center space-x-3 z-20">
-            <img src="{{ asset('images/sp-black.png') }}" alt="Logo" class="h-14 md:h-12 w-auto">
-        </div>
-
-        <div class="w-full md:w-1/2 flex flex-col justify-center px-12 lg:px-28 py-10 bg-white h-full">
-
-            <div class="text-center mb-8">
-                <h1 class="text-2xl md:text-3xl font-bold text-black leading-tight mb-5">
-                    Record Center <br>
-                    PT Semen Padang
-                </h1>
-                <h2 class="text-xl md:text-2xl font-bold text-[#e92027]">Login</h2>
+        <!-- Left Column: Branding & Pattern (1/3) -->
+        <div class="hidden md:flex w-full md:w-1/3 relative overflow-hidden bg-gradient-to-br from-[#c41820] to-[#8a1216] text-white flex-col justify-between p-12 z-20 shadow-2xl">
+            <!-- Geometric Pattern Overlay -->
+            <div class="absolute inset-0 opacity-10">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
             </div>
-
-            <form method="POST" action="{{ route('login.authenticate') }}" class="space-y-5 max-w-md mx-auto w-full">
-                @csrf
-                @if($errors->any())
-                    <div class="bg-red-50 text-red-700 p-2 rounded-lg text-xs mb-3">
-                        <ul class="list-disc list-inside">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <div>
-                    <label class="block text-[#e92027] font-bold mb-1 text-sm">Email</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="far fa-user text-gray-400 text-sm"></i>
-                        </span>
-                        <input type="email" name="email" placeholder="Type your username" required
-                            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#e92027] outline-none text-sm shadow-sm">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[#e92027] font-bold mb-1 text-sm">Password</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400 text-sm"></i>
-                        </span>
-                        <input type="password" name="password" placeholder="Enter Current Password" required
-                            class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#e92027] outline-none text-sm shadow-sm">
-                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                            <i class="far fa-eye-slash text-gray-400 text-sm"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-[#e92027] text-white font-bold py-2.5 rounded-lg hover:bg-[#c41820] transition-colors shadow-lg text-base mt-2">
-                    Sign in
-                </button>
-            </form>
-
-            <p class="mt-6 text-center text-[10px] text-gray-300 tracking-widest uppercase">
-                © 2026 PT Semen Padang - Kearsipan Unit Sistem Manajemen
-            </p>
+            
+            <!-- Modern Curvy Shapes (Neumorphic/Glassy Feel) -->
+            <div class="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-[-10%] left-[-10%] w-80 h-80 bg-black opacity-20 rounded-full blur-3xl"></div>
+            
+             <!-- Content -->
+            <div class="relative z-10 mt-auto mb-auto">
+                 <div class="w-20 h-1 bg-white mb-6 rounded-full opacity-50"></div>
+                 <h2 class="text-4xl font-bold mb-2 leading-tight">Selamat Datang!</h2>
+                 <p class="text-white/80 text-lg font-light leading-relaxed">
+                     Record Center <br> 
+                     <span class="font-semibold">PT Semen Padang</span>
+                 </p>
+            </div>
+            
+            <div class="relative z-10 text-xs opacity-50 font-light">
+                &copy; {{ date('Y') }} Record Center. All rights reserved.
+            </div>
         </div>
 
-        <div class="hidden md:flex md:w-1/2 bg-[#e92027] justify-center items-center h-full">
-            <img src="{{ asset('images/pabrik-sp.png') }}" alt="Arsip Semen Padang"
-                class="max-h-[85%] max-w-[85%] object-contain">
+        <!-- Right Column: Login Form (2/3) -->
+        <div class="w-full md:w-2/3 relative flex items-center justify-center p-8 bg-gray-50">
+            
+            <!-- Background Image (SuperGrafis) with Blur & Opacity -->
+            <!-- Background Image (SuperGrafis) -->
+            <div class="absolute inset-0 z-0 opacity-40"
+                style="background-image: url('{{ asset('images/SuperGrafis.png') }}'); background-size: cover; background-position: center;">
+            </div>
+            
+             <!-- Login Card -->
+            <div class="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-md p-10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/50">
+                
+                <div class="text-center mb-10">
+
+                    <h1 class="text-3xl font-bold text-gray-800 mb-1">Login</h1>
+                </div>
+
+                <form method="POST" action="{{ route('login.authenticate') }}" class="space-y-6">
+                    @csrf
+                    
+                    @if($errors->any())
+                        <div x-data="{ show: true }" x-show="show" class="bg-red-50 text-red-600 p-4 rounded-xl text-sm mb-4 border border-red-100 flex items-start gap-3">
+                            <i class="fas fa-exclamation-circle mt-0.5"></i>
+                            <div>
+                                <ul class="list-disc list-inside">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            <button @click="show = false" type="button" class="ml-auto text-red-400 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    @endif
+
+                    <!-- Email Input -->
+                    <div class="relative group form-floating">
+                        <input type="email" name="email" id="email" placeholder=" " required
+                            class="peer w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#e92027]/20 focus:border-[#e92027] transition-all duration-300 text-gray-700 text-sm placeholder-transparent">
+                        <label for="email" 
+                               class="absolute left-1 top-4 text-gray-400 text-sm transition-all duration-300 pointer-events-none">
+                            Email Address
+                        </label>
+                        <i class="far fa-envelope absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#e92027] transition-colors"></i>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="relative group form-floating" x-data="{ showPass: false }">
+                        <input :type="showPass ? 'text' : 'password'" name="password" id="password" placeholder=" " required
+                            class="peer w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#e92027]/20 focus:border-[#e92027] transition-all duration-300 text-gray-700 text-sm placeholder-transparent">
+                        <label for="password" 
+                               class="absolute left-1 top-4 text-gray-400 text-sm transition-all duration-300 pointer-events-none">
+                            Password
+                        </label>
+                        <button type="button" @click="showPass = !showPass" class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#e92027] transition-colors focus:outline-none">
+                            <i class="far" :class="showPass ? 'fa-eye' : 'fa-eye-slash'"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#e92027] focus:ring-[#e92027]">
+                            <span class="text-gray-500 group-hover:text-gray-700 transition">Remember me</span>
+                        </label>
+                        <a href="#" class="text-[#e92027] font-medium hover:underline">Forgot password?</a>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-[#e92027] text-white font-bold py-4 rounded-xl hover:bg-[#c41820] hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform active:scale-95 text-sm tracking-wide">
+                        LOGIN
+                    </button>
+                    
+                </form>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-gray-400 text-xs">
+                        &copy; 2026 Record Center PT Semen Padang
+                    </p>
+                </div>
+            </div>
+            
         </div>
+
     </div>
 
 </body>
