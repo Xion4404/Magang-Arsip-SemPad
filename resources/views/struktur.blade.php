@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visi Misi - Sistem Informasi e-Arsip PT Semen Padang</title>
+    <title>Struktur Organisasi - Sistem Informasi e-Arsip PT Semen Padang</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,9 +43,9 @@
                          x-transition:leave-end="opacity-0 translate-y-2"
                          class="absolute left-0 mt-0 w-56 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100"
                          style="display: none;">
-                        <a href="{{ route('visi-misi') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0 font-bold bg-red-50 text-red-700">Visi Misi</a>
+                        <a href="{{ route('visi-misi') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Visi Misi</a>
                         <a href="{{ route('sejarah') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Sejarah</a>
-                        <a href="{{ route('struktur') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
+                        <a href="{{ route('struktur') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0 font-bold bg-red-50 text-red-700">Struktur Organisasi</a>
                         <a href="{{ route('penghargaan') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">Penghargaan</a>
                     </div>
                 </div>
@@ -79,84 +79,26 @@
                     <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-2 drop-shadow-lg">
                         Tentang Kami
                     </h1>
-                     <p class="text-xl font-light">Visi Misi</p>
+                     <p class="text-xl font-light">Struktur Organisasi</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content: Struktur Organisasi -->
     <section class="py-20 relative bg-white bg-cover bg-center" style="background-image: url('{{ asset('images/BG_supergrafis.png') }}');"> 
         <div class="container mx-auto px-6 relative z-10">
             
-            <!-- Meaning Semen Padang -->
-            <div class="text-center mb-16">
-                 <h2 class="text-2xl text-gray-800 font-medium mb-2">Kearsipan PT Semen Padang</h2>
-                 <h3 class="text-3xl md:text-4xl font-bold text-[#e92027]">“Tepat Kelola, Tepat Saji”</h3>
-            </div>
 
-            <div class="max-w-7xl mx-auto px-6 lg:px-20">
-                <div class="flex flex-col md:flex-row gap-16 items-start">
-                     <!-- Images Grid -->
-                     <div class="w-full md:w-1/2 grid grid-cols-2 gap-4">
-                          <!-- Main Image (hp 6) -->
-                          <div class="col-span-2 rounded-2xl shadow-xl overflow-hidden aspect-video relative group">
-                               <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-500 z-10"></div>
-                               <img src="{{ asset('images/hp 6.jpeg') }}" alt="Visi Misi Semen Padang" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
-                          </div>
-                          <!-- Secondary Image 1 (hp 4) -->
-                          <div class="rounded-2xl shadow-xl overflow-hidden aspect-video relative group">
-                               <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-500 z-10"></div>
-                               <img src="{{ asset('images/hp 4.jpeg') }}" alt="Kegiatan Arsip" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
-                          </div>
-                          <!-- Secondary Image 2 (hp 5) -->
-                          <div class="rounded-2xl shadow-xl overflow-hidden aspect-video relative group">
-                               <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition duration-500 z-10"></div>
-                               <img src="{{ asset('images/hp 5.jpeg') }}" alt="Fasilitas Arsip" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
-                          </div>
-                     </div>
-
-                     <!-- Text -->
-                     <div class="w-full md:w-1/2">
-                          <!-- Visi -->
-                          <div class="mb-8">
-                               <div class="flex items-center gap-3 mb-2">
-                                   <div class="w-1.5 h-8 bg-[#e92027]"></div>
-                                   <h2 class="text-3xl font-bold text-gray-900 tracking-wide">VISI</h2>
-                               </div>
-                               <p class="text-gray-700 leading-relaxed text-lg pl-4 border-l-2 border-gray-100 text-justify">
-                                    "Menuju manajemen kearsipan yang <span class="font-bold text-gray-900">TEPAT KELOLA DAN TEPAT SAJI DENGAN MEMPERHATIKAN ASPEK K3</span>"
-                               </p>
-                          </div>
-
-                          <!-- Misi -->
-                          <div>
-                               <div class="flex items-center gap-3 mb-4">
-                                   <div class="w-1.5 h-8 bg-[#e92027]"></div>
-                                   <h2 class="text-3xl font-bold text-gray-900 tracking-wide">MISI</h2>
-                               </div>
-                               <ol class="list-none space-y-3 text-gray-700 leading-relaxed text-lg text-justify">
-                                   <li class="flex gap-4">
-                                       <span class="font-bold text-[#e92027] text-xl">1.</span>
-                                       <span>Membangun manajemen kearsipan yang <span class="font-bold text-gray-900">EFEKTIF DAN EFISIEN</span></span>
-                                   </li>
-                                   <li class="flex gap-3">
-                                       <span class="font-bold text-[#e92027] text-xl">2.</span>
-                                       <span>Peningkatan kemampuan dan <span class="font-bold text-gray-900">KOMPETENSI SDM</span> diunit kearsipan serta koordinator anggota tu- ukp unit kerja</span>
-                                   </li>
-                                   <li class="flex gap-3">
-                                       <span class="font-bold text-[#e92027] text-xl">3.</span>
-                                       <span>Meningkatkan efesiensi dan efektifitas <span class="font-bold text-gray-900">PELAYANAN</span></span>
-                                   </li>
-                                   <li class="flex gap-3">
-                                       <span class="font-bold text-[#e92027] text-xl">4.</span>
-                                       <span>Menjadikan arsip sebagai memori kolektif dan jati diri perusahaan</span>
-                                   </li>
-                               </ol>
-                          </div>
-                     </div>
+            <!-- Image Container -->
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-6 lg:p-10 border border-gray-100 transform hover:scale-[1.01] transition-all duration-300">
+                    <img src="{{ asset('images/struktur.jpeg') }}" 
+                         alt="Struktur Organisasi PT Semen Padang" 
+                         class="w-full h-auto object-contain rounded-xl shadow-md mx-auto">
                 </div>
             </div>
+
         </div>
     </section>
 

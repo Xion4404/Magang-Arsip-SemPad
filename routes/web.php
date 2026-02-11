@@ -25,6 +25,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/visi-misi', [LandingController::class, 'visiMisi'])->name('visi-misi');
 Route::get('/sejarah', [LandingController::class, 'sejarah'])->name('sejarah');
+Route::get('/struktur-organisasi', [LandingController::class, 'struktur'])->name('struktur');
 Route::get('/penghargaan', [LandingController::class, 'penghargaan'])->name('penghargaan');
 
 // ==========================================

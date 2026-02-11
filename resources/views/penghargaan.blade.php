@@ -45,7 +45,7 @@
                          style="display: none;">
                         <a href="{{ route('visi-misi') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Visi Misi</a>
                         <a href="{{ route('sejarah') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Sejarah</a>
-                        <a href="{{ route('landing') }}#struktur" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
+                        <a href="{{ route('struktur') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
                         <a href="{{ route('penghargaan') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition font-bold bg-red-50 text-red-700">Penghargaan</a>
                     </div>
                 </div>
@@ -257,7 +257,7 @@
                 </a>
 
                 <!-- 3. Struktur Organisasi -->
-                <a href="{{ route('landing') }}#struktur" class="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-l-4 border-transparent hover:border-[#e92027] flex flex-col justify-between h-48">
+                <a href="{{ route('struktur') }}" class="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-l-4 border-transparent hover:border-[#e92027] flex flex-col justify-between h-48">
                     <div>
                          <span class="text-sm font-semibold text-gray-400 group-hover:text-[#e92027] transition mb-2 block">03</span>
                          <h3 class="text-xl font-bold text-gray-800 group-hover:text-[#e92027] transition">Struktur Organisasi</h3>

@@ -46,7 +46,7 @@
                          style="display: none;">
                         <a href="{{ route('visi-misi') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Visi Misi</a>
                         <a href="{{ route('sejarah') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Sejarah</a>
-                        <a href="#struktur" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
+                        <a href="{{ route('struktur') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition border-b border-gray-50 last:border-0">Struktur Organisasi</a>
                         <a href="{{ route('penghargaan') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">Penghargaan</a>
                     </div>
                 </div>
@@ -62,6 +62,7 @@
             slides: [
                 { img: 'hp 4.jpeg', text: 'Ruang Pameran Arsip' },
                 { img: 'hp 5.jpeg', text: 'Ruang Pameran Arsip' },
+                { img: 'hp 8.jpeg', text: 'Rak' },
                 { img: 'hp 6.jpeg', text: 'Rak Penyimpanan Arsip' }
             ],
             autoplay() {
@@ -104,7 +105,7 @@
                             Login
                         </a>
                         <a href="#tentang" class="px-8 py-4 bg-white hover:bg-gray-100 text-[#e92027] font-bold rounded-lg transition transform hover:-translate-y-1 shadow-lg text-center">
-                            Pelajari Selengkapnya
+                            View More
                         </a>
                     </div>
                 </div>

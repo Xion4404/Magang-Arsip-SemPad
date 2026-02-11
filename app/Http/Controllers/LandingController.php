@@ -52,4 +52,9 @@ class LandingController extends Controller
     {
         return view('penghargaan');
     }
+
+    public function struktur()
+    {
+        return view('struktur');
+    }
 }
