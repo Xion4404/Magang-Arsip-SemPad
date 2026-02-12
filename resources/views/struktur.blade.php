@@ -189,10 +189,23 @@
                             Jl. Raya Indarung, Kec. Lubuk Kilangan<br>
                             Kota Padang 25237, Sumatera Barat
                         </p>
+                        
+                        <!-- Google Maps Embed -->
+                        <div class="mt-4 rounded-xl overflow-hidden shadow-lg border border-gray-100 w-full max-w-xs h-48">
+                            <iframe 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0" 
+                                scrolling="no" 
+                                marginheight="0" 
+                                marginwidth="0" 
+                                src="https://maps.google.com/maps?q=3F2F%2B6Q%20Indarung%2C%20Kota%20Padang%2C%20Sumatera%20Barat%2C%20Indonesia&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                            </iframe>
+                        </div>
                     </div>
 
                     <!-- Column 3: Media Sosial & SIG Group -->
-                    <div class="text-right">
+                    <div class="text-right flex flex-col justify-end h-full">
                         <h4 class="font-bold text-gray-900 text-lg mb-3">Media Sosial</h4>
                         <div class="flex justify-end gap-4 mb-6">
                             <a href="https://twitter.com/semenpadang1910" target="_blank" class="w-8 h-8 link-hover"><svg class="w-5 h-5 text-gray-600 hover:text-black transition" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>

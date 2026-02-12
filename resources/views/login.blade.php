@@ -130,14 +130,20 @@
                         </button>
                     </div>
 
-                    <div class="flex items-center justify-between text-xs">
-                        <label class="flex items-center gap-2 cursor-pointer group">
-                            <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#e92027] focus:ring-[#e92027]">
-                            <span class="text-gray-500 group-hover:text-gray-700 transition">Remember me</span>
+                    <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember" type="checkbox" class="h-4 w-4 text-[#e92027] focus:ring-[#e92027] border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                            Ingat Saya
                         </label>
-                        <a href="#" class="text-[#e92027] font-medium hover:underline">Forgot password?</a>
                     </div>
 
+                    <div class="text-sm">
+                        <a href="{{ route('password.request') }}" class="font-medium text-[#e92027] hover:text-[#b91c1c]">
+                            Lupa Password?
+                        </a>
+                    </div>
+                </div>
                     <button type="submit"
                         class="w-full bg-[#e92027] text-white font-bold py-4 rounded-xl hover:bg-[#c41820] hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform active:scale-95 text-sm tracking-wide">
                         LOGIN

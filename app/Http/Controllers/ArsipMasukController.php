@@ -119,6 +119,10 @@ class ArsipMasukController extends Controller
     public function edit($id)
     {
         $arsipMasuk = ArsipMasuk::findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && auth()->id() !== $arsipMasuk->user_penerima) {
+            abort(403, 'Unauthorized action.');
+        }
         $users = User::all();
         $units = \App\Models\Unit::all(); // Fetch all units
         return view('arsip-masuk.edit', compact('arsipMasuk', 'users', 'units'));
@@ -135,6 +139,11 @@ class ArsipMasukController extends Controller
         ]);
 
         $arsipMasuk = ArsipMasuk::findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && auth()->id() !== $arsipMasuk->user_penerima) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $arsipMasuk->update($request->all());
 
         return redirect()->route('arsip-masuk.index')
@@ -144,6 +153,10 @@ class ArsipMasukController extends Controller
     public function destroy($id)
     {
         $arsipMasuk = ArsipMasuk::findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && auth()->id() !== $arsipMasuk->user_penerima) {
+            abort(403, 'Unauthorized action.');
+        }
         
         // Optional: Check dependencies (e.g. berkas logs) before deleting?
         // Standard delete for now.

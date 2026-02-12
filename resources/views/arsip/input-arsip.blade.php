@@ -396,7 +396,7 @@
             newHakAkses: '', 
             newMedia: '',
             newMasaSimpan: '',
-            newTindakan: 'Musnah',
+            newTindakan: '',
             namaBerkas: @json(old('nama_berkas', $arsip->nama_berkas ?? '')),
             unitPengolah: '',
             kodeKlasifikasi: '',

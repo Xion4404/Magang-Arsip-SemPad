@@ -114,6 +114,10 @@ class MonitoringKaryawanController extends Controller
     public function edit($id)
     {
         $monitoring = LogAktivitas::findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && auth()->id() !== $monitoring->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
         $users = User::all();
         $arsipMasuk = ArsipMasuk::all();
         return view('monitoring.edit', compact('monitoring', 'users', 'arsipMasuk'));
@@ -123,6 +127,10 @@ class MonitoringKaryawanController extends Controller
     {
         $logAktivitas = LogAktivitas::findOrFail($id);
         
+        if (auth()->user()->role !== 'admin' && auth()->id() !== $logAktivitas->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Prevent editing if status is Selesai
         if ($logAktivitas->status_kerja == 'Selesai') {
             return redirect()->back()->with('error', 'Data yang sudah selesai tidak dapat diedit!');
@@ -161,6 +169,10 @@ class MonitoringKaryawanController extends Controller
     {
         $logAktivitas = LogAktivitas::findOrFail($id);
         
+        if (auth()->user()->role !== 'admin' && auth()->id() !== $logAktivitas->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Prevent deleting if status is Selesai
         if ($logAktivitas->status_kerja == 'Selesai') {
             return redirect()->back()->with('error', 'Data yang sudah selesai tidak dapat dihapus!');

@@ -12,12 +12,13 @@
 
     <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden relative">
 
+        @auth
         <x-sidebar />
-
-
+        @endauth
 
         <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
             
+            @auth
             <!-- Open Sidebar Button (Visible only when sidebar is closed) -->
             <button x-show="!sidebarOpen" 
                     @click="sidebarOpen = true" 
@@ -29,6 +30,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                 </svg>
             </button>
+            @endauth
             
 
 
