@@ -2,10 +2,12 @@
     {{-- Header Page --}}
     {{-- Header Page --}}
     {{-- Header Page --}}
-    <div class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
+    <div
+        class="bg-gradient-to-br from-[#e92027] via-[#b91c1c] to-[#7f090b] text-white pb-32 pt-16 px-8 -mt-6 -mx-6 mb-8 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
         <!-- Polygon Pattern Overlay -->
         <div class="absolute inset-0 z-0 opacity-40">
-             <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <svg class="absolute w-full h-full" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"
+                width="100%" height="100%">
                 <defs>
                     <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#580000;stop-opacity:0.3" />
@@ -20,13 +22,17 @@
         </div>
 
         <!-- Ornamental Icon -->
-        <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
-            <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L24 12L12 24L0 12L12 0Z" /></svg>
+        <div
+            class="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4 z-0 pointer-events-none mix-blend-overlay">
+            <svg width="400" height="400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0L24 12L12 24L0 12L12 0Z" />
+            </svg>
         </div>
-        
+
         <div class="max-w-7xl mx-auto relative z-10 text-center md:text-left">
             <h1 class="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-md">Form Peminjaman Baru</h1>
-            <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Isi formulir di bawah ini untuk mengajukan peminjaman arsip.</p>
+            <p class="text-red-50 text-base font-light opacity-95 max-w-lg leading-relaxed drop-shadow-sm">Isi formulir
+                di bawah ini untuk mengajukan peminjaman arsip.</p>
         </div>
     </div>
 
@@ -279,9 +285,13 @@
                         <div><label class="block text-xs font-bold text-gray-700 uppercase mb-2">Hak
                                 Akses</label><select x-model="tempItem.akses"
                                 class="w-full border border-gray-300 rounded-lg p-3 text-sm bg-white outline-none">
-                                <option value="Biasa">Biasa / Terbuka</option>
-                                <option value="Terbatas">Terbatas</option>
-                                <option value="Rahasia">Rahasia</option>
+                                <option value="Biasa">Biasa</option>
+                                <template x-if="!['Band IV', 'Karyawan/Pelaksana'].includes(jabatan)">
+                                    <option value="Terbatas">Terbatas</option>
+                                </template>
+                                <template x-if="!['Band IV', 'Karyawan/Pelaksana'].includes(jabatan)">
+                                    <option value="Rahasia">Rahasia</option>
+                                </template>
                             </select></div>
                     </div>
 
@@ -380,8 +390,16 @@
 
                 get filteredArsip() {
                     const query = this.searchQuery.toLowerCase();
+                    const restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
+                    const isRestricted = restrictedJabatan.includes(this.jabatan);
+
                     return daftarArsip.filter(item => {
-                        return (item.nama_berkas || '').toLowerCase().includes(query) || (item.no_box || '').toLowerCase().includes(query);
+                        const matchQuery = (item.nama_berkas || '').toLowerCase().includes(query) || (item.no_box || '').toLowerCase().includes(query);
+
+                        if (isRestricted && ['Rahasia', 'Terbatas'].includes(item.hak_akses)) {
+                            return false;
+                        }
+                        return matchQuery;
                     }).slice(0, 10);
                 },
                 selectArsip(arsip) { this.tempItem.id = arsip.id; this.tempItem.display_name = arsip.nama_berkas; this.tempItem.no_box = arsip.no_box; this.tempItem.akses = arsip.hak_akses; this.searchQuery = arsip.nama_berkas; },
@@ -398,6 +416,17 @@
                         return;
                     }
                     if (this.tempItem.source === 'manual') this.tempItem.display_name = this.tempItem.nama_manual;
+
+                    // NEW CHECK: Access Control
+                    const restrictedJabatan = ['Band IV', 'Karyawan/Pelaksana'];
+                    const restrictedAkses = ['Rahasia', 'Terbatas'];
+
+                    if (restrictedJabatan.includes(this.jabatan) && restrictedAkses.includes(this.tempItem.akses)) {
+                        this.serverErrors = [`Gagal! Jabatan ${this.jabatan} tidak diizinkan akses arsip ${this.tempItem.akses}.`];
+                        this.showValidationModal = true;
+                        return;
+                    }
+
                     this.items.push({ ...this.tempItem }); this.closeModal();
                 },
 

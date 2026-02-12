@@ -41,10 +41,24 @@ class ArsipController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('nama_berkas', 'like', "%{$search}%")
                   ->orWhere('no_berkas', 'like', "%{$search}%")
-                  ->orWhere('isi', 'like', "%{$search}%") // Direct column search
+                  ->orWhere('isi', 'like', "%{$search}%")
+                  ->orWhere('unit_pengolah', 'like', "%{$search}%")
+                  ->orWhere('tahun', 'like', "%{$search}%")
+                  ->orWhere('jumlah', 'like', "%{$search}%")
+                  ->orWhere('no_box', 'like', "%{$search}%")
+                  ->orWhere('hak_akses', 'like', "%{$search}%")
+                  ->orWhere('masa_simpan', 'like', "%{$search}%")
+                  ->orWhere('jenis_media', 'like', "%{$search}%")
+                  ->orWhere('tindakan_akhir', 'like', "%{$search}%")
+                  // Search Relations
                   ->orWhereHas('klasifikasi', function($q3) use ($search) {
-                      $q3->where('kode_klasifikasi', 'like', "%{$search}%");
-                  });
+                      $q3->where('kode_klasifikasi', 'like', "%{$search}%")
+                         ->orWhere('jenis_arsip', 'like', "%{$search}%");
+                  })
+                  // Search Formatted Date (Matches display format e.g. "15 Jun 1993")
+                  ->orWhereRaw("DATE_FORMAT(tanggal_masuk, '%d %b %Y') LIKE ?", ["%{$search}%"])
+                  // Search Original Date format just in case
+                  ->orWhere('tanggal_masuk', 'like', "%{$search}%");
             });
         }
 
@@ -86,7 +100,14 @@ class ArsipController extends Controller
                 break;
         }
 
-        $arsips = $query->paginate(100);
+        // Check for Print Mode
+        $printMode = $request->get('print') === 'true';
+
+        if ($printMode) {
+             $arsips = $query->get();
+        } else {
+             $arsips = $query->paginate(100);
+        }
         
         // Calculate grouping and numbering based on Entry Order (First ID)
         $groupData = [];
@@ -138,7 +159,7 @@ class ArsipController extends Controller
             return view('arsip.partials.table', compact('arsips', 'groupData'));
         }
 
-        return view('arsip.arsip', compact('arsips', 'availableYears', 'availableBoxes', 'groupData'));
+        return view('arsip.arsip', compact('arsips', 'availableYears', 'availableBoxes', 'groupData', 'printMode'));
     }
 
     public function create()

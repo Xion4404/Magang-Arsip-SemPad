@@ -1,3 +1,121 @@
+@if(isset($printMode) && $printMode)
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cetak Data Arsip - PT Semen Padang</title>
+        @vite(['resources/css/app.css'])
+        <style>
+            @media print, screen {
+                body {
+                    background-color: white !important;
+                    font-family: sans-serif;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                    margin: 0;
+                    padding: 20px;
+                }
+                
+                /* Header */
+                .print-header {
+                    border-bottom: 3px solid #8B0000;
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                
+                /* Table Styling */
+                table {
+                    width: 100%;
+                    table-layout: fixed;
+                    border-collapse: collapse;
+                    border: 1px solid #000;
+                    font-size: 9pt; /* Readable size */
+                }
+                
+                thead tr {
+                    background-color: #fce4e4 !important;
+                    color: #8B0000 !important;
+                }
+                
+                th, td {
+                    border: 1px solid #444 !important;
+                    padding: 4px 6px;
+                    vertical-align: middle;
+                    word-wrap: break-word;
+                }
+                
+                th {
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    text-align: center;
+                    background-color: #fce4e4 !important; /* Ensure background prints */
+                }
+
+                /* Hiding Checkbox and Actions */
+                th:first-child, td:first-child, /* Checkbox */
+                th:nth-child(29), td:nth-child(29), /* Aksi (index might vary, targeting last) */
+                th:last-child, td:last-child { 
+                    display: none; 
+                }
+
+                /* Column Sizing */
+                th:nth-child(2), td:nth-child(2) { width: 30px; text-align: center; } /* No */
+                th:nth-child(3), td:nth-child(3) { width: 80px; } /* Kode */
+                th:nth-child(4), td:nth-child(4) { width: 15%; } /* Nama Berkas */
+                th:nth-child(5), td:nth-child(5) { width: 25%; } /* Uraian */
+                th:nth-child(6), td:nth-child(6) { width: 40px; text-align: center; } /* Thn */
+                th:nth-child(7), td:nth-child(7) { width: 70px; text-align: center; } /* Tgl */
+                th:nth-child(8), td:nth-child(8) { width: 30px; text-align: center; } /* Jml */
+                th:nth-child(12), td:nth-child(12) { width: 40px; text-align: center; } /* Box */
+
+                /* Clean Badges */
+                .rounded-lg, .rounded-full, .bg-red-50, .bg-green-100 {
+                    background: none !important;
+                    border: none !important;
+                    color: black !important;
+                    padding: 0 !important;
+                    font-weight: normal;
+                }
+                
+                /* Hide buttons/links inside table */
+                button, a {
+                    text-decoration: none;
+                    color: black;
+                    pointer-events: none;
+                }
+                
+                /* Hide unneeded icons */
+                svg { display: none; }
+            }
+            
+            @page {
+                size: landscape;
+                margin: 10mm;
+            }
+        </style>
+    </head>
+    <body onload="window.print()">
+        <div class="print-header">
+            <img src="{{ asset('images/logo-sp.png') }}" alt="Logo" style="height: 80px; width: auto;">
+            <div style="text-align: center; flex: 1;">
+                <h1 style="font-size: 24px; font-weight: bold; color: #8B0000; text-transform: uppercase; margin: 0;">PT Semen Padang</h1>
+                <h2 style="font-size: 18px; font-weight: bold; margin: 5px 0;">Daftar Arsip Dokumen</h2>
+                <p style="font-size: 12px; color: #666; margin: 0;">Indarung, Padang 25237, Sumatera Barat</p>
+            </div>
+            <div style="width: 80px;"></div> <!-- Spacer for balance -->
+        </div>
+
+        <div id="arsip-table-container">
+            @include('arsip.partials.table')
+        </div>
+    </body>
+    </html>
+
+@else
 <x-layout>
     {{-- Print Header (Visible only in Print) --}}
     <div id="print-header" class="hidden mb-8 border-b-2 border-[#e92027] pb-4">
@@ -165,10 +283,10 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Excel
                         </button>
-                        <button type="button" onclick="printTable()" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl font-bold hover:bg-gray-200 hover:-translate-y-1 transition flex items-center gap-2 border border-gray-200">
+                        <a href="{{ request()->fullUrlWithQuery(['print' => 'true']) }}" target="_blank" class="bg-gray-100 text-gray-700 px-5 py-3 rounded-xl font-bold hover:bg-gray-200 hover:-translate-y-1 transition flex items-center gap-2 border border-gray-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                             Print
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -278,113 +396,5 @@
             }
         }
     </script>
-    
-    <style>
-        @media print {
-            @page {
-                size: A4 landscape;
-                margin: 5mm;
-            }
-            body {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                background-color: white !important;
-                font-family: sans-serif;
-            }
-            body * {
-                visibility: hidden;
-            }
-            #arsip-table-container, #arsip-table-container *, #print-header, #print-header * {
-                visibility: visible;
-            }
-
-            /* Make Print Header Visible and Static */
-            #print-header {
-                display: block !important;
-                border-bottom: 2px solid #8B0000;
-                padding-bottom: 5px;
-                margin-bottom: 10px !important;
-                width: 100% !important;
-                position: relative;
-                left: 0;
-                top: 0;
-            }
-
-            /* Main Table Container */
-            #arsip-table-container {
-                position: absolute;
-                left: 0;
-                top: 100px; /* Adjust based on header height */
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            /* Table Styling */
-            table {
-                width: 100% !important;
-                table-layout: fixed;
-                border-collapse: collapse;
-                border: 1px solid #000;
-                font-size: 7pt !important; /* Aggressive small font */
-            }
-            
-            thead tr {
-                background-color: #fce4e4 !important;
-                color: #8B0000 !important;
-            }
-
-            th, td {
-                border: 1px solid #666 !important;
-                padding: 2px 4px !important; /* Tight padding */
-                vertical-align: middle;
-                overflow: hidden;
-                white-space: normal; /* Allow wrapping */
-                line-height: 1.1;
-                color: black !important;
-            }
-
-            /* Header Specifics */
-            th {
-                text-transform: uppercase;
-                font-weight: bold;
-                text-align: center;
-                height: 25px;
-            }
-
-            /* Column Widths Optimization (Total ~100%) */
-            th:first-child, td:first-child { display: none; } /* Hide Checkbox */
-            
-            /* Columns by Index (1-based because checkbox is 1) */
-            th:nth-child(2), td:nth-child(2) { width: 3% !important; text-align: center; } /* No */
-            th:nth-child(3), td:nth-child(3) { width: 8% !important; } /* Kode */
-            th:nth-child(4), td:nth-child(4) { width: 14% !important; } /* Nama Berkas */
-            th:nth-child(5), td:nth-child(5) { width: 28% !important; } /* Uraian/Isi */
-            th:nth-child(6), td:nth-child(6) { width: 4% !important; text-align: center; } /* Tahun */
-            th:nth-child(7), td:nth-child(7) { width: 6% !important; text-align: center; } /* Tanggal */
-            th:nth-child(8), td:nth-child(8) { width: 3% !important; text-align: center; } /* Jml */
-            th:nth-child(9), td:nth-child(9) { width: 6% !important; text-align: center; } /* Akses */
-            th:nth-child(10), td:nth-child(10) { width: 6% !important; text-align: center; } /* Retensi */
-            th:nth-child(11), td:nth-child(11) { width: 7% !important; text-align: center; } /* Ket */
-            th:nth-child(12), td:nth-child(12) { width: 5% !important; text-align: center; } /* Box */
-            th:nth-child(13), td:nth-child(13) { width: 10% !important; } /* Unit */
-            th:nth-child(14), td:nth-child(14) { display: none !important; } /* Hide Media to save space */
-            th:nth-child(15), td:nth-child(15) { display: none !important; } /* Hide Aksi */
-
-            /* Badges Flattening for Print */
-            .rounded-lg, .rounded-full {
-                border-radius: 0 !important;
-                border: none !important;
-                background: none !important;
-                padding: 0 !important;
-                color: black !important;
-                font-weight: normal;
-            }
-
-            /* Hide decorative elements */
-            .hidden-print, button, input[type="checkbox"] {
-                display: none !important;
-            }
-        }
-    </style>
 </x-layout>
+@endif
