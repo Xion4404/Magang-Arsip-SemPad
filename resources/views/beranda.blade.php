@@ -851,9 +851,17 @@
                         datasets: [{
                             data: @json($arsipUnitChart['data']),
                             backgroundColor: [
-                                '#b91c1c', '#c41820', '#e92027', '#ef4444', '#f87171', 
-                                '#fca5a5', '#fecaca', '#fee2e2'
-                            ], // Red shades
+                                '#e92027', // Red (Primary)
+                                '#3b82f6', // Blue
+                                '#10b981', // Emerald
+                                '#f59e0b', // Amber
+                                '#8b5cf6', // Violet
+                                '#ec4899', // Pink
+                                '#06b6d4', // Cyan
+                                '#f97316', // Orange
+                                '#6366f1', // Indigo
+                                '#84cc16'  // Lime
+                            ],
                             borderWidth: 1,
                             borderColor: '#ffffff'
                         }]

@@ -134,13 +134,13 @@
                     <div class="flex items-center">
                         <input id="remember-me" name="remember" type="checkbox" class="h-4 w-4 text-[#e92027] focus:ring-[#e92027] border-gray-300 rounded">
                         <label for="remember-me" class="ml-2 block text-sm text-gray-900">
-                            Ingat Saya
+                            Remember Me
                         </label>
                     </div>
 
                     <div class="text-sm">
                         <a href="{{ route('password.request') }}" class="font-medium text-[#e92027] hover:text-[#b91c1c]">
-                            Lupa Password?
+                            Forgot Password?
                         </a>
                     </div>
                 </div>

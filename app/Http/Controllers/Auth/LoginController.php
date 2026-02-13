@@ -23,7 +23,7 @@ class LoginController extends Controller
             'email' => 'Format email tidak valid',
         ]);
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             return redirect()->intended('/beranda');
